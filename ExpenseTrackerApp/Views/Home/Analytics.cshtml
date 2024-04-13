@@ -1,0 +1,136 @@
+﻿<body class="dashboard">
+    <div id="main-wrapper">
+        <div class="content-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title">
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-xl-4">
+                                    <div class="page-title-content">
+                                        <h3>Analytics</h3>
+                                        <p class="mb-2">Welcome Ekash Finance Management</p>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="breadcrumbs">
+                                        <a href="#">Home </a>
+                                        <span><i class="fi fi-rr-angle-small-right"></i></span>
+                                        <a href="#">Analytics</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xxl-12 col-xl-12">
+                        <div class="settings-menu">
+                            <a href="./analytics.html">Analytics</a>
+                            <a href="./analytics-expenses.html">Expenses</a>
+                            <a href="./analytics-income.html">Income</a>
+                            <a href="./analytics-income-vs-expenses.html">Income vs Expenses</a>
+                            <a href="./analytics-balance.html">Balance</a>
+                            <a href="./analytics-transaction-history.html">Transaction History</a>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="analytics-widget">
+                                    <div class="widget-icon me-3 bg-primary">
+                                        <span>
+                                            <i class="fi fi-rr-mobile"></i>
+                                        </span>
+                                    </div>
+                                    <div class="widget-content">
+                                        <p>Daily Average</p>
+                                        <h3>$5470.36</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="analytics-widget">
+                                    <div class="widget-icon me-3 bg-success">
+                                        <span>
+                                            <i class="fi fi-rr-replace"></i>
+                                        </span>
+                                    </div>
+                                    <div class="widget-content">
+                                        <p>Change</p>
+                                        <h3>+47.36%</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="analytics-widget">
+                                    <div class="widget-icon me-3 bg-warning">
+                                        <span>
+                                            <i class="fi fi-rs-receipt"></i>
+                                        </span>
+                                    </div>
+                                    <div class="widget-content">
+                                        <p>Total Transaction</p>
+                                        <h3>354</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="analytics-widget">
+                                    <div class="widget-icon me-3 bg-danger">
+                                        <span><i class="fi fi-ss-confetti"></i></span>
+                                    </div>
+                                    <div class="widget-content">
+                                        <p>Categories</p>
+                                        <h3>40</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Weekly Expenses </h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="chartjsWeeklyExpenses"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="copyright">
+                            <p>
+                                © Copyright
+                                <script>
+                                    var CurrentYear = new Date().getFullYear()
+                                    document.write(CurrentYear)
+                                </script>
+                                <a href="#">Ekash</a> I All Rights Reserved
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="footer-social">
+                            <ul>
+                                <li><a href="#"><i class="fi fi-brands-facebook"></i></a></li>
+                                <li><a href="#"><i class="fi fi-brands-twitter"></i></a></li>
+                                <li><a href="#"><i class="fi fi-brands-linkedin"></i></a></li>
+                                <li><a href="#"><i class="fi fi-brands-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/chartjs/chartjs.js"></script>
+    <script src="~/js/plugins/chartjs-bar-weekly-expense.js"></script>
+    <script src="~/js/scripts.js"></script>
+</body>

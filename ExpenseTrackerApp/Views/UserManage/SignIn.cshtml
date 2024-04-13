@@ -1,0 +1,78 @@
+﻿@model ExpenseTrackerApp.Models.ViewModels.SignInviewModel
+
+<body class="dashboard">
+    <div class="authincation">
+        <div class="container">
+            <div class="row justify-content-center align-items-center g-0">
+                <div class="col-xl-8">
+                    <div class="row g-0">
+                        <div class="col-lg-6">
+                            <div class="welcome-content">
+                                <div class="welcome-title">
+                                    <div class="mini-logo">
+                                        <a href="index.html">
+                                            <img src="~/images/logo-white.png" alt="" width="30" />
+                                        </a>
+                                    </div>
+                                    <h3>Welcome to Ekash</h3>
+                                </div>
+                                <div class="privacy-social">
+                                    <div class="privacy-link">
+                                        <a href="#">
+                                            Have an issue with 2-factor
+                                            authentication?
+                                        </a><br /><a href="#">Privacy Policy</a>
+                                    </div>
+                                    <div class="intro-social">
+                                        <ul>
+                                            <li><a href="#"><i class="fi fi-brands-facebook"></i></a></li>
+                                            <li><a href="#"><i class="fi fi-brands-twitter-alt"></i></a></li>
+                                            <li><a href="#"><i class="fi fi-brands-linkedin"></i></a></li>
+                                            <li><a href="#"><i class="fi fi-brands-pinterest"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="auth-form">
+                                <h4>Sign In</h4>
+                                <form method="post" action="/UserManage/SignIn">
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" asp-for="RememberMe" />
+                                                @Html.DisplayNameFor(m => m.RememberMe)
+                                            </div>
+                                        </div>
+                                        <div class="col-6 text-end"><a href="/reset.html">Forgot Password?</a></div>
+                                    </div>
+                                    <div class="mt-3 d-grid gap-2">
+                                        <button type="submit"
+                                                class="btn btn-primary me-8 text-white">
+                                            Sign In
+                                        </button>
+                                    </div>
+                                </form>
+                                <p class="mt-3 mb-0 undefined">
+                                    Don't have an account?<a class="text-primary" asp-controller="UserManage" asp-action="SignUp"> Sign up</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/scripts.js"></script>
+</body>
