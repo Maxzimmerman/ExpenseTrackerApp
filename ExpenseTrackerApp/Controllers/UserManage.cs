@@ -3,6 +3,7 @@ using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace ExpenseTrackerApp.Controllers
@@ -80,6 +81,42 @@ namespace ExpenseTrackerApp.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Home", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SettingsProfile()
+        {
+            var currentUser = (ClaimsIdentity)User.Identity;
+            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var user = _context.applicationUsers.FirstOrDefault(x => x.Id == currentUserId);
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SettingsProfile(ApplicationUser user)
+        {
+
+            if (user.Id == null || user.Id == string.Empty)
+            {
+                return BadRequest($"{user.UserName} in invalid shape");
+            }
+
+            var db_user = await _context.applicationUsers.FirstOrDefaultAsync(e => e.Id == user.Id);
+
+            if (db_user == null)
+            {
+                return NotFound("ship");
+            }
+
+            db_user.ApplicationUserName = user.ApplicationUserName;
+            db_user.Email = user.Email;
+            db_user.registeredSince = user.registeredSince;
+
+            await _context.SaveChangesAsync();
+
+            return View(db_user);
         }
 
         public IActionResult Profile()

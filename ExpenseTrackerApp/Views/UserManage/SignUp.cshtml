@@ -37,7 +37,7 @@
                         <div class="col-lg-6">
                             <div class="auth-form">
                                 <h4>Sign Up</h4>
-                                <form method="post" action="/UserManage/SignUp">
+                                <form method="post" asp-controller="UserManage" asp-action="SignUp">
                                     <div class="row">
                                         <div class="col-12 mb-3">
                                             <input asp-for="Name" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Name" />
@@ -73,7 +73,4 @@
             </div>
         </div>
     </div>
-    <script src="~/vendor/jquery/jquery.min.js"></script>
-    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/scripts.js"></script>
 </body>

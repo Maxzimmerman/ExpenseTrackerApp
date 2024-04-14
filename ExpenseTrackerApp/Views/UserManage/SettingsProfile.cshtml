@@ -1,0 +1,111 @@
+﻿@model ExpenseTrackerApp.Models.ApplicationUser;
+
+
+<body class="dashboard">
+    <div id="main-wrapper">
+        <div class="content-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title">
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-xl-4">
+                                    <div class="page-title-content">
+                                        <h3>Edit Profile</h3>
+                                        <p class="mb-2">Welcome Ekash Finance Management</p>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="breadcrumbs">
+                                        <a href="#">Home </a>
+                                        <span><i class="fi fi-rr-angle-small-right"></i></span>
+                                        <a href="#">Edit Profile</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xxl-12 col-xl-12">
+                        <div class="settings-menu">
+                            <a asp-controller="Settings" asp-action="General">General</a>
+                            <a asp-controller="UserManage" asp-action="SettingsProfile">Profile</a>
+                            <a href="~/settings-categories.html">Categories</a>
+                        </div>
+                        <div class="row">
+                            <div class="col-xxl-6 col-xl-6 col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">User Profile</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <form method="post" asp-controller="UserManage" asp-action="SettingsProfile">
+                                            <div class="row g-3">
+                                                <input hidden asp-for="Id"></input>
+                                                <div class="col-12 mb-3">
+                                                    <label class="form-label">Name</label>
+                                                    <input asp-for="ApplicationUserName" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.ApplicationUserName.ToString()">
+                                                </div>
+                                                <div class="col-12 mb-3">
+                                                    <label class="form-label">New Email</label>
+                                                    <input asp-for="Email" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.Email.ToString()">
+                                                </div>
+                                                <div class="col-12 mb-3">
+                                                    <label class="form-label">New Email</label>
+                                                    <input asp-for="registeredSince" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.registeredSince.ToString("d MMMM yyyy")">
+                                                </div>
+                                                <div class="col-12 mb-3">
+                                                    <label class="form-label">New Password</label>
+                                                    <input type="password" class="form-control"
+                                                           placeholder="**********">
+                                                    <small class="mt-2 mb-0 d-block">
+                                                        Enable two factor authencation
+                                                        on the
+                                                        security
+                                                        page
+                                                    </small>
+                                                </div>
+                                                <div class="col-12 col-12 mb-3">
+                                                    <button class="btn btn-primary">Save</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="copyright">
+                            <p>
+                                © Copyright
+                                <script>
+                                    var CurrentYear = new Date().getFullYear()
+                                    document.write(CurrentYear)
+                                </script>
+                                <a href="#">Ekash</a> I All Rights Reserved
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="footer-social">
+                            <ul>
+                                <li><a href="#"><i class="fi fi-brands-facebook"></i></a></li>
+                                <li><a href="#"><i class="fi fi-brands-twitter"></i></a></li>
+                                <li><a href="#"><i class="fi fi-brands-linkedin"></i></a></li>
+                                <li><a href="#"><i class="fi fi-brands-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

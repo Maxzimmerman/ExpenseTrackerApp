@@ -1,31 +1,36 @@
-﻿using ExpenseTrackerApp.Models;
+﻿using ExpenseTrackerApp.Data;
+using ExpenseTrackerApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace ExpenseTrackerApp.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _applicationDbContext;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext)
         {
             _logger = logger;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            _applicationDbContext = applicationDbContext;
         }
 
         public IActionResult Home()
         {
-            return View();
+            if(User.Identity.IsAuthenticated)
+            {
+                var currentUser = (ClaimsIdentity)User.Identity;
+                var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                var user = _applicationDbContext.applicationUsers.FirstOrDefault(u =>  u.Id == currentUserId);
+                return View(user);
+            }
+            else
+            {
+                return RedirectToAction("SignIn", "UserManage");
+            }
         }
 
         public IActionResult Budgets()

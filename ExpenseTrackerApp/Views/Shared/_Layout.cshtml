@@ -22,7 +22,7 @@
                         <div class="header-left">
                             <div class="brand-logo">
                                 <a class="mini-logo" asp-controller="Home" asp-action="Home">
-                                    <img src="./images/logoi.png" alt="" width="40">
+                                    <img src="~/images/logoi.png" alt="" width="40">
                                 </a>
                             </div>
                             <div class="search">
@@ -39,66 +39,6 @@
                                 <span class="dark"><i class="fi fi-rr-eclipse-alt"></i></span>
                                 <span class="light"><i class="fi fi-rr-eclipse-alt"></i></span>
                             </div>
-                            <div class="nav-item dropdown notification">
-                                <div data-bs-toggle="dropdown">
-                                    <div class="notify-bell icon-menu">
-                                        <span><i class="fi fi-rs-bells"></i></span>
-                                    </div>
-                                </div>
-                                <div tabindex="-1" role="menu" aria-hidden="true"
-                                     class="dropdown-menu dropdown-menu-end">
-                                    <h4>Recent Notification</h4>
-                                    <div class="lists">
-                                        <a class="" href="/#">
-                                            <div class="d-flex align-items-center">
-                                                <span class="me-3 icon success">
-                                                    <i class="fi fi-bs-check"></i>
-                                                </span>
-                                                <div>
-                                                    <p>Account created successfully</p>
-                                                    <span>2024-11-04 12:00:23</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                        <a class="" href="/#">
-                                            <div class="d-flex align-items-center">
-                                                <span class="me-3 icon fail">
-                                                    <i class="fi fi-sr-cross-small"></i>
-                                                </span>
-                                                <div>
-                                                    <p>2FA verification failed</p>
-                                                    <span>2024-11-04 12:00:23</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                        <a class="" href="/#">
-                                            <div class="d-flex align-items-center">
-                                                <span class="me-3 icon success">
-                                                    <i class="fi fi-bs-check"></i>
-                                                </span>
-                                                <div>
-                                                    <p>Device confirmation completed</p>
-                                                    <span>2024-11-04 12:00:23</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                        <a class="" href="/#">
-                                            <div class="d-flex align-items-center">
-                                                <span class="me-3 icon pending">
-                                                    <i class="fi fi-rr-triangle-warning"></i>
-                                                </span>
-                                                <div>
-                                                    <p>Phone verification pending</p>
-                                                    <span>2024-11-04 12:00:23</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="more">
-                                        <a href="/notifications.html">More<i class="fi fi-bs-angle-right"></i></a>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="dropdown profile_log dropdown">
                                 <div data-bs-toggle="dropdown">
                                     <div class="user icon-menu active">
@@ -114,24 +54,19 @@
                                                      src="~/images/avatar/3.jpg" alt="">
                                             </span>
                                             <div class="user-info">
-                                                <h5>Hafsa Humaira</h5>
-                                                <span>hello@email.com</span>
+                                                <h5>@User.Identity.Name</h5>
                                             </div>
                                         </div>
                                     </div>
-                                    <a class="dropdown-item" href="/profile.html">
+                                    <a class="dropdown-item" asp-controller="UserManage" asp-action="Profile">
                                         <span><i class="fi fi-rr-user"></i></span>
                                         Profile
                                     </a>
-                                    <a class="dropdown-item" href="/wallets.html">
-                                        <span><i class="fi fi-rr-wallet"></i></span>
-                                        Wallets
-                                    </a>
-                                    <a class="dropdown-item" href="/settings.html">
+                                    <a class="dropdown-item" asp-controller="Settings" asp-action="General">
                                         <span><i class="fi fi-rr-settings"></i></span>
                                         Settings
                                     </a>
-                                    <a class="dropdown-item logout" href="/signin.html">
+                                    <a class="dropdown-item logout" asp-controller="UserManage" asp-action="SignOut">
                                         <span><i class="fi fi-bs-sign-out-alt"></i></span>
                                         Logout
                                     </a>
@@ -145,7 +80,7 @@
     </div>
     <div class="sidebar">
         <div class="brand-logo">
-            <a class="full-logo" href="index.html">
+            <a class="full-logo" asp-controller="Home" asp-action="Home">
                 <img src="~/images/logoi.png" alt=""
                      width="30">
             </a>
@@ -153,7 +88,7 @@
         <div class="menu">
             <ul>
                 <li>
-                    <a asp-controller="Home" asp-action="Index">
+                    <a asp-controller="Home" asp-action="Home">
                         <span>
                             <i class="fi fi-rr-dashboard"></i>
                         </span>
@@ -193,7 +128,7 @@
                     </a>
                 </li>
                 <li>
-                    <a asp-controller="Home" asp-action="Settings">
+                    <a asp-controller="Settings" asp-action="General">
                         <span>
                             <i class="fi fi-rs-settings"></i>
                         </span>
@@ -208,9 +143,26 @@
             @RenderBody()
         </main>
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/scripts.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/circle-progress/circle-progress.min.js"></script>
+    <script src="~/vendor/circle-progress/circle-progress-init.js"></script>
+    <script src="~/vendor/chartjs/chartjs.js"></script>
+    <script src="~/js/plugins/chartjs-bar-income-vs-expense.js"></script>
+    <script src="~/js/plugins/chartjs-bar-weekly-expense.js"></script>
+    <script src="~/js/plugins/chartjs-profile-wallet.js"></script>
+    <script src="~/js/plugins/chartjs-profile-wallet2.js"></script>
+    <script src="~/js/plugins/chartjs-profile-wallet3.js"></script>
+    <script src="~/js/plugins/chartjs-profile-wallet4.js"></script>
+    <script src="~/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="~/js/plugins/perfect-scrollbar-init.js"></script>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/chartjs/chartjs.js"></script>
+    <script src="~/js/plugins/chartjs-bar-budget-period.js"></script>
+    <script src="~/js/plugins/circle-progress-init.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
