@@ -42,14 +42,14 @@
                                     <div class="card-body">
                                         <form method="post" asp-controller="UserManage" asp-action="SettingsProfile">
                                             <div class="row g-3">
-                                                <input hidden asp-for="Id"></input>
+                                                <input asp-for="Id" hidden/>
                                                 <div class="col-12 mb-3">
                                                     <label class="form-label">Name</label>
-                                                    <input asp-for="ApplicationUserName" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.ApplicationUserName.ToString()">
+                                                    <input asp-for="ApplicationUserName" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.ApplicationUserName">
                                                 </div>
                                                 <div class="col-12 mb-3">
                                                     <label class="form-label">New Email</label>
-                                                    <input asp-for="Email" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.Email.ToString()">
+                                                    <input asp-for="Email" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.Email">
                                                 </div>
                                                 <div class="col-12 mb-3">
                                                     <label class="form-label">New Email</label>
@@ -57,7 +57,7 @@
                                                 </div>
                                                 <div class="col-12 mb-3">
                                                     <label class="form-label">New Password</label>
-                                                    <input type="password" class="form-control"
+                                                    <input name="currentPassword" type="password" class="form-control"
                                                            placeholder="**********">
                                                     <small class="mt-2 mb-0 d-block">
                                                         Enable two factor authencation

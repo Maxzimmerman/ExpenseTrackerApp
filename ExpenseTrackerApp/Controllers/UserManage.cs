@@ -1,6 +1,9 @@
 ﻿using ExpenseTrackerApp.Data;
+using ExpenseTrackerApp.Data.Migrations;
+using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,12 +16,14 @@ namespace ExpenseTrackerApp.Controllers
         private readonly ApplicationDbContext _context;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IUserRepository _userRepository;
 
-        public UserManage(ApplicationDbContext context, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        public UserManage(ApplicationDbContext context, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IUserRepository userRepository)
         {
             _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -42,10 +47,10 @@ namespace ExpenseTrackerApp.Controllers
                 }
                 else
                 {
-                    return BadRequest(result.Errors);
+                    return View("BadRequest");
                 }
             }
-            return BadRequest();
+            return View("BadRequest");
         }
 
         [HttpGet]
@@ -68,65 +73,63 @@ namespace ExpenseTrackerApp.Controllers
                 }
                 else
                 {
-                    return BadRequest(result);
+                    return View("BadRequest");
                 }
             }
             else
             {
-                return BadRequest("Fehler");
+                return View("BadRequest");
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> SignOut()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Home", "Home");
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> SettingsProfile()
         {
             var currentUser = (ClaimsIdentity)User.Identity;
             var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var user = _context.applicationUsers.FirstOrDefault(x => x.Id == currentUserId);
+            var user = _userRepository.getUserById(currentUserId);
 
             return View(user);
         }
 
         [HttpPost]
-        public async Task<IActionResult> SettingsProfile(ApplicationUser user)
+        public async Task<IActionResult> SettingsProfile(ApplicationUser user, string currentPassword)
         {
+            var updatedUser = _userRepository.updateUser(user);
 
-            if (user.Id == null || user.Id == string.Empty)
+            if(!string.IsNullOrEmpty(currentPassword))
             {
-                return BadRequest($"{user.UserName} in invalid shape");
+                var token = await _userManager.GeneratePasswordResetTokenAsync(updatedUser);
+                var changePasswordResult = await _userManager.ResetPasswordAsync(updatedUser, token, currentPassword);
+
+                if (changePasswordResult.Succeeded)
+                {
+                    return View(user);
+                }
+                return View("BadRequest");
             }
-
-            var db_user = await _context.applicationUsers.FirstOrDefaultAsync(e => e.Id == user.Id);
-
-            if (db_user == null)
-            {
-                return NotFound("ship");
-            }
-
-            db_user.ApplicationUserName = user.ApplicationUserName;
-            db_user.Email = user.Email;
-            db_user.registeredSince = user.registeredSince;
-
-            await _context.SaveChangesAsync();
-
-            return View(db_user);
+            return View(updatedUser);
         }
 
+        [Authorize]
+        [HttpGet]
         public IActionResult Profile()
         {
             var currentUser = (ClaimsIdentity)User.Identity;
             var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+            var user = _userRepository.getUserById(currentUserId);
 
-            var user = _context.applicationUsers.FirstOrDefault(u => u.Id == currentUserId);
-            if(user.ApplicationUserName == "Max")
+            if(user != null)
             {
                 return View(user);
             }

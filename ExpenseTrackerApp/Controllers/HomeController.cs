@@ -1,5 +1,7 @@
 ﻿using ExpenseTrackerApp.Data;
+using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -10,11 +12,13 @@ namespace ExpenseTrackerApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IUserRepository _userRepository;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext, IUserRepository userRepository)
         {
             _logger = logger;
             _applicationDbContext = applicationDbContext;
+            _userRepository = userRepository;
         }
 
         public IActionResult Home()
@@ -24,7 +28,7 @@ namespace ExpenseTrackerApp.Controllers
                 var currentUser = (ClaimsIdentity)User.Identity;
                 var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                var user = _applicationDbContext.applicationUsers.FirstOrDefault(u =>  u.Id == currentUserId);
+                var user = _userRepository.getUserById(currentUserId);
                 return View(user);
             }
             else
@@ -33,21 +37,25 @@ namespace ExpenseTrackerApp.Controllers
             }
         }
 
+        [Authorize]
         public IActionResult Budgets()
         {
             return View();
         }
 
+        [Authorize]
         public IActionResult Goals()
         {
             return View();
         }
 
+        [Authorize]
         public IActionResult Analytics()
         {
             return View();
         }
 
+        [Authorize]
         public IActionResult Settings()
         {
             return View();

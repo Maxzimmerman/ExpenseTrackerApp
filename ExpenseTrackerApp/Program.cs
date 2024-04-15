@@ -1,4 +1,7 @@
 using ExpenseTrackerApp.Data;
+using ExpenseTrackerApp.Data.Repositories;
+using ExpenseTrackerApp.Data.Repositories.IRepsitories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +15,17 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//    .AddCookie(options =>
+//    {
+//        //(options.LoginPath = "/UserManage/SignIn";
+//        options.ReturnUrlParameter = "/Home/Home";
+//    });
+
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
