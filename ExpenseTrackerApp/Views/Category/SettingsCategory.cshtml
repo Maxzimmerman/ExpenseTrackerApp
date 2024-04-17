@@ -1,0 +1,178 @@
+﻿@model ExpenseTrackerApp.Models.Category
+
+<body class="dashboard">
+    <div id="main-wrapper">
+        <div class="content-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title">
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-xl-4">
+                                    <div class="page-title-content">
+                                        <h3>Categories</h3>
+                                        <p class="mb-2">Welcome Ekash Finance Management</p>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="breadcrumbs">
+                                        <a href="#">Home </a>
+                                        <span><i class="fi fi-rr-angle-small-right"></i></span>
+                                        <a href="#">Categories</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xxl-12 col-xl-12">
+                        <div class="settings-menu">
+                            <a asp-controller="Settings" asp-action="General">General</a>
+                            <a asp-controller="UserManage" asp-action="SettingsProfile">Profile</a>
+                            <a asp-controller="Category" asp-action="SettingsCategory">Categories</a>
+                        </div>
+                        <div class="row">
+                            <div class="col-xxl-4 col-xl-4 col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Create a new categories</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="create-new-category">
+                                            <form class="row" method="post" asp-controller="Category" asp-action="AddCategory">
+                                                <div class="mb-3 col-12">
+                                                    <label class="form-label">Name </label>
+                                                    <input asp-for="Title" type="text" class="form-control" placeholder="category name" autocomplete="username" aria-required="true">
+                                                </div>
+                                                <div class="mb-3 col-12">
+                                                    <label class="form-label">Monthly Budget </label>
+                                                    <input asp-for="monthlyBudget" type="text" class="form-control" placeholder="Monthly Budget" autocomplete="username" aria-required="true">
+                                                </div>
+                                                <div class="mb-3 col-12">
+                                                    <label class="form-label">Type </label>
+                                                    <select asp-for="CateogryTypeId" asp-items="ViewBag.CategoryTypes" class="form-select" autocomplete="username" aria-required="true">
+                                                        <option selected>Choose...</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3 col-6">
+                                                    <label class="form-label">Icon </label>
+                                                    <select asp-for="CategoryIconId" asp-items="ViewBag.CategoryIcons" class="form-select" autocomplete="username" aria-required="true">
+                                                        <option selected>Choose...</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3 col-6">
+                                                    <label class="form-label">Color </label>
+                                                    <select asp-for="CategoryColorId" asp-items="ViewBag.CategoryColors" class="form-select" autocomplete="username" aria-required="true">
+                                                        <option selected>Choose...</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-12">
+                                                    <button class="btn btn-success w-100">Create new category</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xxl-8 col-xl-8 col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Income Categories</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="category-type">
+                                            <ul>
+                                                @{
+                                                    foreach(Category income in ViewBag.Incoms)
+                                                    {
+                                                        <li>
+                                                            <div class="left-category">
+                                                                <span class="drag-icon">
+                                                                    <i class="fi fi-ss-grip-lines"></i>
+                                                                </span>
+                                                                <span class="category-icon">
+                                                                    <i class="@income.CategoryColor.code fi @income.CategoryIcon.Name"></i>
+                                                                    Salary
+                                                                </span>
+                                                            </div>
+                                                            <div class="right-category">
+                                                                <span><i class="fi fi-rs-pencil"></i></span>
+                                                                <span><i class="fi fi-rr-eye"></i></span>
+                                                                <span><i class="fi fi-rr-trash"></i></span>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Expense Categories</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="category-type">
+                                            <ul>
+                                                @{
+                                                    foreach(Category expense in ViewBag.Expenses)
+                                                    {
+                                                        <li>
+                                                            <div class="left-category">
+                                                                <span class="drag-icon">
+                                                                    <i class="fi fi-ss-grip-lines"></i>
+                                                                </span>
+                                                                <span class="category-icon">
+                                                                    <i class="@expense.CategoryColor.code @expense.CategoryIcon.Name"></i>
+                                                                    @expense.Title
+                                                                </span>
+                                                            </div>
+                                                            <div class="right-category">
+                                                                <span><i class="fi fi-rs-pencil"></i></span>
+                                                                <span><i class="fi fi-rr-eye"></i></span>
+                                                                <span><i class="fi fi-rr-trash"></i></span>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="copyright">
+                            <p>
+                                © Copyright
+                                <script>
+                                    var CurrentYear = new Date().getFullYear()
+                                    document.write(CurrentYear)
+                                </script>
+                                <a href="#">Ekash</a> I All Rights Reserved
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="footer-social">
+                            <ul>
+                                <li><a href="#"><i class="fi fi-brands-facebook"></i></a></li>
+                                <li><a href="#"><i class="fi fi-brands-twitter"></i></a></li>
+                                <li><a href="#"><i class="fi fi-brands-linkedin"></i></a></li>
+                                <li><a href="#"><i class="fi fi-brands-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

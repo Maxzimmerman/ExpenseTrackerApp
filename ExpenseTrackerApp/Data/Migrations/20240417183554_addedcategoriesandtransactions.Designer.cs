@@ -4,6 +4,7 @@ using ExpenseTrackerApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpenseTrackerApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240417183554_addedcategoriesandtransactions")]
+    partial class addedcategoriesandtransactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,15 +32,6 @@ namespace ExpenseTrackerApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CategoryColorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoryIconId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CateogryTypeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -48,12 +41,6 @@ namespace ExpenseTrackerApp.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryColorId");
-
-                    b.HasIndex("CategoryIconId");
-
-                    b.HasIndex("CateogryTypeId");
 
                     b.ToTable("categories");
                 });
@@ -373,33 +360,6 @@ namespace ExpenseTrackerApp.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
-                });
-
-            modelBuilder.Entity("ExpenseTrackerApp.Models.Category", b =>
-                {
-                    b.HasOne("ExpenseTrackerApp.Models.CategoryColor", "CategoryColor")
-                        .WithMany()
-                        .HasForeignKey("CategoryColorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ExpenseTrackerApp.Models.CategoryIcon", "CategoryIcon")
-                        .WithMany()
-                        .HasForeignKey("CategoryIconId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ExpenseTrackerApp.Models.CategoryType", "CategoryType")
-                        .WithMany()
-                        .HasForeignKey("CateogryTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CategoryColor");
-
-                    b.Navigation("CategoryIcon");
-
-                    b.Navigation("CategoryType");
                 });
 
             modelBuilder.Entity("ExpenseTrackerApp.Models.Transaction", b =>
