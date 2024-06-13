@@ -4,6 +4,7 @@ using ExpenseTrackerApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpenseTrackerApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240421191643_updatedCategoryAndCategoryIcon")]
+    partial class updatedCategoryAndCategoryIcon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +42,7 @@ namespace ExpenseTrackerApp.Data.Migrations
                     b.Property<int>("CategoryIconId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoryTypeId")
+                    b.Property<int>("CateogryTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -59,7 +61,7 @@ namespace ExpenseTrackerApp.Data.Migrations
 
                     b.HasIndex("CategoryIconId");
 
-                    b.HasIndex("CategoryTypeId");
+                    b.HasIndex("CateogryTypeId");
 
                     b.ToTable("categories");
                 });
@@ -408,7 +410,7 @@ namespace ExpenseTrackerApp.Data.Migrations
 
                     b.HasOne("ExpenseTrackerApp.Models.CategoryType", "CategoryType")
                         .WithMany()
-                        .HasForeignKey("CategoryTypeId")
+                        .HasForeignKey("CateogryTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

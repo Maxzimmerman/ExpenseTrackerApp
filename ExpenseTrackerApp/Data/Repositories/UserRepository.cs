@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using ExpenseTrackerApp.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {
