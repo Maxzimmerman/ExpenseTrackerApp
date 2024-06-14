@@ -33,46 +33,101 @@
                             <a asp-controller="Category" asp-action="SettingsCategory">Categories</a>
                         </div>
                         <div class="row">
-                            <div class="col-xxl-4 col-xl-4 col-lg-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h4 class="card-title">Create a new categories</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="create-new-category">
-                                            <form class="row" method="post" asp-controller="Category" asp-action="AddCategory">
-                                                <input hidden asp-for="Id"/>
-                                                <div class="mb-3 col-12">
-                                                    <label class="form-label">Name </label>
-                                                    <input asp-for="Title" type="text" class="form-control" placeholder="category name" autocomplete="username" aria-required="true">
+                            @{
+                                if(Model == null)
+                                {
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="card-title">Create a new categories</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="create-new-category">
+                                                    <form class="row" method="post" asp-controller="Category" asp-action="AddCategory">
+                                                        <input hidden asp-for="Id" />
+                                                        <div class="mb-3 col-12">
+                                                            <label class="form-label">Name </label>
+                                                            <input asp-for="Title" type="text" class="form-control" placeholder="category name" autocomplete="username" aria-required="true">
+                                                        </div>
+                                                        <div class="mb-3 col-12">
+                                                            <label class="form-label">Monthly Budget </label>
+                                                            <input asp-for="monthlyBudget" type="text" class="form-control" placeholder="Monthly Budget" aria-required="true">
+                                                        </div>
+                                                        <div class="mb-3 col-12">
+                                                            <label class="form-label">Type </label>
+                                                            <select asp-for="CategoryTypeId" asp-items="ViewBag.CategoryTypes" class="form-select" aria-required="true">
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3 col-6">
+                                                            <label class="form-label">Icon </label>
+                                                            <select asp-for="CategoryIconId" asp-items="ViewBag.CategoryIcons" class="form-select" aria-required="true">
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3 col-6">
+                                                            <label class="form-label">Color </label>
+                                                            <select asp-for="CategoryColorId" asp-items="ViewBag.CategoryColors" class="form-select" aria-required="true">
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <button class="btn btn-success w-100">Create new category</button>
+                                                        </div>
+                                                    </form>
                                                 </div>
-                                                <div class="mb-3 col-12">
-                                                    <label class="form-label">Monthly Budget </label>
-                                                    <input asp-for="monthlyBudget" type="text" class="form-control" placeholder="Monthly Budget" aria-required="true">
-                                                </div>
-                                                <div class="mb-3 col-12">
-                                                    <label class="form-label">Type </label>
-                                                    <select asp-for="CategoryTypeId" asp-items="ViewBag.CategoryTypes" class="form-select" aria-required="true">
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3 col-6">
-                                                    <label class="form-label">Icon </label>
-                                                    <select asp-for="CategoryIconId" asp-items="ViewBag.CategoryIcons" class="form-select" aria-required="true">
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3 col-6">
-                                                    <label class="form-label">Color </label>
-                                                    <select asp-for="CategoryColorId" asp-items="ViewBag.CategoryColors" class="form-select" aria-required="true">
-                                                    </select>
-                                                </div>
-                                                <div class="col-12">
-                                                    <button class="btn btn-success w-100">Create new category</button>
-                                                </div>
-                                            </form>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                }
+                                else
+                                {
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="card-title">Update Category</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="create-new-category">
+                                                    <form class="row" method="post" asp-controller="Category" asp-action="UpdateCategory">
+                                                        <input hidden asp-for="Id" />
+                                                        <input hidden asp-for="ApplicationUserId"/>
+                                                        <div class="mb-3 col-12">
+                                                            <label class="form-label">Name </label>
+                                                            <input asp-for="Title" type="text" class="form-control" placeholder="@Model.Title" autocomplete="username" aria-required="true">
+                                                        </div>
+                                                        <div class="mb-3 col-12">
+                                                            <label class="form-label">Monthly Budget </label>
+                                                            <input asp-for="monthlyBudget" type="text" class="form-control" placeholder="@Model.monthlyBudget" aria-required="true">
+                                                        </div>
+                                                        <div class="mb-3 col-12">
+                                                            <label class="form-label">Type </label>
+                                                            <select asp-for="CategoryTypeId" asp-items="ViewBag.CategoryTypes" class="form-select" aria-required="true">
+                                                                <option selected>@Model.CategoryType.Name</option>
+                                                            </select>
+
+                                                        </div>
+                                                        <div class="mb-3 col-6">
+                                                            <label class="form-label">Icon </label>
+                                                            <select asp-for="CategoryIconId" asp-items="ViewBag.CategoryIcons" class="form-select" aria-required="true">
+                                                                <option selected>@Model.CategoryIcon.Name</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3 col-6">
+                                                            <label class="form-label">Color </label>
+                                                            <select asp-for="CategoryColorId" asp-items="ViewBag.CategoryColors" class="form-select" aria-required="true">
+                                                                <option selected>@Model.CategoryColor.Name</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <button class="btn btn-success w-100">Update Category</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+
                             <div class="col-xxl-8 col-xl-8 col-lg-6">
                                 <div class="card">
                                     <div class="card-header">
@@ -95,9 +150,9 @@
                                                                 </span>
                                                             </div>
                                                             <div class="right-category">
-                                                                <span><i class="fi fi-rs-pencil"></i></span>
+                                                                <a asp-controller="Category" asp-action="LoadUpdateCategory" asp-route-id="@income.Id"><span><i class="fi fi-rs-pencil"></i></span></a>
                                                                 <span><i class="fi fi-rr-eye"></i></span>
-                                                                <span><i class="fi fi-rr-trash"></i></span>
+                                                                <a asp-controller="Category" asp-action="DeleteCategory" asp-route-id="@income.Id"><span><i class="fi fi-rr-trash"></i></span></a>
                                                             </div>
                                                         </li>
                                                     }
@@ -127,9 +182,9 @@
                                                                 </span>
                                                             </div>
                                                             <div class="right-category">
-                                                                <span><i class="fi fi-rs-pencil"></i></span>
+                                                                <a asp-controller="Category" asp-action="LoadUpdateCategory" asp-route-id="@expense.Id"><span><i class="fi fi-rs-pencil"></i></span></a>
                                                                 <span><i class="fi fi-rr-eye"></i></span>
-                                                                <span><i class="fi fi-rr-trash"></i></span>
+                                                                <a asp-controller="Category" asp-action="DeleteCategory" asp-route-id="@expense.Id"><span><i class="fi fi-rr-trash"></i></span></a>
                                                             </div>
                                                         </li>
                                                     }

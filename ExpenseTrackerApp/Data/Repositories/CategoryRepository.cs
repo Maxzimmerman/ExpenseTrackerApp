@@ -70,5 +70,28 @@ namespace ExpenseTrackerApp.Data.Repositories
             _context.categories.Add(category);
             _context.SaveChanges();
         }
+
+        public void deleteCategory(int id)
+        {
+            var category = this.findCategory(id);
+            _context.categories.Remove(category);
+            _context.SaveChanges();
+        }
+
+        public void updateCategory(Category category)
+        {
+            _context.categories.Update(category);
+            _context.SaveChanges();
+        }
+
+        public Category findCategory(int id)
+        {
+            return _context.categories
+                .Include(c => c.CategoryType)
+                .Include(c => c.CategoryColor)
+                .Include(c => c.CategoryIcon)
+                .Include(c => c.ApplicationUser)
+                .FirstOrDefault(c => c.Id == id);
+        }
     }
 }
