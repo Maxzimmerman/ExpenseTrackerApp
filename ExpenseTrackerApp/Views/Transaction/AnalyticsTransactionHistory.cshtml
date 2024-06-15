@@ -1,13 +1,4 @@
 <body class="dashboard">
-    <div id="preloader" class="preloader-wrapper">
-        <div class="loader">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div>
     <div id="main-wrapper">
         <div class="header">
             <div class="container">
@@ -233,12 +224,12 @@
                 <div class="row">
                     <div class="col-xxl-12 col-xl-12">
                         <div class="settings-menu">
-                            <a href="./analytics.html">Analytics</a>
-                            <a href="./analytics-expenses.html">Expenses</a>
-                            <a href="./analytics-income.html">Income</a>
-                            <a href="./analytics-income-vs-expenses.html">Income vs Expenses</a>
-                            <a href="./analytics-balance.html">Balance</a>
-                            <a href="./analytics-transaction-history.html">Transaction History</a>
+                            <a asp-controller="Transaction" asp-action="Analytics">Analytics</a>
+                            <a asp-controller="Transaction" asp-action="AnalyticsExpenses">Expenses</a>
+                            <a asp-controller="Transaction" asp-action="AnalyticsIncome">Income</a>
+                            <a asp-controller="Transaction" asp-action="AnalyticsIncomeVsExpenses">Income vs Expenses</a>
+                            <a asp-controller="Transaction" asp-action="AnalyticsBalance">Balance</a>
+                            <a asp-controller="Transaction" asp-action="AnalyticsTransactionHistory">Transaction History</a>
                         </div>
                         <div class="row">
                             <div class="col-xl-12">
