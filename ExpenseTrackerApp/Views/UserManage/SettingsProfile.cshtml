@@ -28,8 +28,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xxl-12 col-xl-12">
-                        <<div class="settings-menu">
-                            <a asp-controller="Settings" asp-action="General">General</a>
+                        <div class="settings-menu">
                             <a asp-controller="UserManage" asp-action="SettingsProfile">Profile</a>
                             <a asp-controller="Category" asp-action="SettingsCategory">Categories</a>
                         </div>
@@ -48,15 +47,15 @@
                                                     <input asp-for="ApplicationUserName" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.ApplicationUserName">
                                                 </div>
                                                 <div class="col-12 mb-3">
-                                                    <label class="form-label">New Email</label>
+                                                    <label class="form-label">Email Address</label>
                                                     <input asp-for="Email" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.Email">
                                                 </div>
                                                 <div class="col-12 mb-3">
-                                                    <label class="form-label">New Email</label>
+                                                    <label class="form-label">Registered Since</label>
                                                     <input asp-for="registeredSince" class="form-control" autocomplete="new-password" aria-required="true" placeholder="@Model.registeredSince.ToString("d MMMM yyyy")">
                                                 </div>
                                                 <div class="col-12 mb-3">
-                                                    <label class="form-label">New Password</label>
+                                                    <label class="form-label">Password</label>
                                                     <input name="currentPassword" type="password" class="form-control"
                                                            placeholder="**********">
                                                     <small class="mt-2 mb-0 d-block">

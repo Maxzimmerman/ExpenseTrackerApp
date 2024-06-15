@@ -8,7 +8,7 @@ namespace ExpenseTrackerApp.Controllers
         [Authorize]
         public IActionResult General()
         {
-            return View();
+            return RedirectToAction("SettingsProfile", "UserManage");
         }
     }
 }

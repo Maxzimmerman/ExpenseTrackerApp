@@ -28,7 +28,6 @@
                 <div class="row">
                     <div class="col-xxl-12 col-xl-12">
                         <div class="settings-menu">
-                            <a asp-controller="Settings" asp-action="General">General</a>
                             <a asp-controller="UserManage" asp-action="SettingsProfile">Profile</a>
                             <a asp-controller="Category" asp-action="SettingsCategory">Categories</a>
                         </div>
@@ -151,7 +150,6 @@
                                                             </div>
                                                             <div class="right-category">
                                                                 <a asp-controller="Category" asp-action="LoadUpdateCategory" asp-route-id="@income.Id"><span><i class="fi fi-rs-pencil"></i></span></a>
-                                                                <span><i class="fi fi-rr-eye"></i></span>
                                                                 <a asp-controller="Category" asp-action="DeleteCategory" asp-route-id="@income.Id"><span><i class="fi fi-rr-trash"></i></span></a>
                                                             </div>
                                                         </li>
@@ -183,7 +181,6 @@
                                                             </div>
                                                             <div class="right-category">
                                                                 <a asp-controller="Category" asp-action="LoadUpdateCategory" asp-route-id="@expense.Id"><span><i class="fi fi-rs-pencil"></i></span></a>
-                                                                <span><i class="fi fi-rr-eye"></i></span>
                                                                 <a asp-controller="Category" asp-action="DeleteCategory" asp-route-id="@expense.Id"><span><i class="fi fi-rr-trash"></i></span></a>
                                                             </div>
                                                         </li>

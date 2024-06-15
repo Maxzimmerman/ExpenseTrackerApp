@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Transaction\AnalyticsBalance.cshtml" />
+    <Content Remove="Views\Transaction\AnalyticsExpenses.cshtml" />
+    <Content Remove="Views\Transaction\AnalyticsIncome.cshtml" />
+    <Content Remove="Views\Transaction\AnalyticsIncomeVsExpenses.cshtml" />
+    <Content Remove="Views\Transaction\AnalyticsTransactionHistory.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.25" />
@@ -19,6 +27,14 @@
     <Folder Include="Areas\User\Controllers\" />
     <Folder Include="Areas\User\Views\" />
     <Folder Include="Plan\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Transaction\AnalyticsBalance.cshtml" />
+    <None Include="Views\Transaction\AnalyticsExpenses.cshtml" />
+    <None Include="Views\Transaction\AnalyticsIncomeVsExpenses.cshtml" />
+    <None Include="Views\Transaction\AnalyticsIncome.cshtml" />
+    <None Include="Views\Transaction\AnalyticsTransactionHistory.cshtml" />
   </ItemGroup>
 
 </Project>
