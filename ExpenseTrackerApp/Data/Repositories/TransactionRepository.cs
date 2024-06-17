@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Transactions;
 using ExpenseTrackerApp.Models;
+using ExpenseTrackerApp.Models.ViewModels.TransactionViewModels;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {
@@ -23,6 +24,14 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Include(t => t.Category.CategoryIcon)
                 .FirstOrDefault(t => t.Id == 3);
 
+        }
+
+        public AnalyticsData GetAnalyticsData(string userId)
+        {
+            int transactions = _context.transactions.ToList().Count;
+            int categories = _context.categories.ToList().Count;
+            AnalyticsData data = new AnalyticsData(transactions, categories);
+            return data;
         }
     }
 }

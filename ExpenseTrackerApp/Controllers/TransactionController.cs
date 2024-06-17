@@ -1,8 +1,12 @@
 ﻿using ExpenseTrackerApp.Data.Repositories.IRepsitories;
+using ExpenseTrackerApp.Models.ViewModels.TransactionViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ExpenseTrackerApp.Controllers
 {
+    [Authorize]
     public class TransactionController : Controller
     {
         private readonly ITransactionRepository _transactionRepository;
@@ -15,9 +19,12 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public IActionResult Analytics()
         {
-            var first = _transactionRepository.getFirst();
+            var currentUser = (ClaimsIdentity)User.Identity;
+            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            return View();
+            AnalyticsData data = _transactionRepository.GetAnalyticsData(currentUserId);
+
+            return View(data);
         }
 
         [HttpGet]

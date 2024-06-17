@@ -2,7 +2,7 @@
 using ExpenseTrackerApp.Data.Migrations;
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
-using ExpenseTrackerApp.Models.ViewModels;
+using ExpenseTrackerApp.Models.ViewModels.UserViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

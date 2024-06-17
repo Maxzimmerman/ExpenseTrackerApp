@@ -1,4 +1,4 @@
-﻿namespace ExpenseTrackerApp.Models.ViewModels
+﻿namespace ExpenseTrackerApp.Models.ViewModels.UserViewModels
 {
     public class SettingsCategoryModelView
     {

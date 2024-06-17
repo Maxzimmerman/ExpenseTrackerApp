@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ExpenseTrackerApp.Models.ViewModels
+namespace ExpenseTrackerApp.Models.ViewModels.UserViewModels
 {
     public class SignUpviewModel
     {

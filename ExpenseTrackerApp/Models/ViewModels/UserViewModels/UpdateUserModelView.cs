@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ExpenseTrackerApp.Models.ViewModels
+namespace ExpenseTrackerApp.Models.ViewModels.UserViewModels
 {
-    public class SignInviewModel
+    public class UpdateUserModelView
     {
         [Required]
         [EmailAddress]
@@ -15,7 +15,12 @@ namespace ExpenseTrackerApp.Models.ViewModels
         [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
+        [Required]
+        [Display(Name = "Name")]
+        public string Name { get; set; }
+
+        [Required]
+        [Display(Name = "Registered since")]
+        public DateTime registerdSince { get; set; }
     }
 }

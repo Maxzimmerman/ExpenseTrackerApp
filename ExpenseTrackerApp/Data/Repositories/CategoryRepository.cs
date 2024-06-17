@@ -1,6 +1,6 @@
 ﻿using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
-using ExpenseTrackerApp.Models.RepositoryModels;
+using ExpenseTrackerApp.Models.ViewModels.CategoryViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 

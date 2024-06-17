@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using ExpenseTrackerApp.Models;
 
-namespace ExpenseTrackerApp.Models.RepositoryModels
+namespace ExpenseTrackerApp.Models.ViewModels.CategoryViewModels
 {
     public class AddCategory
     {

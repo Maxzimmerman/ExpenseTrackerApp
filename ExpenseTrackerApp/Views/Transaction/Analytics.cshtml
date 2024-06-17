@@ -1,4 +1,7 @@
-﻿<body class="dashboard">
+﻿@using ExpenseTrackerApp.Models.ViewModels.TransactionViewModels
+@model AnalyticsData
+
+<body class="dashboard">
     <div id="main-wrapper">
         <div class="content-body">
             <div class="container">
@@ -26,7 +29,7 @@
                 <div class="row">
                     <div class="col-xxl-12 col-xl-12">
                         <div class="settings-menu">
-                            <a asp-controller="Transaction" asp-action="Analytics" class="active-link">Analytics</a>
+                            <a asp-controller="Transaction" asp-action="Analytics" style="color: #2F2CD8">Analytics</a>
                             <a asp-controller="Transaction" asp-action="Expenses">Expenses</a>
                             <a asp-controller="Transaction" asp-action="Income">Income</a>
                             <a asp-controller="Transaction" asp-action="IncomeVsExpenses">Income vs Expenses</a>
@@ -69,7 +72,7 @@
                                     </div>
                                     <div class="widget-content">
                                         <p>Total Transaction</p>
-                                        <h3>354</h3>
+                                        <h3>@Model.TotalTransactions</h3>
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +83,7 @@
                                     </div>
                                     <div class="widget-content">
                                         <p>Categories</p>
-                                        <h3>40</h3>
+                                        <h3>@Model.NumberOfCategories</h3>
                                     </div>
                                 </div>
                             </div>

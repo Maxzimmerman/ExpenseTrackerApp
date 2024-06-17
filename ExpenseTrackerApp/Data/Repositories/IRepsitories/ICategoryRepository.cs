@@ -1,5 +1,5 @@
 ﻿using ExpenseTrackerApp.Models;
-using ExpenseTrackerApp.Models.RepositoryModels;
+using ExpenseTrackerApp.Models.ViewModels.CategoryViewModels;
 
 namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
