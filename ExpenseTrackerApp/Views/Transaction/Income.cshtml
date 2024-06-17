@@ -1,4 +1,4 @@
-<body class="dashboard">
+﻿<body class="dashboard">
     <div id="main-wrapper">
         <div class="header">
             <div class="container">
@@ -207,14 +207,14 @@
                             <div class="row align-items-center justify-content-between">
                                 <div class="col-xl-4">
                                     <div class="page-title-content">
-                                        <h3>Analytics</h3>
+                                        <h3>Income</h3>
                                         <p class="mb-2">Welcome Ekash Finance Management</p>
                                     </div>
                                 </div>
                                 <div class="col-auto">
                                     <div class="breadcrumbs"><a href="#">Home </a>
                                         <span><i class="fi fi-rr-angle-small-right"></i></span>
-                                        <a href="#">Analytics</a>
+                                        <a href="#">Income</a>
                                     </div>
                                 </div>
                             </div>
@@ -225,17 +225,17 @@
                     <div class="col-xxl-12 col-xl-12">
                         <div class="settings-menu">
                             <a asp-controller="Transaction" asp-action="Analytics">Analytics</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsExpenses">Expenses</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsIncome">Income</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsIncomeVsExpenses">Income vs Expenses</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsBalance">Balance</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsTransactionHistory">Transaction History</a>
+                            <a asp-controller="Transaction" asp-action="Expenses">Expenses</a>
+                            <a asp-controller="Transaction" asp-action="Income">Income</a>
+                            <a asp-controller="Transaction" asp-action="IncomeVsExpenses">Income vs Expenses</a>
+                            <a asp-controller="Transaction" asp-action="Balance">Balance</a>
+                            <a asp-controller="Transaction" asp-action="TransactionHistory">Transaction History</a>
                         </div>
                         <div class="row">
-                            <div class=" col-xxl-4 col-xl-4 col-lg-4 col-md-12">
+                            <div class=" col-xxl-4 col-xl-4 col-lg-6 col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4 class="card-title">Expenses Breakdown</h4>
+                                        <h4 class="card-title">Income Breakdown</h4>
                                     </div>
                                     <div class="card-body">
                                         <canvas id="chartjsDonut"></canvas>
@@ -274,7 +274,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-8 col-lg-8">
+                            <div class="col-xl-8">
                                 <div class="card">
                                     <div class="card-header">
                                         <h4 class="card-title">Transaction History</h4>

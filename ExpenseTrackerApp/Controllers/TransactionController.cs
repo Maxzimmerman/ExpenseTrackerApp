@@ -12,6 +12,7 @@ namespace ExpenseTrackerApp.Controllers
             _transactionRepository = transactionRepository;
         }
 
+        [HttpGet]
         public IActionResult Analytics()
         {
             var first = _transactionRepository.getFirst();
@@ -19,27 +20,32 @@ namespace ExpenseTrackerApp.Controllers
             return View();
         }
 
-        public IActionResult AnalyticsBalance()
+        [HttpGet]
+        public IActionResult Balance()
         {
             return View();
         }
 
-        public IActionResult AnalyticsExpenses()
+        [HttpGet]
+        public IActionResult Expenses()
         {
             return View();
         }
 
-        public IActionResult AnalyticsIncome()
+        [HttpGet]
+        public IActionResult Income()
         {
             return View();
         }
 
-        public IActionResult AnalyticsIncomeVsExpenses()
+        [HttpGet]
+        public IActionResult IncomeVsExpenses()
         {
             return View();
         }
 
-        public IActionResult AnalyticsTransactionHistory()
+        [HttpGet]
+        public IActionResult TransactionHistory()
         {
             return View();
         }

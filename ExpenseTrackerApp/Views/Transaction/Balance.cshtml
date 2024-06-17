@@ -1,4 +1,4 @@
-<body class="dashboard">
+﻿<body class="dashboard">
     <div id="main-wrapper">
         <div class="header">
             <div class="container">
@@ -6,8 +6,11 @@
                     <div class="col-xxl-12">
                         <div class="header-content">
                             <div class="header-left">
-                                <div class="brand-logo"><a class="mini-logo" href="index.html"><img
-                                            src="./images/logoi.png" alt="" width="40"></a></div>
+                                <div class="brand-logo">
+                                    <a class="mini-logo" href="index.html">
+                                        <img src="./images/logoi.png" alt="" width="40">
+                                    </a>
+                                </div>
                                 <div class="search">
                                     <form action="#">
                                         <div class="input-group">
@@ -29,13 +32,14 @@
                                         </div>
                                     </div>
                                     <div tabindex="-1" role="menu" aria-hidden="true"
-                                        class="dropdown-menu dropdown-menu-end">
+                                         class="dropdown-menu dropdown-menu-end">
                                         <h4>Recent Notification</h4>
                                         <div class="lists">
                                             <a class="" href="/#">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="me-3 icon success"><i
-                                                            class="fi fi-bs-check"></i></span>
+                                                    <span class="me-3 icon success">
+                                                        <i class="fi fi-bs-check"></i>
+                                                    </span>
                                                     <div>
                                                         <p>Account created successfully</p>
                                                         <span>2024-11-04 12:00:23</span>
@@ -44,8 +48,9 @@
                                             </a>
                                             <a class="" href="/#">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="me-3 icon fail"><i
-                                                            class="fi fi-sr-cross-small"></i></span>
+                                                    <span class="me-3 icon fail">
+                                                        <i class="fi fi-sr-cross-small"></i>
+                                                    </span>
                                                     <div>
                                                         <p>2FA verification failed</p>
                                                         <span>2024-11-04 12:00:23</span>
@@ -54,8 +59,9 @@
                                             </a>
                                             <a class="" href="/#">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="me-3 icon success"><i
-                                                            class="fi fi-bs-check"></i></span>
+                                                    <span class="me-3 icon success">
+                                                        <i class="fi fi-bs-check"></i>
+                                                    </span>
                                                     <div>
                                                         <p>Device confirmation completed</p>
                                                         <span>2024-11-04 12:00:23</span>
@@ -64,8 +70,9 @@
                                             </a>
                                             <a class="" href="/#">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="me-3 icon pending"><i
-                                                            class="fi fi-rr-triangle-warning"></i></span>
+                                                    <span class="me-3 icon pending">
+                                                        <i class="fi fi-rr-triangle-warning"></i>
+                                                    </span>
                                                     <div>
                                                         <p>Phone verification pending</p>
                                                         <span>2024-11-04 12:00:23</span>
@@ -80,15 +87,18 @@
                                 </div>
                                 <div class="dropdown profile_log dropdown">
                                     <div data-bs-toggle="dropdown">
-                                        <div class="user icon-menu active"><span><i class="fi fi-rr-user"></i></span>
+                                        <div class="user icon-menu active">
+                                            <span><i class="fi fi-rr-user"></i></span>
                                         </div>
                                     </div>
                                     <div tabindex="-1" role="menu" aria-hidden="true"
-                                        class="dropdown-menu dropdown-menu dropdown-menu-end">
+                                         class="dropdown-menu dropdown-menu dropdown-menu-end">
                                         <div class="user-email">
                                             <div class="user">
-                                                <span class="thumb"><img class="rounded-full"
-                                                        src="./images/avatar/3.jpg" alt=""></span>
+                                                <span class="thumb">
+                                                    <img class="rounded-full"
+                                                         src="./images/avatar/3.jpg" alt="">
+                                                </span>
                                                 <div class="user-info">
                                                     <h5>Hafsa Humaira</h5>
                                                     <span>hello@email.com</span>
@@ -120,8 +130,12 @@
             </div>
         </div>
         <div class="sidebar">
-            <div class="brand-logo"><a class="full-logo" href="index.html"><img src="./images/logoi.png" alt=""
-                        width="30"></a></div>
+            <div class="brand-logo">
+                <a class="full-logo" href="index.html">
+                    <img src="./images/logoi.png" alt=""
+                         width="30">
+                </a>
+            </div>
             <div class="menu">
                 <ul>
                     <li>
@@ -212,7 +226,8 @@
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="breadcrumbs"><a href="#">Home </a>
+                                    <div class="breadcrumbs">
+                                        <a href="#">Home </a>
                                         <span><i class="fi fi-rr-angle-small-right"></i></span>
                                         <a href="#">Balance</a>
                                     </div>
@@ -225,11 +240,11 @@
                     <div class="col-xxl-12 col-xl-12">
                         <div class="settings-menu">
                             <a asp-controller="Transaction" asp-action="Analytics">Analytics</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsExpenses">Expenses</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsIncome">Income</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsIncomeVsExpenses">Income vs Expenses</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsBalance">Balance</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsTransactionHistory">Transaction History</a>
+                            <a asp-controller="Transaction" asp-action="Expenses">Expenses</a>
+                            <a asp-controller="Transaction" asp-action="Income">Income</a>
+                            <a asp-controller="Transaction" asp-action="IncomeVsExpenses">Income vs Expenses</a>
+                            <a asp-controller="Transaction" asp-action="Balance">Balance</a>
+                            <a asp-controller="Transaction" asp-action="TransactionHistory">Transaction History</a>
                         </div>
                         <div class="row">
                             <div class="col-12">
@@ -260,7 +275,8 @@
                 <div class="row">
                     <div class="col-xl-6">
                         <div class="copyright">
-                            <p>© Copyright
+                            <p>
+                                © Copyright
                                 <script>
                                     var CurrentYear = new Date().getFullYear()
                                     document.write(CurrentYear)

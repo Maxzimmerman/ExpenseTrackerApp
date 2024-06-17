@@ -1,4 +1,4 @@
-<body class="dashboard">
+﻿<body class="dashboard">
     <div id="main-wrapper">
         <div class="header">
             <div class="container">
@@ -6,8 +6,11 @@
                     <div class="col-xxl-12">
                         <div class="header-content">
                             <div class="header-left">
-                                <div class="brand-logo"><a class="mini-logo" href="index.html"><img
-                                            src="./images/logoi.png" alt="" width="40"></a></div>
+                                <div class="brand-logo">
+                                    <a class="mini-logo" href="index.html">
+                                        <img src="./images/logoi.png" alt="" width="40">
+                                    </a>
+                                </div>
                                 <div class="search">
                                     <form action="#">
                                         <div class="input-group">
@@ -29,13 +32,14 @@
                                         </div>
                                     </div>
                                     <div tabindex="-1" role="menu" aria-hidden="true"
-                                        class="dropdown-menu dropdown-menu-end">
+                                         class="dropdown-menu dropdown-menu-end">
                                         <h4>Recent Notification</h4>
                                         <div class="lists">
                                             <a class="" href="/#">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="me-3 icon success"><i
-                                                            class="fi fi-bs-check"></i></span>
+                                                    <span class="me-3 icon success">
+                                                        <i class="fi fi-bs-check"></i>
+                                                    </span>
                                                     <div>
                                                         <p>Account created successfully</p>
                                                         <span>2024-11-04 12:00:23</span>
@@ -44,8 +48,9 @@
                                             </a>
                                             <a class="" href="/#">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="me-3 icon fail"><i
-                                                            class="fi fi-sr-cross-small"></i></span>
+                                                    <span class="me-3 icon fail">
+                                                        <i class="fi fi-sr-cross-small"></i>
+                                                    </span>
                                                     <div>
                                                         <p>2FA verification failed</p>
                                                         <span>2024-11-04 12:00:23</span>
@@ -54,8 +59,9 @@
                                             </a>
                                             <a class="" href="/#">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="me-3 icon success"><i
-                                                            class="fi fi-bs-check"></i></span>
+                                                    <span class="me-3 icon success">
+                                                        <i class="fi fi-bs-check"></i>
+                                                    </span>
                                                     <div>
                                                         <p>Device confirmation completed</p>
                                                         <span>2024-11-04 12:00:23</span>
@@ -64,8 +70,9 @@
                                             </a>
                                             <a class="" href="/#">
                                                 <div class="d-flex align-items-center">
-                                                    <span class="me-3 icon pending"><i
-                                                            class="fi fi-rr-triangle-warning"></i></span>
+                                                    <span class="me-3 icon pending">
+                                                        <i class="fi fi-rr-triangle-warning"></i>
+                                                    </span>
                                                     <div>
                                                         <p>Phone verification pending</p>
                                                         <span>2024-11-04 12:00:23</span>
@@ -80,15 +87,18 @@
                                 </div>
                                 <div class="dropdown profile_log dropdown">
                                     <div data-bs-toggle="dropdown">
-                                        <div class="user icon-menu active"><span><i class="fi fi-rr-user"></i></span>
+                                        <div class="user icon-menu active">
+                                            <span><i class="fi fi-rr-user"></i></span>
                                         </div>
                                     </div>
                                     <div tabindex="-1" role="menu" aria-hidden="true"
-                                        class="dropdown-menu dropdown-menu dropdown-menu-end">
+                                         class="dropdown-menu dropdown-menu dropdown-menu-end">
                                         <div class="user-email">
                                             <div class="user">
-                                                <span class="thumb"><img class="rounded-full"
-                                                        src="./images/avatar/3.jpg" alt=""></span>
+                                                <span class="thumb">
+                                                    <img class="rounded-full"
+                                                         src="./images/avatar/3.jpg" alt="">
+                                                </span>
                                                 <div class="user-info">
                                                     <h5>Hafsa Humaira</h5>
                                                     <span>hello@email.com</span>
@@ -120,8 +130,12 @@
             </div>
         </div>
         <div class="sidebar">
-            <div class="brand-logo"><a class="full-logo" href="index.html"><img src="./images/logoi.png" alt=""
-                        width="30"></a></div>
+            <div class="brand-logo">
+                <a class="full-logo" href="index.html">
+                    <img src="./images/logoi.png" alt=""
+                         width="30">
+                </a>
+            </div>
             <div class="menu">
                 <ul>
                     <li>
@@ -207,14 +221,15 @@
                             <div class="row align-items-center justify-content-between">
                                 <div class="col-xl-4">
                                     <div class="page-title-content">
-                                        <h3>Transaction History</h3>
+                                        <h3>Analytics</h3>
                                         <p class="mb-2">Welcome Ekash Finance Management</p>
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="breadcrumbs"><a href="#">Home </a>
+                                    <div class="breadcrumbs">
+                                        <a href="#">Home </a>
                                         <span><i class="fi fi-rr-angle-small-right"></i></span>
-                                        <a href="#">Transaction History</a>
+                                        <a href="#">Analytics</a>
                                     </div>
                                 </div>
                             </div>
@@ -225,14 +240,56 @@
                     <div class="col-xxl-12 col-xl-12">
                         <div class="settings-menu">
                             <a asp-controller="Transaction" asp-action="Analytics">Analytics</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsExpenses">Expenses</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsIncome">Income</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsIncomeVsExpenses">Income vs Expenses</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsBalance">Balance</a>
-                            <a asp-controller="Transaction" asp-action="AnalyticsTransactionHistory">Transaction History</a>
+                            <a asp-controller="Transaction" asp-action="Expenses">Expenses</a>
+                            <a asp-controller="Transaction" asp-action="Income">Income</a>
+                            <a asp-controller="Transaction" asp-action="IncomeVsExpenses">Income vs Expenses</a>
+                            <a asp-controller="Transaction" asp-action="Balance">Balance</a>
+                            <a asp-controller="Transaction" asp-action="TransactionHistory">Transaction History</a>
                         </div>
                         <div class="row">
-                            <div class="col-xl-12">
+                            <div class=" col-xxl-4 col-xl-4 col-lg-4 col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Expenses Breakdown</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="chartjsDonut"></canvas>
+                                        <div class="list-1 mt-3">
+                                            <ul>
+                                                <li>
+                                                    <p class="mb-0">Food</p>
+                                                    <h5 class="mb-0"><span>$1200</span>38%</h5>
+                                                </li>
+                                                <li>
+                                                    <p class="mb-0">Transport</p>
+                                                    <h5 class="mb-0"><span>$1200</span>38%</h5>
+                                                </li>
+                                                <li>
+                                                    <p class="mb-0">Healthcare</p>
+                                                    <h5 class="mb-0"><span>$1200</span>38%</h5>
+                                                </li>
+                                                <li>
+                                                    <p class="mb-0">Education</p>
+                                                    <h5 class="mb-0"><span>$1200</span>38%</h5>
+                                                </li>
+                                                <li>
+                                                    <p class="mb-0">Clothes</p>
+                                                    <h5 class="mb-0"><span>$1200</span>38%</h5>
+                                                </li>
+                                                <li>
+                                                    <p class="mb-0">Pets</p>
+                                                    <h5 class="mb-0"><span>$1200</span>38%</h5>
+                                                </li>
+                                                <li>
+                                                    <p class="mb-0">Entertainment</p>
+                                                    <h5 class="mb-0"><span>$1200</span>38%</h5>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-8 col-lg-8">
                                 <div class="card">
                                     <div class="card-header">
                                         <h4 class="card-title">Transaction History</h4>
@@ -253,9 +310,10 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-emerald-500 fi fi-rr-barber-shop"></i>
-                                                                    Beauty</span>
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-emerald-500 fi fi-rr-barber-shop"></i>
+                                                                    Beauty
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -270,10 +328,11 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-teal-500 fi fi-rr-receipt"></i> Bills
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-teal-500 fi fi-rr-receipt"></i> Bills
                                                                     &
-                                                                    Fees</span>
+                                                                    Fees
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -288,9 +347,10 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-cyan-500 fi fi-rr-car-side"></i>
-                                                                    Car</span>
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-cyan-500 fi fi-rr-car-side"></i>
+                                                                    Car
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -305,9 +365,10 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-sky-500 fi fi-rr-graduation-cap"></i>
-                                                                    Education</span>
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-sky-500 fi fi-rr-graduation-cap"></i>
+                                                                    Education
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -322,9 +383,10 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-blue-500 fi fi-rr-clapperboard-play"></i>
-                                                                    Entertainment</span>
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-blue-500 fi fi-rr-clapperboard-play"></i>
+                                                                    Entertainment
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -339,9 +401,10 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-emerald-500 fi fi-rr-barber-shop"></i>
-                                                                    Beauty</span>
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-emerald-500 fi fi-rr-barber-shop"></i>
+                                                                    Beauty
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -356,10 +419,11 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-teal-500 fi fi-rr-receipt"></i> Bills
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-teal-500 fi fi-rr-receipt"></i> Bills
                                                                     &
-                                                                    Fees</span>
+                                                                    Fees
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -374,9 +438,10 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-cyan-500 fi fi-rr-car-side"></i>
-                                                                    Car</span>
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-cyan-500 fi fi-rr-car-side"></i>
+                                                                    Car
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -391,9 +456,10 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-sky-500 fi fi-rr-graduation-cap"></i>
-                                                                    Education</span>
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-sky-500 fi fi-rr-graduation-cap"></i>
+                                                                    Education
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -408,9 +474,10 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <span class="table-category-icon"><i
-                                                                        class="bg-blue-500 fi fi-rr-clapperboard-play"></i>
-                                                                    Entertainment</span>
+                                                                <span class="table-category-icon">
+                                                                    <i class="bg-blue-500 fi fi-rr-clapperboard-play"></i>
+                                                                    Entertainment
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 12.12.2023
@@ -440,7 +507,8 @@
                 <div class="row">
                     <div class="col-xl-6">
                         <div class="copyright">
-                            <p>© Copyright
+                            <p>
+                                © Copyright
                                 <script>
                                     var CurrentYear = new Date().getFullYear()
                                     document.write(CurrentYear)
