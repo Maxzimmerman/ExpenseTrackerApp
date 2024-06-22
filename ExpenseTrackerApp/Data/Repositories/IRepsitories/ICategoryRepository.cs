@@ -5,7 +5,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
     public interface ICategoryRepository
     {
-        AddCategory addCategoryData();
+        AddCategory addCategoryData(string userId);
         void createCategory(Category category, string id);
         void deleteCategory(int id);
         void updateCategory(Category category);

@@ -26,5 +26,9 @@ namespace ExpenseTrackerApp.Models
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public Category Category { get; set; }
+
+        [ForeignKey("ApplicationUser")]
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
     }
 }

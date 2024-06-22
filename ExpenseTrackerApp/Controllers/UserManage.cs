@@ -13,14 +13,12 @@ namespace ExpenseTrackerApp.Controllers
 {
     public class UserManage : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserRepository _userRepository;
 
-        public UserManage(ApplicationDbContext context, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IUserRepository userRepository)
+        public UserManage(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IUserRepository userRepository)
         {
-            _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
             _userRepository = userRepository;
@@ -83,7 +81,7 @@ namespace ExpenseTrackerApp.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> SignOut()
+        public new async Task<IActionResult> SignOut()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Home", "Home");
@@ -93,8 +91,8 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public async Task<IActionResult> SettingsProfile()
         {
-            var currentUser = (ClaimsIdentity)User.Identity;
-            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
+            var currentUserId = currentUser.Id;
 
             var user = _userRepository.getUserById(currentUserId);
 
@@ -122,10 +120,10 @@ namespace ExpenseTrackerApp.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
-            var currentUser = (ClaimsIdentity)User.Identity;
-            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
+            var currentUserId = currentUser.Id;
 
             var user = _userRepository.getUserById(currentUserId);
 

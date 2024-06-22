@@ -23,10 +23,9 @@ namespace ExpenseTrackerApp.Data.Repositories
         {
             var user = _context.applicationUsers.FirstOrDefault(u => u.Id == id);
             if (user != null)
-            {
                 return user;
-            }
-            return null;
+            else
+                throw new Exception("Couldn't find user");
         }
 
         public ApplicationUser updateUser(ApplicationUser user)
@@ -38,8 +37,10 @@ namespace ExpenseTrackerApp.Data.Repositories
                 toUpdate.Email = user.Email;
                 toUpdate.registeredSince = user.registeredSince;
                 _context.SaveChanges();
+                return toUpdate;    
             }
-            return toUpdate;
+            else
+                throw new Exception("Couldn't find the user");
         }
     }
 }

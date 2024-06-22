@@ -2,6 +2,8 @@
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels.CategoryViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,20 +11,26 @@ using System.Security.Claims;
 
 namespace ExpenseTrackerApp.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CategoryController(ApplicationDbContext context, ICategoryRepository categoryRepository)
+        public CategoryController(ApplicationDbContext context, ICategoryRepository categoryRepository, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _categoryRepository = categoryRepository;
+            _userManager = userManager;
         }
 
-        public IActionResult SettingsCategory()
+        public async Task<IActionResult> SettingsCategory()
         {
-            AddCategory addCategory = _categoryRepository.addCategoryData();
+            var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
+            var currentUserId = currentUser.Id;
+
+            AddCategory addCategory = _categoryRepository.addCategoryData(currentUserId);
 
             ViewBag.CategoryTypes = addCategory.CategoryTypes;
             ViewBag.CategoryIcons = addCategory.CategoryIcons;
@@ -34,7 +42,7 @@ namespace ExpenseTrackerApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCategory(Category category)
+        public async Task<IActionResult> AddCategory(Category category)
         {
             if(category == null)
             {
@@ -42,8 +50,8 @@ namespace ExpenseTrackerApp.Controllers
             }
             else
             {
-                var currentUser = (ClaimsIdentity)User.Identity;
-                var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
+                var currentUserId = currentUser.Id;
 
                 _categoryRepository.createCategory(category, currentUserId);
 
@@ -52,11 +60,14 @@ namespace ExpenseTrackerApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult LoadUpdateCategory(int id)
+        public async Task<IActionResult> LoadUpdateCategory(int id)
         {
+            var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
+            var currentUserId = currentUser.Id;
+
             var category = _categoryRepository.findCategory(id);
 
-            AddCategory addCategory = _categoryRepository.addCategoryData();
+            AddCategory addCategory = _categoryRepository.addCategoryData(currentUserId);
 
             ViewBag.CategoryTypes = addCategory.CategoryTypes;
             ViewBag.CategoryIcons = addCategory.CategoryIcons;

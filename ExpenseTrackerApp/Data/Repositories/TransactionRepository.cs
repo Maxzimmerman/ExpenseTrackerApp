@@ -17,13 +17,17 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public ExpenseTrackerApp.Models.Transaction getFirst()
         {
-            return _context.transactions
+            var transaction = _context.transactions
                 .Include(t => t.Category)
                 .Include(t => t.Category.CategoryType)
                 .Include(t => t.Category.CategoryColor)
                 .Include(t => t.Category.CategoryIcon)
                 .FirstOrDefault(t => t.Id == 3);
 
+            if (transaction != null)
+                return transaction;
+            else
+                throw new Exception("Couldn't find any transaction");
         }
 
         public AnalyticsData GetAnalyticsData(string userId)

@@ -15,7 +15,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             _context = context;
         }
 
-        public AddCategory addCategoryData()
+        public AddCategory addCategoryData(string userId)
         {
             IEnumerable<SelectListItem> categoryTypes =
                 _context.categoriesTypes.Select(ct => new SelectListItem
@@ -42,13 +42,13 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Include(c => c.CategoryType)
                 .Include(c => c.CategoryIcon)
                 .Include(c => c.CategoryColor)
-                .Where(c => c.CategoryTypeId == 1)
+                .Where(c => c.CategoryTypeId == 1 && c.ApplicationUserId == userId)
                 .ToList();
             var incoms = _context.categories
                 .Include(c => c.CategoryType)
                 .Include(c => c.CategoryIcon)
                 .Include(c => c.CategoryColor)
-                .Where(c => c.CategoryTypeId == 2)
+                .Where(c => c.CategoryTypeId == 2 && c.ApplicationUserId == userId)
                 .ToList();
 
             AddCategory addCategory = new AddCategory();
@@ -63,9 +63,28 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public void createCategory(Category category, string id)
         {
-            category.CategoryIcon = _context.categoriesIcons.FirstOrDefault(c => c.Id == category.CategoryIconId);
-            category.CategoryType = _context.categoriesTypes.FirstOrDefault(c => c.Id == category.CategoryTypeId);
-            category.CategoryColor = _context.categoriesColors.FirstOrDefault(c => c.Id == category.CategoryColorId);
+            var categoryIcon = _context.categoriesIcons.FirstOrDefault(c => c.Id == category.CategoryIconId);
+            var categoryType = _context.categoriesTypes.FirstOrDefault(c => c.Id == category.CategoryTypeId);
+            var categoryColor = _context.categoriesColors.FirstOrDefault(c => c.Id == category.CategoryColorId);
+
+            if (categoryIcon == null)
+            {
+                throw new Exception($"CategoryIcon with ID {category.CategoryIconId} not found.");
+            }
+
+            if (categoryType == null)
+            {
+                throw new Exception($"CategoryType with ID {category.CategoryTypeId} not found.");
+            }
+
+            if (categoryColor == null)
+            {
+                throw new Exception($"CategoryColor with ID {category.CategoryColorId} not found.");
+            }
+
+            category.CategoryIcon = categoryIcon;
+            category.CategoryType = categoryType;
+            category.CategoryColor = categoryColor;
             category.ApplicationUserId = id;
             _context.categories.Add(category);
             _context.SaveChanges();
@@ -86,12 +105,17 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public Category findCategory(int id)
         {
-            return _context.categories
+            var category = _context.categories
                 .Include(c => c.CategoryType)
                 .Include(c => c.CategoryColor)
                 .Include(c => c.CategoryIcon)
                 .Include(c => c.ApplicationUser)
                 .FirstOrDefault(c => c.Id == id);
+
+            if (category != null)
+                return category;
+            else
+                throw new Exception("Couldn't find any category");
         }
     }
 }

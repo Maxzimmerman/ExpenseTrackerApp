@@ -2,6 +2,7 @@
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -11,22 +12,22 @@ namespace ExpenseTrackerApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _applicationDbContext;
         private readonly IUserRepository _userRepository;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext, IUserRepository userRepository)
+        public HomeController(ILogger<HomeController> logger, IUserRepository userRepository, UserManager<IdentityUser> userManage)
         {
             _logger = logger;
-            _applicationDbContext = applicationDbContext;
             _userRepository = userRepository;
+            _userManager = userManage;
         }
 
-        public IActionResult Home()
+        public async Task<IActionResult> Home()
         {
             if(User.Identity.IsAuthenticated)
             {
-                var currentUser = (ClaimsIdentity)User.Identity;
-                var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
+                var currentUserId = currentUser.Id;
 
                 var user = _userRepository.getUserById(currentUserId);
                 return View(user);
