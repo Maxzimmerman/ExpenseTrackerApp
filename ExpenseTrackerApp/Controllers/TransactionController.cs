@@ -41,13 +41,17 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public IActionResult Expenses()
         {
-            return View();
+            var expenses = _transactionRepository.GetExpenses(User.Claims.First().Value);
+
+            return View(expenses);
         }
 
         [HttpGet]
         public IActionResult Income()
         {
-            return View();
+            var incoms = _transactionRepository.GetIncoms(User.Claims.First().Value);
+
+            return View(incoms);
         }
 
         [HttpGet]

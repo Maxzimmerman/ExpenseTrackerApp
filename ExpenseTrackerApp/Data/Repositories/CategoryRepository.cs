@@ -42,13 +42,13 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Include(c => c.CategoryType)
                 .Include(c => c.CategoryIcon)
                 .Include(c => c.CategoryColor)
-                .Where(c => c.CategoryTypeId == 1 && c.ApplicationUserId == userId)
+                .Where(c => c.CategoryType.Name == "Expense" && c.ApplicationUserId == userId)
                 .ToList();
             var incoms = _context.categories
                 .Include(c => c.CategoryType)
                 .Include(c => c.CategoryIcon)
                 .Include(c => c.CategoryColor)
-                .Where(c => c.CategoryTypeId == 2 && c.ApplicationUserId == userId)
+                .Where(c => c.CategoryType.Name == "Income" && c.ApplicationUserId == userId)
                 .ToList();
 
             AddCategory addCategory = new AddCategory();

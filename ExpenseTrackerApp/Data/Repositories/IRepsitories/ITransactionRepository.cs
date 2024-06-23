@@ -7,5 +7,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
     {
         ExpenseTrackerApp.Models.Transaction getFirst();
         AnalyticsData GetAnalyticsData(string userId);
+        List<ExpenseTrackerApp.Models.Transaction> GetExpenses(string userId);
+        List<ExpenseTrackerApp.Models.Transaction> GetIncoms(string userId);
     }
 }
