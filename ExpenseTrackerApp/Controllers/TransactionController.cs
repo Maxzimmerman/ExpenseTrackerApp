@@ -41,17 +41,17 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public IActionResult Expenses()
         {
-            var expenses = _transactionRepository.GetExpenses(User.Claims.First().Value);
+            var expensesData = _transactionRepository.GetExpenseData(User.Claims.First().Value);
 
-            return View(expenses);
+            return View(expensesData);
         }
 
         [HttpGet]
         public IActionResult Income()
         {
-            var incoms = _transactionRepository.GetIncoms(User.Claims.First().Value);
+            var incomsData = _transactionRepository.GetIncomeData(User.Claims.First().Value);
 
-            return View(incoms);
+            return View(incomsData);
         }
 
         [HttpGet]
@@ -63,7 +63,9 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public IActionResult TransactionHistory()
         {
-            return View();
+            var transactions = _transactionRepository.GetTransactions(User.Claims.First().Value); 
+
+            return View(transactions);
         }
     }
 }

@@ -117,5 +117,43 @@ namespace ExpenseTrackerApp.Data.Repositories
             else
                 throw new Exception("Couldn't find any category");
         }
+
+        public List<Category> GetAllCategories(string userId)
+        {
+            var list = _context.categories
+                .Where(c => c.ApplicationUserId == userId)
+                .ToList();
+
+            if (list != null)
+                return list;
+            else
+                throw new Exception("Could not find any category");
+        }
+
+        public List<Category> GetAllExpenseCategories(string userId)
+        {
+            var listExpenses = _context.categories
+                .Include(c => c.CategoryType)
+                .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == "Expense")
+                .ToList();
+
+            if (listExpenses != null)
+                return listExpenses;
+            else
+                throw new Exception("Could not find any category");
+        }
+
+        public List<Category> GetAllIncomeCategories(string userId)
+        {
+            var listIncoms = _context.categories
+                .Include(c => c.CategoryType)
+                .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == "Income")
+                .ToList();
+
+            if (listIncoms != null)
+                return listIncoms;
+            else
+                throw new Exception("Could not find any category");
+        }
     }
 }

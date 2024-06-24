@@ -1,4 +1,4 @@
-﻿@model List<ExpenseTrackerApp.Models.Transaction>
+﻿@model ExpenseTrackerApp.Models.ViewModels.TransactionViewModels.ExpenseAndIncomeData
 
 <body class="dashboard">
     <div id="main-wrapper">
@@ -96,7 +96,7 @@
                                                     </thead>
                                                     <tbody>
                                                         @{
-                                                            foreach(var income in Model)
+                                                            foreach(var income in Model.transactions)
                                                             {
                                                                 <tr>
                                                                     <td>

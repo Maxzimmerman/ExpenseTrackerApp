@@ -10,5 +10,8 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         void deleteCategory(int id);
         void updateCategory(Category category);
         Category findCategory(int id);
+        public List<Category> GetAllCategories(string userId);
+        public List<Category> GetAllExpenseCategories(string userId);
+        public List<Category> GetAllIncomeCategories(string userId);    
     }
 }
