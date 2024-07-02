@@ -143,13 +143,15 @@
             @RenderBody()
         </main>
     </div>
-    <script src="~/js/scripts.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/vendor/chartjs/chartjs.js"></script>
+    <script src="~/js/scripts.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/vendor/circle-progress/circle-progress.min.js"></script>
     <script src="~/vendor/circle-progress/circle-progress-init.js"></script>
-    <script src="~/vendor/chartjs/chartjs.js"></script>
     <script src="~/js/plugins/chartjs-bar-income-vs-expense.js"></script>
     <script src="~/js/plugins/chartjs-bar-weekly-expense.js"></script>
     <script src="~/js/plugins/chartjs-profile-wallet.js"></script>
@@ -157,15 +159,11 @@
     <script src="~/js/plugins/chartjs-profile-wallet3.js"></script>
     <script src="~/js/plugins/chartjs-profile-wallet4.js"></script>
     <script src="~/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="~/js/plugins/perfect-scrollbar-init.js"></script>
-    <script src="~/vendor/jquery/jquery.min.js"></script>
-    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/vendor/chartjs/chartjs.js"></script>
     <script src="~/js/plugins/chartjs-bar-budget-period.js"></script>
     <script src="~/js/plugins/circle-progress-init.js"></script>
-    <script src="~/js/plugins/chartjs-donut.js"></script>
     <script src="~/js/plugins/chartjs-line-balance-wallet.js"></script>
     <script src="~/js/plugins/chartjs-line-total-balance.js"></script>
+    <script src="~/js/plugins/perfect-scrollbar-init.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

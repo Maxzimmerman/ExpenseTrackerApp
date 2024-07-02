@@ -1,4 +1,5 @@
 ﻿@model ExpenseTrackerApp.Models.ViewModels.TransactionViewModels.ExpenseAndIncomeData
+@using System.Text.Json
 
 <body class="dashboard">
     <div id="main-wrapper">
@@ -141,50 +142,50 @@
         </div>
     </div>
     <script>
-        //doughut chart
-        var ctx = document.getElementById("chartjsDonut")
-        // ctx.height = 175;
-        new Chart(ctx, {
-            type: "doughnut",
-            data: {
-                datasets: [
-                    {
-                        data: [33, 33, 33],
-                        backgroundColor: [
-                            "rgba(22, 82, 240,1)",
-                            "rgba(22, 82, 240,0.5)",
-                            "rgba(22, 82, 240,0.15)",
-                        ],
-                        // rotation: -25/450*360,
+        setTimeout(() => {
+            var ctx = document.getElementById("chartjsDonut");
+            var data = @Html.Raw(JsonSerializer.Serialize(Model.categorieDataList.Select(c => c.Percentage).ToList()));
+            var labels = @Html.Raw(JsonSerializer.Serialize(Model.categorieDataList.Select(c => c.Title).ToList()));
+
+            console.log(data);
+            console.log(labels);
+
+            new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    datasets: [
+                        {
+                            data: data,
+                            backgroundColor: [
+                                "rgba(22, 82, 240,1)",
+                                "rgba(22, 82, 240,0.5)",
+                                "rgba(22, 82, 240,0.15)",
+                            ],
 
 
-                    }],
-                labels: [
-                    "Facebookggg",
-                    "Youtube",
-                    "Google",
-                ]
-            },
-            options: {
-                responsive: false,
-                cutoutPercentage: 80,
-                maintainAspectRatio: false,
-                animation: {
-                    animateRotate: true,
-                    animateScale: true,
+                        }],
+                    labels: labels
                 },
-                legend: {
-                    display: false,
-                    position: "bottom",
-                    labels: {
-                        usePointStyle: true,
-                        // fontFamily: "Segoe UI",
-                        fontSize: 12,
-                        fontColor: "#464a53",
-                        padding: 20,
+                options: {
+                    responsive: false,
+                    cutoutPercentage: 80,
+                    maintainAspectRatio: false,
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                    },
+                    legend: {
+                        display: false,
+                        position: "bottom",
+                        labels: {
+                            usePointStyle: true,
+                            fontSize: 12,
+                            fontColor: "#464a53",
+                            padding: 20,
+                        },
                     },
                 },
-            },
-        })
+            })
+        }, 100)
     </script>
 </body>

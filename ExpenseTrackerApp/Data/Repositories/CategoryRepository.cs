@@ -118,7 +118,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 throw new Exception("Couldn't find any category");
         }
 
-        public List<Category> GetAllCategories(string userId)
+        public List<Category> GetAllCategoriesWithTransactions(string userId)
         {
             var list = _context.categories
                 .Where(c => c.ApplicationUserId == userId)
@@ -130,7 +130,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 throw new Exception("Could not find any category");
         }
 
-        public List<Category> GetAllExpenseCategories(string userId)
+        public List<Category> GetAllExpenseCategoriesWithTransactions(string userId)
         {
             var listExpenses = _context.categories
                 .Include(c => c.CategoryType)
@@ -143,7 +143,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 throw new Exception("Could not find any category");
         }
 
-        public List<Category> GetAllIncomeCategories(string userId)
+        public List<Category> GetAllIncomeCategoriesWithTransactions(string userId)
         {
             var listIncoms = _context.categories
                 .Include(c => c.CategoryType)
@@ -154,6 +154,49 @@ namespace ExpenseTrackerApp.Data.Repositories
                 return listIncoms;
             else
                 throw new Exception("Could not find any category");
+        }
+
+        public List<Category> GetAllCategoriesWithTransactions(string userId, string ExpenseOrIncom)
+        {
+            List<Category> categoriesWithTransactions = new List<Category>();
+            var categories = _context.categories
+                .Include(c => c.CategoryType)
+                .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == ExpenseOrIncom)
+                .ToList();
+
+            foreach(var category in categories)
+            {
+                if(this.CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(userId, category.Title))
+                {
+                    categoriesWithTransactions.Add(category);
+                }
+            }
+
+            if (categoriesWithTransactions != null)
+                return categoriesWithTransactions;
+            else
+                throw new Exception("Could not find any category");
+        }
+
+        public bool CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(string userId, string categoryName)
+        {
+            decimal amount = _context.transactions
+                .Where(t => t.ApplicationUserId == userId && t.Category.Title == categoryName)
+                .Sum(t => t.Amount);
+
+            if (amount != 0)
+                return true;
+            else
+                return false;
+        }
+
+        public decimal GetTotalAmountOfAllCategories(string userId, string ExpenseOrIncomd)
+        {
+            decimal amount = _context.transactions
+                .Where(t => t.ApplicationUserId == userId && t.Category.CategoryType.Name == ExpenseOrIncomd)
+                .Sum(t => System.Math.Abs(t.Amount));
+
+            return amount;
         }
     }
 }

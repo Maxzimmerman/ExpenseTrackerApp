@@ -1,4 +1,5 @@
 //doughut chart
+console.log("hello")
 var ctx = document.getElementById("chartjsDonut")
 // ctx.height = 175;
 new Chart(ctx, {
@@ -53,3 +54,6 @@ new Chart(ctx, {
         },
     },
 })
+
+var ChartData = window.chartData;
+console.log(ChartData);

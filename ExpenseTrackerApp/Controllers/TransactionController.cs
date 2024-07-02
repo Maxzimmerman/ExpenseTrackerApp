@@ -43,6 +43,8 @@ namespace ExpenseTrackerApp.Controllers
         {
             var expensesData = _transactionRepository.GetExpenseData(User.Claims.First().Value);
 
+            ViewBag.ChartData = expensesData.categorieDataList;
+
             return View(expensesData);
         }
 

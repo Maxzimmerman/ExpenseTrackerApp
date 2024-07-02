@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Transactions;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels.TransactionViewModels;
+using System.Diagnostics.Eventing.Reader;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {
@@ -103,17 +104,22 @@ namespace ExpenseTrackerApp.Data.Repositories
         public decimal GetPercentageOfTransactionOfCertainCetegory(string CategoryTitle, string userId, string ExpnseOrIncome)
         {
             decimal percentage = 0;
-            decimal numberOfCategories = 0;
+            decimal totalAmountOfCategories = 0;
             decimal amountOfCertainCategory = 0;
 
-            numberOfCategories = _categoryRepository.GetAllExpenseCategories(userId).Count();
+            totalAmountOfCategories = _categoryRepository.GetTotalAmountOfAllCategories(userId, ExpnseOrIncome);
             amountOfCertainCategory = this.GetAmountOfTransactionOfCertainCategory(CategoryTitle, ExpnseOrIncome);
 
             if (ExpnseOrIncome == "Expense")
                 amountOfCertainCategory *= -1;
 
-            if (amountOfCertainCategory > 0)
-                percentage = (amountOfCertainCategory / numberOfCategories) * 10;
+            if (totalAmountOfCategories > 0)
+                percentage = (amountOfCertainCategory / totalAmountOfCategories) * 100;
+
+            if(percentage > 100)
+            {
+                percentage = 100;
+            }
 
             return Math.Round(percentage, 0);
         }
@@ -121,10 +127,31 @@ namespace ExpenseTrackerApp.Data.Repositories
         public ExpenseAndIncomeData GetExpenseData(string userId)
         {
             ExpenseAndIncomeData expenseAndIncomeData = new ExpenseAndIncomeData();
-            List<ExpenseTrackerApp.Models.Transaction> incoms = this.GetExpenses(userId);
+            List<ExpenseTrackerApp.Models.Transaction> expense = this.GetExpenses(userId);
             List<ExpenseAndIncomeCategoryData> expenseAndIncomeCategoryList = new List<ExpenseAndIncomeCategoryData>();
 
-            foreach(var category in _categoryRepository.GetAllExpenseCategories(userId))
+            foreach(var category in _categoryRepository.GetAllExpenseCategoriesWithTransactions(userId))
+            {
+                ExpenseAndIncomeCategoryData expenseAndIncomeCategoryData = new ExpenseAndIncomeCategoryData();
+                expenseAndIncomeCategoryData.Title = category.Title;
+                expenseAndIncomeCategoryData.Amount = this.GetAmountOfTransactionOfCertainCategory(category.Title, category.CategoryType.Name);
+                expenseAndIncomeCategoryData.Percentage = this.GetPercentageOfTransactionOfCertainCetegory(category.Title, userId, category.CategoryType.Name);
+                expenseAndIncomeCategoryList.Add(expenseAndIncomeCategoryData);
+            }
+
+            expenseAndIncomeData.transactions = expense;
+            expenseAndIncomeData.categorieDataList = expenseAndIncomeCategoryList;
+
+            return expenseAndIncomeData;
+        }
+
+        public ExpenseAndIncomeData GetIncomeData(string userId)
+        {
+            ExpenseAndIncomeData expenseAndIncomeData= new ExpenseAndIncomeData();
+            List<ExpenseTrackerApp.Models.Transaction> incoms = this.GetIncoms(userId);
+            List<ExpenseAndIncomeCategoryData> expenseAndIncomeCategoryList = new List<ExpenseAndIncomeCategoryData>();
+
+            foreach (var category in _categoryRepository.GetAllIncomeCategoriesWithTransactions(userId))
             {
                 ExpenseAndIncomeCategoryData expenseAndIncomeCategoryData = new ExpenseAndIncomeCategoryData();
                 expenseAndIncomeCategoryData.Title = category.Title;
@@ -135,15 +162,6 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             expenseAndIncomeData.transactions = incoms;
             expenseAndIncomeData.categorieDataList = expenseAndIncomeCategoryList;
-
-            return expenseAndIncomeData;
-        }
-
-        public ExpenseAndIncomeData GetIncomeData(string userId)
-        {
-            ExpenseAndIncomeData expenseAndIncomeData= new ExpenseAndIncomeData();
-            List<ExpenseTrackerApp.Models.Transaction> incoms = this.GetIncoms(userId);   
-            expenseAndIncomeData.transactions = incoms;
 
             return expenseAndIncomeData;
         }
