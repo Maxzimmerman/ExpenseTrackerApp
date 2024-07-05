@@ -59,7 +59,9 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public IActionResult IncomeVsExpenses()
         {
-            return View();
+            var incomeVsExpensesData = _transactionRepository.GetIncomeVsExpensesData(User.Claims.First().Value);
+
+            return View(incomeVsExpensesData);
         }
 
         [HttpGet]

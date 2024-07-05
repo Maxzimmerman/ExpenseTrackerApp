@@ -18,6 +18,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             _categoryRepository = categoryRepository;
         }
 
+        // General Start
         public ExpenseTrackerApp.Models.Transaction getFirst()
         {
             var transaction = _context.transactions
@@ -31,14 +32,6 @@ namespace ExpenseTrackerApp.Data.Repositories
                 return transaction;
             else
                 throw new Exception("Couldn't find any transaction");
-        }
-
-        public AnalyticsData GetAnalyticsData(string userId)
-        {
-            int transactions = _context.transactions.ToList().Count;
-            int categories = _context.categories.ToList().Count;
-            AnalyticsData data = new AnalyticsData(transactions, categories);
-            return data;
         }
 
         public List<ExpenseTrackerApp.Models.Transaction> GetExpenses(string userId)
@@ -88,6 +81,78 @@ namespace ExpenseTrackerApp.Data.Repositories
             else throw new Exception("Could not find any transaction");
         }
 
+        public List<Models.Transaction> GetTransactionsForJan(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForFeb(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForMar(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForApr(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForMay(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForJun(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForJul(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForAug(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForSep(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForOct(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForNov(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Models.Transaction> GetTransactionsForDec(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        // General End
+        // Analytics Page Start
+        public AnalyticsData GetAnalyticsData(string userId)
+        {
+            int transactions = _context.transactions.ToList().Count;
+            int categories = _context.categories.ToList().Count;
+            AnalyticsData data = new AnalyticsData(transactions, categories);
+            return data;
+        }
+
+        // Analytics Page End
+        // Expense And Income Pages Start
         public decimal GetAmountOfTransactionOfCertainCategory(string CategoryTitle, string ExpenseOrIncome)
         {
             decimal amount = 0;
@@ -165,5 +230,24 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             return expenseAndIncomeData;
         }
+
+        // Expense And Income Pages End
+        // Income VS Expenses Page Start
+
+        public IncomeVsExpensesData GetIncomeVsExpensesData(string userId)
+        {
+            var transactions = this.GetTransactions(userId);
+            List<Dictionary<string, int>> incomeData;
+            List<Dictionary<string, int>> expenseData;
+            IncomeVsExpensesData incomeVsExpensesData = new IncomeVsExpensesData();
+            incomeVsExpensesData.transactions = transactions;
+
+            if (transactions != null)
+                return incomeVsExpensesData;
+            else
+                throw new Exception("Could not collect Income vs Expenses data");
+        }
+
+        // Income Vs Expenses Page End
     }
 }
