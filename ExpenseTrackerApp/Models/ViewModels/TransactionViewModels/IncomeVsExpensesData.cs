@@ -3,7 +3,7 @@
     public class IncomeVsExpensesData
     {
         public List<ExpenseTrackerApp.Models.Transaction> transactions;
-        public List<Dictionary<string, int>> incomsChartData;
-        public List<Dictionary<string, int>> expensesChartData;
+        public List<int> incomsChartData;
+        public List<int> expensesChartData;
     }
 }

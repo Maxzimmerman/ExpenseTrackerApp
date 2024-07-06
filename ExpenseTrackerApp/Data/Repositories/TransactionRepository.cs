@@ -81,64 +81,20 @@ namespace ExpenseTrackerApp.Data.Repositories
             else throw new Exception("Could not find any transaction");
         }
 
-        public List<Models.Transaction> GetTransactionsForJan(string userId)
+        public List<Models.Transaction> GetTransactionOfCertainMonth(string userId, string ExpenseOrIncome, int month)
         {
-            throw new NotImplementedException();
-        }
+            var transactions = _context.transactions
+                .Include(t => t.Category)
+                .Include(t => t.Category.CategoryColor)
+                .Include(t => t.Category.CategoryIcon)
+                .Include(t => t.Category.CategoryType)
+                .Where(t => t.ApplicationUserId == userId && t.Date.Month == month && t.Category.CategoryType.Name == ExpenseOrIncome)
+                .ToList();
 
-        public List<Models.Transaction> GetTransactionsForFeb(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForMar(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForApr(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForMay(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForJun(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForJul(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForAug(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForSep(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForOct(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForNov(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<Models.Transaction> GetTransactionsForDec(string userId)
-        {
-            throw new NotImplementedException();
+            if (transactions != null) 
+                return transactions; 
+            else 
+                throw new Exception("Could not find any Transactions of certain Month");
         }
 
         // General End
@@ -237,10 +193,20 @@ namespace ExpenseTrackerApp.Data.Repositories
         public IncomeVsExpensesData GetIncomeVsExpensesData(string userId)
         {
             var transactions = this.GetTransactions(userId);
-            List<Dictionary<string, int>> incomeData;
-            List<Dictionary<string, int>> expenseData;
+
+            List<int> incomeData = new List<int>();
+            List<int> expenseData = new List<int>();
+            
+            for(int i = 1; i < 13; i++)
+            {
+                incomeData.Add(GetTransactionOfCertainMonth(userId, "Income", i).Count);
+                expenseData.Add(GetTransactionOfCertainMonth(userId, "Expense", i).Count);
+            }
+
             IncomeVsExpensesData incomeVsExpensesData = new IncomeVsExpensesData();
             incomeVsExpensesData.transactions = transactions;
+            incomeVsExpensesData.incomsChartData = incomeData;
+            incomeVsExpensesData.expensesChartData = expenseData;
 
             if (transactions != null)
                 return incomeVsExpensesData;
