@@ -35,7 +35,9 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public IActionResult Balance()
         {
-            return View();
+            var balanceData = _transactionRepository.GetBalanceData(User.Claims.First().Value);
+
+            return View(balanceData);
         }
 
         [HttpGet]

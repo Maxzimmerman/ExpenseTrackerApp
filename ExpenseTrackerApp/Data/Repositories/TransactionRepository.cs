@@ -97,6 +97,27 @@ namespace ExpenseTrackerApp.Data.Repositories
                 throw new Exception("Could not find any Transactions of certain Month");
         }
 
+        public decimal GetBalanceForCertainMonth(string userId, int month)
+        {
+            decimal balance = _context.transactions
+                .Where(t => t.ApplicationUserId == userId && t.Date.Month == month)
+                .Sum(t => t.Amount);
+
+            return balance;
+        }
+
+        public decimal GetBalanceForCertainDay(string userId, int year, int month, int day)
+        {
+            decimal balance = _context.transactions
+                .Where(t => t.ApplicationUserId == userId 
+                && t.Date.Year == year 
+                && t.Date.Month == month 
+                && t.Date.Day == day)
+                .Sum(t => t.Amount);
+
+            return balance;
+        }
+
         // General End
         // Analytics Page Start
         public AnalyticsData GetAnalyticsData(string userId)
@@ -215,5 +236,38 @@ namespace ExpenseTrackerApp.Data.Repositories
         }
 
         // Income Vs Expenses Page End
+        // Balance Page Start
+
+        public BalanceData GetBalanceData(string userId)
+        {
+            BalanceData balanceData = new BalanceData();
+
+            List<decimal> monthlyBalance = new List<decimal>();
+            List<decimal> daylyBalance = new List<decimal>();
+            List<int> daysInCurrentMonth = new List<int>();
+
+            for(int i = 1; i < 13; i++)
+            {
+                monthlyBalance.Add(GetBalanceForCertainMonth(userId, i));
+            }
+
+            int currentYear = DateTime.Now.Year;
+            int currentMonth = DateTime.Now.Month;
+            int numberOfDays = DateTime.DaysInMonth(currentYear, currentMonth);
+
+            for(int i = 1; i < numberOfDays + 1; i++)
+            {
+                daylyBalance.Add(GetBalanceForCertainDay(userId, currentYear, currentMonth, i));
+                daysInCurrentMonth.Add(i);
+            }
+
+            balanceData.monthlyBalance = monthlyBalance;
+            balanceData.daylyBalance = daylyBalance;
+            balanceData.daysInCurrentMonth = daysInCurrentMonth;
+
+            return balanceData;
+        }
+
+        // Balance Page End
     }
 }

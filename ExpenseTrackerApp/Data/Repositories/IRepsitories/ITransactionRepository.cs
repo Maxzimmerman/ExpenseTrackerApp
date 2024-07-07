@@ -14,5 +14,8 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         public ExpenseAndIncomeData GetIncomeData(string userId);
         public List<Models.Transaction> GetTransactionOfCertainMonth(string userId, string ExpenseOrIncome, int month);
         public IncomeVsExpensesData GetIncomeVsExpensesData(string userId);
+        public decimal GetBalanceForCertainMonth(string userId, int month);
+        public BalanceData GetBalanceData(string userId);
+        public decimal GetBalanceForCertainDay(string userId, int year, int month, int day);
     }
 }
