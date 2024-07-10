@@ -1,4 +1,5 @@
 ﻿@using ExpenseTrackerApp.Models.ViewModels.TransactionViewModels
+@using System.Text.Json
 @model AnalyticsData
 
 <body class="dashboard">
@@ -46,7 +47,7 @@
                                     </div>
                                     <div class="widget-content">
                                         <p>Daily Average</p>
-                                        <h3>$5470.36</h3>
+                                        <h3>$@Model.DailyAverageValue</h3>
                                     </div>
                                 </div>
                             </div>
@@ -59,7 +60,10 @@
                                     </div>
                                     <div class="widget-content">
                                         <p>Change</p>
-                                        <h3>+47.36%</h3>
+                                        <h3>@{
+                                                if(Model.TotalAmount > 0) {@("$" + "+" + Model.TotalAmount) } else { @("$" + Model.TotalAmount)  }
+                                            }
+                                        </h3>
                                     </div>
                                 </div>
                             </div>
@@ -131,4 +135,62 @@
             </div>
         </div>
     </div>
+    <script>
+        // Transaction Graph
+        setTimeout(() => {
+            var ctx = document.getElementById("chartjsWeeklyExpenses");
+            ctx.height = 100;
+
+            // Data passed from the server
+            var weeklyExpenses = @Html.Raw(JsonSerializer.Serialize(Model.weeklyEspenses));
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    datasets: weeklyExpenses.map((expenses, index) => ({
+                        label: 'Week ' + (index + 1),
+                        data: expenses,
+                        backgroundColor: 'rgba(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ', 1)'
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            stacked: true,
+                            gridLines: {
+                                drawBorder: false,
+                                display: false
+                            },
+                            ticks: {
+                                display: true, // Show main x-axis line
+                                beginAtZero: true
+                            },
+                            barPercentage: 0.5, // Adjusted to fit properly
+                            categoryPercentage: 0.5
+                        }],
+                        yAxes: [{
+                            stacked: true,
+                            gridLines: {
+                                drawBorder: false, // Hide main y-axis line
+                                display: false
+                            },
+                            ticks: {
+                                display: true,
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        enabled: true
+                    }
+                }
+            });
+        }, 100);
+    </script>
 </body>

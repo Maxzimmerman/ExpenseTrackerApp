@@ -118,13 +118,72 @@ namespace ExpenseTrackerApp.Data.Repositories
             return balance;
         }
 
+        public decimal GetAmountForTransactionOfCertainWeek(string userid, int year, int month, int week)
+        {
+            var firstDayOfMonth = new DateTime(year, month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+            decimal amount = _context.transactions
+                .Where(t => t.ApplicationUserId == userid 
+                && t.Category.CategoryType.Name == "Expense"
+                && t.Date.Year == year 
+                && t.Date.Month == month 
+                && t.Date.Day >= firstDayOfMonth.Day && t.Date.Day <= lastDayOfMonth.Day)
+                .Sum(t => t.Amount);
+
+            return amount;
+        }
+
+        public decimal GetDailyAverage(string userId)
+        {
+            decimal dailyAverage = _context.transactions
+                .Where(t => t.ApplicationUserId == userId)
+                .GroupBy(t => t.Date.Date)
+                .Select(g => g.Sum(t => t.Amount))
+                .Average();
+
+            return Math.Round(dailyAverage, 0);
+        }
+
+        public decimal GetTotalAmount(string userId)
+        {
+            decimal totalAmount = _context.transactions
+                .Where(t => t.ApplicationUserId == userId)
+                .Sum(t => t.Amount);
+
+            return totalAmount;
+        }
+
         // General End
         // Analytics Page Start
         public AnalyticsData GetAnalyticsData(string userId)
         {
-            int transactions = _context.transactions.ToList().Count;
-            int categories = _context.categories.ToList().Count;
-            AnalyticsData data = new AnalyticsData(transactions, categories);
+            int transactions = _context.transactions.Count();
+            int categories = _context.categories.Count();
+            decimal dailyAverage = GetDailyAverage(userId);
+            decimal totalAmount = GetTotalAmount(userId);
+            List<List<decimal>> weeklyExpenses = new List<List<decimal>>();
+            var year = DateTime.Now.Year;
+
+            for (int month = 1; month <= 12; month++)
+            {
+                List<decimal> list = new List<decimal>();
+                for (int week = 1; week <= 4; week++)
+                {
+                    list.Add(GetBalanceForCertainDay(userId, year, month, week));
+                }
+                weeklyExpenses.Add(list);
+            }
+
+            AnalyticsData data = new AnalyticsData
+            {
+                TotalTransactions = transactions,
+                NumberOfCategories = categories,
+                DailyAverageValue = dailyAverage,
+                TotalAmount = totalAmount,
+                weeklyEspenses = weeklyExpenses
+            };
+
             return data;
         }
 
