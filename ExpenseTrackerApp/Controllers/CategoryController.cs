@@ -12,7 +12,7 @@ using System.Security.Claims;
 namespace ExpenseTrackerApp.Controllers
 {
     [Authorize]
-    public class CategoryController : Controller
+    public class CategoryController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly ICategoryRepository _categoryRepository;

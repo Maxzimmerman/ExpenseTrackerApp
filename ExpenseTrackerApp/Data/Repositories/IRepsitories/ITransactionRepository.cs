@@ -16,8 +16,8 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         public IncomeVsExpensesData GetIncomeVsExpensesData(string userId);
         public decimal GetBalanceForCertainMonth(string userId, int month);
         public BalanceData GetBalanceData(string userId);
-        public decimal GetBalanceForCertainDay(string userId, int year, int month, int day);
-        public decimal GetAmountForTransactionOfCertainWeek(string userid, int year, int month, int week);
+        public decimal GetBalanceForCertainDay(string userId, int year, int month, int week);
+        public decimal GetAmountForTransactionOfCertainWeek(string userid, int year, int month, int day);
         public decimal GetDailyAverage(string userId);
         public decimal GetTotalAmount(string userId);
     }

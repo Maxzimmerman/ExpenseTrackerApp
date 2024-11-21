@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 namespace ExpenseTrackerApp.Controllers
 {
     [Authorize]
-    public class TransactionController : Controller
+    public class TransactionController : BaseController
     {
         private readonly ITransactionRepository _transactionRepository;
         private readonly UserManager<IdentityUser> _userManager;

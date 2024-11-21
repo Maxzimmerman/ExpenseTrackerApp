@@ -1,0 +1,30 @@
+﻿@{
+    var footer = ViewData["Footer"] as Footer;
+}
+
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="copyright">
+                    <p>
+                        © Copyright
+                        <script>
+                            var CurrentYear = new Date().getFullYear()
+                            document.write(CurrentYear)
+                        </script>
+                        <a href="#">@footer.CopryRightHolder</a> I All Rights Reserved
+                    </p>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="footer-social">
+                    <ul>
+                        <li><a href="https://github.com/Maxzimmerman"><i class="fi fi-brands-github"></i></a></li>
+                        <li><a href="https://www.linkedin.com/in/max-zimmermann-939592281/"><i class="fi fi-brands-linkedin"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

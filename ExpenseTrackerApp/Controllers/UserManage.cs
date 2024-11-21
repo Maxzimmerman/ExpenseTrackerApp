@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace ExpenseTrackerApp.Controllers
 {
-    public class UserManage : Controller
+    public class UserManage : BaseController
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
