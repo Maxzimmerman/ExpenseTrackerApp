@@ -17,6 +17,8 @@ namespace ExpenseTrackerApp.Data
         public DbSet<CategoryColor> categoriesColors { get; set; }
         public DbSet<CategoryType> categoriesTypes { get; set; }
         public DbSet<CategoryIcon> categoriesIcons { get; set; }
+        public DbSet<SocialLink> socialLinks { get; set; }
+        public DbSet<Footer> footers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +36,12 @@ namespace ExpenseTrackerApp.Data
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.Amount)
                 .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<SocialLink>()
+                .HasOne(s => s.Footer)
+                .WithMany()
+                .HasForeignKey(s => s.FooterId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configure foreign keys with no cascade delete
             modelBuilder.Entity<Category>()

@@ -15,7 +15,10 @@ namespace ExpenseTrackerApp.Controllers
         private readonly IUserRepository _userRepository;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IUserRepository userRepository, UserManager<IdentityUser> userManage)
+        public HomeController(ILogger<HomeController> logger, 
+            IUserRepository userRepository, 
+            UserManager<IdentityUser> userManage,
+            IFooterRepository footerRepository) : base(footerRepository)
         {
             _logger = logger;
             _userRepository = userRepository;

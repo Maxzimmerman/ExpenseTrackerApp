@@ -14,13 +14,13 @@ namespace ExpenseTrackerApp.Controllers
     [Authorize]
     public class CategoryController : BaseController
     {
-        private readonly ApplicationDbContext _context;
         private readonly ICategoryRepository _categoryRepository;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public CategoryController(ApplicationDbContext context, ICategoryRepository categoryRepository, UserManager<IdentityUser> userManager)
+        public CategoryController(IFooterRepository footerRepository, 
+            ICategoryRepository categoryRepository, 
+            UserManager<IdentityUser> userManager) : base(footerRepository)
         {
-            _context = context;
             _categoryRepository = categoryRepository;
             _userManager = userManager;
         }

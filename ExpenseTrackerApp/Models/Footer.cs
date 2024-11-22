@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExpenseTrackerApp.Models
 {
@@ -7,6 +8,7 @@ namespace ExpenseTrackerApp.Models
         [Key]
         public int Id { get; set; }
         public string CopryRightHolder { get; set; } = string.Empty;
-        public List<SocialLinks> Links { get; set; }
+        [NotMapped]
+        public ICollection<SocialLink> SocialLinks { get; set; }
     }
 }

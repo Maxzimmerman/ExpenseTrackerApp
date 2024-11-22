@@ -15,7 +15,9 @@ namespace ExpenseTrackerApp.Controllers
         private readonly ITransactionRepository _transactionRepository;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public TransactionController(ITransactionRepository transactionRepository, UserManager<IdentityUser> userManager)
+        public TransactionController(ITransactionRepository transactionRepository, 
+            UserManager<IdentityUser> userManager,
+            IFooterRepository footerRepository) : base(footerRepository)
         {
             _transactionRepository = transactionRepository;
             _userManager = userManager;

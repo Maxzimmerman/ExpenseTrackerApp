@@ -20,8 +20,12 @@
             <div class="col-xl-6">
                 <div class="footer-social">
                     <ul>
-                        <li><a href="https://github.com/Maxzimmerman"><i class="fi fi-brands-github"></i></a></li>
-                        <li><a href="https://www.linkedin.com/in/max-zimmermann-939592281/"><i class="fi fi-brands-linkedin"></i></a></li>
+                        @{
+                            foreach(SocialLink socialLink in footer.SocialLinks)
+                            {
+                                <li><a href="@socialLink.Url"><i class="fi @socialLink.IconClass"></i></a></li>
+                            }
+                        }
                     </ul>
                 </div>
             </div>

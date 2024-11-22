@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExpenseTrackerApp.Models
 {
-    public class SocialLinks
+    public class SocialLink
     {
         [Key]
         public int Id { get; set; }

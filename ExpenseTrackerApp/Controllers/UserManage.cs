@@ -17,7 +17,10 @@ namespace ExpenseTrackerApp.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserRepository _userRepository;
 
-        public UserManage(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IUserRepository userRepository)
+        public UserManage(SignInManager<IdentityUser> signInManager, 
+            UserManager<IdentityUser> userManager, 
+            IUserRepository userRepository,
+            IFooterRepository footerRepository) : base(footerRepository)
         {
             _signInManager = signInManager;
             _userManager = userManager;
