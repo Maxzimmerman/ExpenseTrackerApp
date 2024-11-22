@@ -16,12 +16,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-//    .AddCookie(options =>
-//    {
-//        //(options.LoginPath = "/UserManage/SignIn";
-//        options.ReturnUrlParameter = "/Home/Home";
-//    });
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/UserManage/SignIn"; 
+        options.AccessDeniedPath = "/UserManage/AccessDenied"; 
+        options.ReturnUrlParameter = "ReturnUrl"; 
+    });
+
 
 builder.Services.AddControllersWithViews();
 

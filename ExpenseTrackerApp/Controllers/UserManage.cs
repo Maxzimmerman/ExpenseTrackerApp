@@ -74,12 +74,12 @@ namespace ExpenseTrackerApp.Controllers
                 }
                 else
                 {
-                    return View("BadRequest");
+                    return RedirectToAction("AccessDenied", "UserManage");
                 }
             }
             else
             {
-                return View("BadRequest");
+                return RedirectToAction("AccessDenied", "UserManage");
             }
         }
 
@@ -134,6 +134,12 @@ namespace ExpenseTrackerApp.Controllers
             {
                 return View(user);
             }
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
             return View();
         }
     }
