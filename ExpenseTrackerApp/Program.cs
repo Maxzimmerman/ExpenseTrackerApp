@@ -1,6 +1,7 @@
 using ExpenseTrackerApp.Data;
 using ExpenseTrackerApp.Data.Repositories;
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
+using ExpenseTrackerApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,15 +15,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/UserManage/SignIn"; 
-        options.AccessDeniedPath = "/UserManage/AccessDenied"; 
-        options.ReturnUrlParameter = "ReturnUrl"; 
-    });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/UserManage/SignIn";
+    options.LogoutPath = "/UserManage/SignOut";
+    options.AccessDeniedPath = "/UserManage/AccessDenied";
+    options.SlidingExpiration = true;
+});
+
 
 
 builder.Services.AddControllersWithViews();
@@ -32,6 +35,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IFooterRepository, FooterRepository>();
+builder.Services.AddScoped<IUserManageService, UserManageService>();
 
 var app = builder.Build();
 
