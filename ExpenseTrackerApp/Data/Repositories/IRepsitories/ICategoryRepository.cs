@@ -3,7 +3,7 @@ using ExpenseTrackerApp.Models.ViewModels.CategoryViewModels;
 
 namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
-    public interface ICategoryRepository
+    public interface ICategoryRepository : IRepository<Category>
     {
         AddCategory addCategoryData(string userId);
         void createCategory(Category category, string id);

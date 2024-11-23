@@ -6,45 +6,45 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _applicationDbContext;
 
-        public CategoryRepository(ApplicationDbContext context)
+        public CategoryRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
         {
-            _context = context;
+            _applicationDbContext = applicationDbContext;
         }
 
         public AddCategory addCategoryData(string userId)
         {
             IEnumerable<SelectListItem> categoryTypes =
-                _context.categoriesTypes.Select(ct => new SelectListItem
+                _applicationDbContext.categoriesTypes.Select(ct => new SelectListItem
                 {
                     Text = ct.Name,
                     Value = ct.Id.ToString()
                 }).ToList();
 
             IEnumerable<SelectListItem> categoryIcons =
-                _context.categoriesIcons.Select(ci => new SelectListItem
+                _applicationDbContext.categoriesIcons.Select(ci => new SelectListItem
                 {
                     Text = ci.Name,
                     Value = ci.Id.ToString()
                 }).ToList();
 
             IEnumerable<SelectListItem> categoryColors =
-                _context.categoriesColors.Select(cc => new SelectListItem
+                _applicationDbContext.categoriesColors.Select(cc => new SelectListItem
                 {
                     Text = cc.Name,
                     Value = cc.Id.ToString()
                 }).ToList();
 
-            var expenses = _context.categories
+            var expenses = _applicationDbContext.categories
                 .Include(c => c.CategoryType)
                 .Include(c => c.CategoryIcon)
                 .Include(c => c.CategoryColor)
                 .Where(c => c.CategoryType.Name == "Expense" && c.ApplicationUserId == userId)
                 .ToList();
-            var incoms = _context.categories
+            var incoms = _applicationDbContext.categories
                 .Include(c => c.CategoryType)
                 .Include(c => c.CategoryIcon)
                 .Include(c => c.CategoryColor)
@@ -63,9 +63,9 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public void createCategory(Category category, string id)
         {
-            var categoryIcon = _context.categoriesIcons.FirstOrDefault(c => c.Id == category.CategoryIconId);
-            var categoryType = _context.categoriesTypes.FirstOrDefault(c => c.Id == category.CategoryTypeId);
-            var categoryColor = _context.categoriesColors.FirstOrDefault(c => c.Id == category.CategoryColorId);
+            var categoryIcon = _applicationDbContext.categoriesIcons.FirstOrDefault(c => c.Id == category.CategoryIconId);
+            var categoryType = _applicationDbContext.categoriesTypes.FirstOrDefault(c => c.Id == category.CategoryTypeId);
+            var categoryColor = _applicationDbContext.categoriesColors.FirstOrDefault(c => c.Id == category.CategoryColorId);
 
             if (categoryIcon == null)
             {
@@ -86,26 +86,26 @@ namespace ExpenseTrackerApp.Data.Repositories
             category.CategoryType = categoryType;
             category.CategoryColor = categoryColor;
             category.ApplicationUserId = id;
-            _context.categories.Add(category);
-            _context.SaveChanges();
+            _applicationDbContext.categories.Add(category);
+            _applicationDbContext.SaveChanges();
         }
 
         public void deleteCategory(int id)
         {
             var category = this.findCategory(id);
-            _context.categories.Remove(category);
-            _context.SaveChanges();
+            _applicationDbContext.categories.Remove(category);
+            _applicationDbContext.SaveChanges();
         }
 
         public void updateCategory(Category category)
         {
-            _context.categories.Update(category);
-            _context.SaveChanges();
+            _applicationDbContext.categories.Update(category);
+            _applicationDbContext.SaveChanges();
         }
 
         public Category findCategory(int id)
         {
-            var category = _context.categories
+            var category = _applicationDbContext.categories
                 .Include(c => c.CategoryType)
                 .Include(c => c.CategoryColor)
                 .Include(c => c.CategoryIcon)
@@ -120,7 +120,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public List<Category> GetAllCategoriesWithTransactions(string userId)
         {
-            var list = _context.categories
+            var list = _applicationDbContext.categories
                 .Where(c => c.ApplicationUserId == userId)
                 .ToList();
 
@@ -132,7 +132,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public List<Category> GetAllExpenseCategoriesWithTransactions(string userId)
         {
-            var listExpenses = _context.categories
+            var listExpenses = _applicationDbContext.categories
                 .Include(c => c.CategoryType)
                 .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == "Expense")
                 .ToList();
@@ -145,7 +145,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public List<Category> GetAllIncomeCategoriesWithTransactions(string userId)
         {
-            var listIncoms = _context.categories
+            var listIncoms = _applicationDbContext.categories
                 .Include(c => c.CategoryType)
                 .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == "Income")
                 .ToList();
@@ -159,7 +159,7 @@ namespace ExpenseTrackerApp.Data.Repositories
         public List<Category> GetAllCategoriesWithTransactions(string userId, string ExpenseOrIncom)
         {
             List<Category> categoriesWithTransactions = new List<Category>();
-            var categories = _context.categories
+            var categories = _applicationDbContext.categories
                 .Include(c => c.CategoryType)
                 .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == ExpenseOrIncom)
                 .ToList();
@@ -180,7 +180,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public bool CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(string userId, string categoryName)
         {
-            decimal amount = _context.transactions
+            decimal amount = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId && t.Category.Title == categoryName)
                 .Sum(t => t.Amount);
 
@@ -192,7 +192,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public decimal GetTotalAmountOfAllCategories(string userId, string ExpenseOrIncomd)
         {
-            decimal amount = _context.transactions
+            decimal amount = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId && t.Category.CategoryType.Name == ExpenseOrIncomd)
                 .Sum(t => System.Math.Abs(t.Amount));
 

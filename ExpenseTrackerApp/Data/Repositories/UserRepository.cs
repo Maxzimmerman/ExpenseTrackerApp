@@ -10,18 +10,18 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : Repository<ApplicationUser>, IUserRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _applicationDbContext;
 
-        public UserRepository(ApplicationDbContext context)
+        public UserRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
         {
-            _context = context;
+            _applicationDbContext = applicationDbContext;
         }
 
         public ApplicationUser getUserById(string id)
         {
-            var user = _context.applicationUsers.FirstOrDefault(u => u.Id == id);
+            var user = _applicationDbContext.applicationUsers.FirstOrDefault(u => u.Id == id);
             if (user != null)
                 return user;
             else
@@ -36,7 +36,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 toUpdate.ApplicationUserName = user.ApplicationUserName;
                 toUpdate.Email = user.Email;
                 toUpdate.registeredSince = user.registeredSince;
-                _context.SaveChanges();
+                _applicationDbContext.SaveChanges();
                 return toUpdate;    
             }
             else

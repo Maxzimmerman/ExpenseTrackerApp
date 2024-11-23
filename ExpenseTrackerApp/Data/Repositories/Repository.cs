@@ -14,13 +14,13 @@ namespace ExpenseTrackerApp.Data.Repositories
             this.dbSet = _applicationDbContext.Set<T>();
         }
 
-        public virtual async void Add(T entry)
+        public virtual void Add(T entry)
         {
             _applicationDbContext.Add(entry);
             _applicationDbContext.SaveChanges();
         }
 
-        public virtual async void Delete(T entry)
+        public virtual void Delete(T entry)
         {
             _applicationDbContext.Remove(entry);
             _applicationDbContext.SaveChanges();

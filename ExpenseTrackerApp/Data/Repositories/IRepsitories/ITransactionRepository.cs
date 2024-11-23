@@ -3,7 +3,7 @@ using ExpenseTrackerApp.Models.ViewModels.TransactionViewModels;
 
 namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
-    public interface ITransactionRepository
+    public interface ITransactionRepository : IRepository<Models.Transaction>
     {
         ExpenseTrackerApp.Models.Transaction getFirst();
         AnalyticsData GetAnalyticsData(string userId);

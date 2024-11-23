@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository<ApplicationUser> 
     {
         ApplicationUser getUserById(string id);
         ApplicationUser updateUser(ApplicationUser user);
