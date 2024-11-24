@@ -1,5 +1,6 @@
 ﻿using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {

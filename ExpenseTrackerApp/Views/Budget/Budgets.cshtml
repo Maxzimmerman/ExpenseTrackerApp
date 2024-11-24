@@ -1,0 +1,162 @@
+﻿@model ExpenseTrackerApp.Models.ViewModels.BudgetViewModels.BudgetViewModel
+
+<body class="dashboard">
+    <div id="main-wrapper">
+        <div class="content-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title">
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-xl-4">
+                                    <div class="page-title-content">
+                                        <h3>Budgets</h3>
+                                        <p class="mb-2">Welcome Trackify Finance Management</p>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="breadcrumbs">
+                                        <a href="#">Home </a>
+                                        <span><i class="fi fi-rr-angle-small-right"></i></span>
+                                        <a href="#">Budgets</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="budgets-tab">
+                    <div class="row g-0">
+                        <div class="col-xl-3">
+                            <div class="nav d-block">
+                                <div class="row">
+                                    @{
+                                        for (int i = 0; i < Model.Budgets.Count(); i++)
+                                        {
+                                            string filterActive = i == 1 ? "active" : "";
+                                            string tabId = "tab" + i;
+
+                                            <div class="col-xl-12 col-md-6">
+                                                <div class="budgets-nav @filterActive" data-bs-toggle="pill" data-bs-target="#@tabId">
+                                                    <div class="budgets-nav-icon">
+                                                        <span><i class="fi @Model.Budgets[i].Category.CategoryIcon.Code"></i></span>
+                                                    </div>
+                                                    <div class="budgets-nav-text">
+                                                        <h3>@Model.Budgets[i].Category.Title</h3>
+                                                        <p>$1458.30</p>
+                                                    </div>
+                                                    <span class="show-time">@Model.Budgets[i].BudgetType.Name</span>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="add-budgets-link">
+                                <h5 class="mb-0">Add new budget</h5>
+                                <a href="add-new-account.html">
+                                    <i class="fi fi-rr-square-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xl-9">
+                            <div class="tab-content budgets-tab-content">
+                                @{
+                                    // The first Item Has to be market as shown
+                                    for (int i = 0; i < Model.Budgets.Count(); i++)
+                                    {
+                                        string classText = i == 0 ? "tab-pane fade show active" : "tab-pane fade";
+                                        string tabId = "tab" + i;
+
+                                        <div class="@classText" id="@tabId">
+                                            <div class="budgets-tab-title">
+                                                <h3>@Model.Budgets[i].Category.Title</h3>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xl-12">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div>
+                                                                    <span>Spend</span>
+                                                                    <h3>$1458.30</h3>
+                                                                </div>
+                                                                <div class="text-end">
+                                                                    <span>Budget</span>
+                                                                    <h3>$1458.30</h3>
+                                                                </div>
+                                                            </div>
+                                                            <div class="progress">
+                                                                <div class="progress-bar" style="width: 25%;"
+                                                                     role="progressbar">
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between mt-2">
+                                                                <span>25%</span>
+                                                                <span>75%</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xxl-12">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                                                                    <div class="budget-widget">
+                                                                        <p>Last Month</p>
+                                                                        <h3>$42,678</h3>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                                                                    <div class="budget-widget">
+                                                                        <p>Expenses</p>
+                                                                        <h3>$1,798</h3>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                                                                    <div class="budget-widget">
+                                                                        <p>Taxes</p>
+                                                                        <h3>$255.25</h3>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
+                                                                    <div class="budget-widget">
+                                                                        <p>Debt</p>
+                                                                        <h3>$365,478</h3>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-12">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h4 class="card-title">Budget Period </h4>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <canvas id="chartjsBudgetPeriod"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <partial name="~/Views/Footer/_Footer.cshtml" />
+    </div>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/chartjs/chartjs.js"></script>
+    <script src="~/js/plugins/chartjs-bar-budget-period.js"></script>
+    <script src="~/vendor/circle-progress/circle-progress.min.js"></script>
+    <script src="~/js/plugins/circle-progress-init.js"></script>
+    <script src="~/js/scripts.js"></script>
+</body>

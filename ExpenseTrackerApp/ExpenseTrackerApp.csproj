@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\UserManage\AccessDenied.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.25" />
@@ -22,6 +18,7 @@
   <ItemGroup>
     <Folder Include="Areas\User\Controllers\" />
     <Folder Include="Areas\User\Views\" />
+    <Folder Include="CustomExceptions\" />
     <Folder Include="Plan\" />
   </ItemGroup>
 
@@ -31,10 +28,6 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\UserManage\AccessDenied.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\UserManage\AccessDenied.cshtml" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@ using ExpenseTrackerApp.Data;
 using ExpenseTrackerApp.Data.Repositories;
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Services;
+using ExpenseTrackerApp.Services.IServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => {
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+})
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
@@ -27,7 +31,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 
-
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IFooterRepository, FooterRepository>();
@@ -36,6 +39,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IFooterRepository, FooterRepository>();
 builder.Services.AddScoped<IUserManageService, UserManageService>();
+builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 

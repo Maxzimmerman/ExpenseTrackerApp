@@ -1,6 +1,7 @@
 ﻿using ExpenseTrackerApp.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ExpenseTrackerApp.Data
 {
@@ -19,6 +20,8 @@ namespace ExpenseTrackerApp.Data
         public DbSet<CategoryIcon> categoriesIcons { get; set; }
         public DbSet<SocialLink> socialLinks { get; set; }
         public DbSet<Footer> footers { get; set; }
+        public DbSet<Budget> budgets { get; set; }
+        public DbSet<BudgetType> budgettypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,13 +40,30 @@ namespace ExpenseTrackerApp.Data
                 .Property(t => t.Amount)
                 .HasColumnType("decimal(18,2)");
 
+            modelBuilder.Entity<Budget>()
+                .Property(b => b.Amount)
+                .HasColumnType("decimal(18,2)");
+
+            // Configure foreign keys with no cascade delete
+
+            modelBuilder.Entity<Budget>()
+                .HasOne(b => b.BudgetType)
+                .WithMany()
+                .HasForeignKey(b => b.BudgetTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Budget>()
+                .HasOne(b => b.Category)
+                .WithMany()
+                .HasForeignKey(b => b.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<SocialLink>()
                 .HasOne(s => s.Footer)
                 .WithMany()
                 .HasForeignKey(s => s.FooterId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure foreign keys with no cascade delete
             modelBuilder.Entity<Category>()
                 .HasOne(c => c.ApplicationUser)
                 .WithMany()
@@ -57,6 +77,7 @@ namespace ExpenseTrackerApp.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Similar configurations for other models
+
             modelBuilder.Entity<Category>()
                 .HasOne(c => c.CategoryType)
                 .WithMany()

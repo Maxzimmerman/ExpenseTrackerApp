@@ -3,7 +3,7 @@ using ExpenseTrackerApp.Data.Migrations;
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels.UserViewModels;
-using ExpenseTrackerApp.Services;
+using ExpenseTrackerApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -119,6 +119,15 @@ namespace ExpenseTrackerApp.Controllers
                 return View();
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (await _userManageService.ConfirmEmail(userId, token))
+                return RedirectToAction("SignIn", "UserManage");
+            return View("Error");
+        }
+
 
         [HttpGet]
         public IActionResult AccessDenied()
