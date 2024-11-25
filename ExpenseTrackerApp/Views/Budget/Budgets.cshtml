@@ -39,13 +39,13 @@
                                             <div class="col-xl-12 col-md-6">
                                                 <div class="budgets-nav @filterActive" data-bs-toggle="pill" data-bs-target="#@tabId">
                                                     <div class="budgets-nav-icon">
-                                                        <span><i class="fi @Model.Budgets[i].Category.CategoryIcon.Code"></i></span>
+                                                        <span><i class="fi @Model.Budgets[i].Budget.Category.CategoryIcon.Code"></i></span>
                                                     </div>
                                                     <div class="budgets-nav-text">
-                                                        <h3>@Model.Budgets[i].Category.Title</h3>
-                                                        <p>$1458.30</p>
+                                                        <h3>@Model.Budgets[i].Budget.Category.Title</h3>
+                                                        <p>$@Model.Budgets[i].Budget.Amount</p>
                                                     </div>
-                                                    <span class="show-time">@Model.Budgets[i].BudgetType.Name</span>
+                                                    <span class="show-time">@Model.Budgets[i].Budget.BudgetType.Name</span>
                                                 </div>
                                             </div>
                                         }
@@ -70,7 +70,7 @@
 
                                         <div class="@classText" id="@tabId">
                                             <div class="budgets-tab-title">
-                                                <h3>@Model.Budgets[i].Category.Title</h3>
+                                                <h3>@Model.Budgets[i].Budget.Category.Title</h3>
                                             </div>
                                             <div class="row">
                                                 <div class="col-xl-12">
@@ -79,21 +79,21 @@
                                                             <div class="d-flex justify-content-between">
                                                                 <div>
                                                                     <span>Spend</span>
-                                                                    <h3>$1458.30</h3>
+                                                                    <h3>$@Model.Budgets[i].SpendAmount</h3>
                                                                 </div>
                                                                 <div class="text-end">
                                                                     <span>Budget</span>
-                                                                    <h3>$1458.30</h3>
+                                                                    <h3>$@Model.Budgets[i].BudgetAmount</h3>
                                                                 </div>
                                                             </div>
                                                             <div class="progress">
-                                                                <div class="progress-bar" style="width: 25%;"
+                                                                <div class="progress-bar" style="width: @Model.Budgets[i].SpendPercentage%;"
                                                                      role="progressbar">
                                                                 </div>
                                                             </div>
                                                             <div class="d-flex justify-content-between mt-2">
-                                                                <span>25%</span>
-                                                                <span>75%</span>
+                                                                <span>@Model.Budgets[i].SpendPercentage%</span>
+                                                                <span>@Model.Budgets[i].BudgetPercentage%</span>
                                                             </div>
                                                         </div>
                                                     </div>

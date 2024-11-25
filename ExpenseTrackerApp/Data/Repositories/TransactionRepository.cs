@@ -19,6 +19,16 @@ namespace ExpenseTrackerApp.Data.Repositories
             _categoryRepository = categoryRepository;
         }
 
+        public decimal GetAmountForCertainCategory(string userId, int categoryId)
+        {
+            decimal amount = _applicationDbContext.transactions
+                .Include(t => t.Category)
+                .Where(t => t.ApplicationUserId == userId && t.Category.Id == categoryId)
+                .ToList()
+                .Sum(t => t.Amount);
+            return amount;
+        }
+
         // General Start
         public ExpenseTrackerApp.Models.Transaction getFirst()
         {

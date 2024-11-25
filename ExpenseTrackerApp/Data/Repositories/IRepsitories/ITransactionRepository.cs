@@ -5,6 +5,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
     public interface ITransactionRepository : IRepository<Models.Transaction>
     {
+        decimal GetAmountForCertainCategory(string userId, int categoryId);
         ExpenseTrackerApp.Models.Transaction getFirst();
         AnalyticsData GetAnalyticsData(string userId);
         List<ExpenseTrackerApp.Models.Transaction> GetExpenses(string userId);

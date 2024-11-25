@@ -24,12 +24,8 @@ namespace ExpenseTrackerApp.Controllers
         public async Task<IActionResult> Budgets()
         {
             string userId = _userManageService.GetCurrentUserId(User);
-            var budgets = await _budgetRepository.GetAllBudgets(userId);
-            var budgestViewModel = new BudgetViewModel()
-            {
-                Budgets = budgets
-            };
-            return View(budgestViewModel);
+            var budgets = await _budgetRepository.GetBudgetViewModelAsync(userId);
+            return View(budgets);
         }
     }
 }

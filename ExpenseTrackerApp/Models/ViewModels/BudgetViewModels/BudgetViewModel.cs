@@ -2,6 +2,6 @@
 {
     public class BudgetViewModel
     {
-        public List<Budget> Budgets { get; set; }
+        public List<BudgetDetailViewModel> Budgets { get; set; } = new List<BudgetDetailViewModel>();
     }
 }
