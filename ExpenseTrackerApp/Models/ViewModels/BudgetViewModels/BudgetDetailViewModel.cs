@@ -8,5 +8,7 @@
         public double SpendPercentage { get; set; }
         public double BudgetPercentage { get; set; }
         public decimal SpendLastMonth { get; set; }
+        public List<decimal> BudgetsForYear { get; set; } = new List<decimal>();
+        public List<decimal>? ExpensesForYear { get; set; }
     }
 }

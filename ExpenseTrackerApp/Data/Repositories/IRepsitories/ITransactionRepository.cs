@@ -6,6 +6,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
     public interface ITransactionRepository : IRepository<Models.Transaction>
     {
+        List<decimal> GetExpensesForAllMonthsForCertainCategory(string userId, int categoryId);
         decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetAmountForCertainCategoryThisMonth(string userId, int categoryId);

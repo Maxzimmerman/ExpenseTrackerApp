@@ -19,6 +19,25 @@ namespace ExpenseTrackerApp.Data.Repositories
             _categoryRepository = categoryRepository;
         }
 
+        public List<decimal> GetExpensesForAllMonthsForCertainCategory(string userId, int categoryId)
+        {
+            List<decimal> expensesMonths = new List<decimal>();
+            int currentYear = DateTime.Now.Year;
+            for(int monthIndex = 1; monthIndex < 13; monthIndex++)
+            {
+                decimal monthExpens = _applicationDbContext.transactions
+                    .Include(t => t.Category)
+                    .Where(t => t.CategoryId == categoryId
+                             && t.Category.CategoryType.Name == "Expense"
+                             && t.ApplicationUserId == userId
+                             && t.Date.Year == currentYear
+                             && t.Date.Month == monthIndex)
+                    .Sum(t => t.Amount);
+                expensesMonths.Add(monthExpens);
+            }
+            return expensesMonths;
+        }
+
         public decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId)
         {
             int year = DateTime.Now.Year;

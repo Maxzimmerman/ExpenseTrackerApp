@@ -52,6 +52,13 @@ namespace ExpenseTrackerApp.Data.Repositories
 
                 budgetDetail.SpendLastMonth = _transactionRepository.GetSpendForCertainCategoryLastMonth(userId, budgetDetail.Budget.CategoryId);
 
+                // chart data budgets and expenses for whole year seperatet in months
+                budgetDetail.ExpensesForYear = _transactionRepository.GetExpensesForAllMonthsForCertainCategory(userId, budgetDetail.Budget.CategoryId);
+                for(int monthIndex = 1; monthIndex < 13; monthIndex++)
+                {
+                    budgetDetail.BudgetsForYear.Add(budgetDetail.Budget.Amount);
+                }
+
                 // add to view model list
                 budgetViewModel.Budgets.Add(budgetDetail);
             }
