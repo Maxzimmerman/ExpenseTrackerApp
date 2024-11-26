@@ -16,9 +16,9 @@
                                 </div>
                                 <div class="col-auto">
                                     <div class="breadcrumbs">
-                                        <a href="#">Home </a>
+                                        <a asp-controller="Home" asp-action="Home">Home </a>
                                         <span><i class="fi fi-rr-angle-small-right"></i></span>
-                                        <a href="#">Budgets</a>
+                                        <a asp-controller="Budget" asp-action="Budgets">Budgets</a>
                                     </div>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                                                         <h3>@Model.Budgets[i].Budget.Category.Title</h3>
                                                         <p>$@Model.Budgets[i].Budget.Amount</p>
                                                     </div>
-                                                    <span class="show-time">@Model.Budgets[i].Budget.BudgetType.Name</span>
+                                                    <span class="show-time">Monthly</span>
                                                 </div>
                                             </div>
                                         }
@@ -127,69 +127,71 @@
                                                             <h4 class="card-title">Budget Period </h4>
                                                         </div>
                                                         <div class="card-body">
-                                                            <canvas id="chartjsBudgetPeriod"></canvas>
+                                                            <canvas class="chartjsBudgetPeriod @Model.Budgets[i].Budget.Id" id="chartjsBudgetPeriod"></canvas>
                                                             <script>
                                                                 //chartjsBudgetPeriod
                                                                 setTimeout(() => {
-                                                                    var ctx = document.getElementById("chartjsBudgetPeriod")
-                                                                    ctx.height = 100
-                                                                    new Chart(ctx, {
-                                                                        type: 'bar',
-                                                                        data: {
-                                                                            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
-                                                                            datasets: [{
-                                                                                label: 'a',
-                                                                                data: [5, 6, 4.5, 5.5, 3, 6, 4.5, 6, 8, 3],
-                                                                                backgroundColor: 'rgba(47, 44, 216,1)',
+                                                                    var ctx = document.querySelectorAll(".chartjsBudgetPeriod")
+                                                                    ctx.forEach(element => {
+                                                                        element.height = 100
+                                                                        new Chart(element, {
+                                                                            type: 'bar',
+                                                                            data: {
+                                                                                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+                                                                                datasets: [{
+                                                                                    label: 'a',
+                                                                                    data: [5, 6, 4.5, 5.5, 3, 6, 4.5, 6, 8, 3],
+                                                                                    backgroundColor: 'rgba(47, 44, 216,1)',
+                                                                                },
+                                                                                {
+                                                                                    label: 'b',
+                                                                                    data: [4, 5, 3.5, 4.5, 2, 5, 3.5, 5, 7, 2],
+                                                                                    backgroundColor: 'rgba(47, 44, 216,0.6)',
+                                                                                },
+                                                                                {
+                                                                                    label: 'c',
+                                                                                    data: [4, 5, 3.5, 4.5, 2, 5, 3.5, 5, 7, 2],
+                                                                                    backgroundColor: 'rgba(47, 44, 216,0.3)',
+                                                                                }
+                                                                                ]
                                                                             },
-                                                                            {
-                                                                                label: 'b',
-                                                                                data: [4, 5, 3.5, 4.5, 2, 5, 3.5, 5, 7, 2],
-                                                                                backgroundColor: 'rgba(47, 44, 216,0.6)',
-                                                                            },
-                                                                            {
-                                                                                label: 'c',
-                                                                                data: [4, 5, 3.5, 4.5, 2, 5, 3.5, 5, 7, 2],
-                                                                                backgroundColor: 'rgba(47, 44, 216,0.3)',
+                                                                            options: {
+                                                                                responsive: !0,
+                                                                                maintainAspectRatio: false,
+                                                                                legend: {
+                                                                                    display: false
+                                                                                },
+                                                                                scales: {
+                                                                                    xAxes: [{
+                                                                                        stacked: true,
+                                                                                        gridLines: {
+                                                                                            drawBorder: false,
+                                                                                            display: false
+                                                                                        },
+                                                                                        ticks: {
+                                                                                            display: true, // hide main x-axis line
+                                                                                            beginAtZero: true
+                                                                                        },
+                                                                                        barPercentage: 1.5,
+                                                                                        categoryPercentage: 0.3
+                                                                                    }],
+                                                                                    yAxes: [{
+                                                                                        stacked: true,
+                                                                                        gridLines: {
+                                                                                            drawBorder: false, // hide main y-axis line
+                                                                                            display: false
+                                                                                        },
+                                                                                        ticks: {
+                                                                                            display: true,
+                                                                                            beginAtZero: true
+                                                                                        },
+                                                                                    }]
+                                                                                },
+                                                                                tooltips: {
+                                                                                    enabled: true
+                                                                                }
                                                                             }
-                                                                            ]
-                                                                        },
-                                                                        options: {
-                                                                            responsive: !0,
-                                                                            maintainAspectRatio: false,
-                                                                            legend: {
-                                                                                display: false
-                                                                            },
-                                                                            scales: {
-                                                                                xAxes: [{
-                                                                                    stacked: true,
-                                                                                    gridLines: {
-                                                                                        drawBorder: false,
-                                                                                        display: false
-                                                                                    },
-                                                                                    ticks: {
-                                                                                        display: true, // hide main x-axis line
-                                                                                        beginAtZero: true
-                                                                                    },
-                                                                                    barPercentage: 1.5,
-                                                                                    categoryPercentage: 0.3
-                                                                                }],
-                                                                                yAxes: [{
-                                                                                    stacked: true,
-                                                                                    gridLines: {
-                                                                                        drawBorder: false, // hide main y-axis line
-                                                                                        display: false
-                                                                                    },
-                                                                                    ticks: {
-                                                                                        display: true,
-                                                                                        beginAtZero: true
-                                                                                    },
-                                                                                }]
-                                                                            },
-                                                                            tooltips: {
-                                                                                enabled: true
-                                                                            }
-                                                                        }
+                                                                        })
                                                                     })
                                                                 }, 100)
                                                             </script>

@@ -11,10 +11,6 @@ namespace ExpenseTrackerApp.Models
         [Required]
         public decimal Amount { get; set; }
 
-        [ForeignKey("BudgetType")]
-        public int BudgetTypeId { get; set; }
-        public BudgetType BudgetType { get; set; }
-
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public Category Category { get; set; }

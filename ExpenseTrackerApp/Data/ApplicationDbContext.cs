@@ -21,7 +21,6 @@ namespace ExpenseTrackerApp.Data
         public DbSet<SocialLink> socialLinks { get; set; }
         public DbSet<Footer> footers { get; set; }
         public DbSet<Budget> budgets { get; set; }
-        public DbSet<BudgetType> budgettypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,12 +44,6 @@ namespace ExpenseTrackerApp.Data
                 .HasColumnType("decimal(18,2)");
 
             // Configure foreign keys with no cascade delete
-
-            modelBuilder.Entity<Budget>()
-                .HasOne(b => b.BudgetType)
-                .WithMany()
-                .HasForeignKey(b => b.BudgetTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Budget>()
                 .HasOne(b => b.Category)

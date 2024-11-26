@@ -63,7 +63,6 @@ namespace ExpenseTrackerApp.Data.Repositories
         {
             var budgets = await _applicationDbContext.budgets
                 .Include(b => b.Category)
-                .Include(b => b.BudgetType)
                 .Include(b => b.Category.CategoryType)
                 .Include(b => b.Category.CategoryIcon)
                 .Include(b => b.Category.CategoryColor)
