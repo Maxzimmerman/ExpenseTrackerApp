@@ -7,5 +7,6 @@
         public decimal BudgetAmount { get; set; }
         public double SpendPercentage { get; set; }
         public double BudgetPercentage { get; set; }
+        public decimal SpendLastMonth { get; set; }
     }
 }

@@ -19,31 +19,58 @@ namespace ExpenseTrackerApp.Data.Repositories
             _categoryRepository = categoryRepository;
         }
 
-        public decimal GetAmountForCertainCategory(string userId, int categoryId)
+        public decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId)
         {
+            int year = DateTime.Now.Year;
+            int lastMonth = DateTime.Now.Month - 1;
+
             decimal amount = _applicationDbContext.transactions
                 .Include(t => t.Category)
-                .Where(t => t.ApplicationUserId == userId && t.Category.Id == categoryId)
+                .Where(t => t.Category.CategoryType.Name == "Income" &&
+                        t.ApplicationUserId == userId &&
+                        t.CategoryId == categoryId &&
+                        t.Date.Year == year &&
+                        t.Date.Month == lastMonth)
                 .ToList()
                 .Sum(t => t.Amount);
-            return amount;
+            return Math.Round(amount, 2);
+        }
+
+        public decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId)
+        {
+            int year = DateTime.Now.Year;
+            int month = DateTime.Now.Month - 1;
+
+            decimal amount = _applicationDbContext.transactions
+                .Include(t => t.Category)
+                .Where(t => t.Category.CategoryType.Name == "Expense" && 
+                        t.ApplicationUserId == userId && 
+                        t.CategoryId == categoryId && 
+                        t.Date.Year == year && 
+                        t.Date.Month == month)
+                .ToList()
+                .Sum(t => t.Amount);
+            return Math.Round(amount, 2);
+        }
+
+        public decimal GetAmountForCertainCategoryThisMonth(string userId, int categoryId)
+        {
+            int year = DateTime.Now.Year;
+            int month = DateTime.Now.Month;
+
+            decimal amount = _applicationDbContext.transactions
+                .Include(t => t.Category)
+                .Where(t => t.Category.CategoryType.Name == "Expense" && 
+                        t.ApplicationUserId == userId && 
+                        t.Category.Id == categoryId &&
+                        t.Date.Year == year &&
+                        t.Date.Month == month)
+                .ToList()
+                .Sum(t => t.Amount);
+            return Math.Round(amount, 2);
         }
 
         // General Start
-        public ExpenseTrackerApp.Models.Transaction getFirst()
-        {
-            var transaction = _applicationDbContext.transactions
-                .Include(t => t.Category)
-                .Include(t => t.Category.CategoryType)
-                .Include(t => t.Category.CategoryColor)
-                .Include(t => t.Category.CategoryIcon)
-                .FirstOrDefault(t => t.Id == 3);
-
-            if (transaction != null)
-                return transaction;
-            else
-                throw new Exception("Couldn't find any transaction");
-        }
 
         public List<ExpenseTrackerApp.Models.Transaction> GetExpenses(string userId)
         {
@@ -92,14 +119,17 @@ namespace ExpenseTrackerApp.Data.Repositories
             else throw new Exception("Could not find any transaction");
         }
 
-        public List<Models.Transaction> GetTransactionOfCertainMonth(string userId, string ExpenseOrIncome, int month)
+        public List<Models.Transaction> GetTransactionOfCertainMonth(string userId, string ExpenseOrIncome, int month, int year)
         {
             var transactions = _applicationDbContext.transactions
                 .Include(t => t.Category)
                 .Include(t => t.Category.CategoryColor)
                 .Include(t => t.Category.CategoryIcon)
                 .Include(t => t.Category.CategoryType)
-                .Where(t => t.ApplicationUserId == userId && t.Date.Month == month && t.Category.CategoryType.Name == ExpenseOrIncome)
+                .Where(t => t.ApplicationUserId == userId && 
+                        t.Date.Month == month && 
+                        t.Date.Year == year &&
+                        t.Category.CategoryType.Name == ExpenseOrIncome)
                 .ToList();
 
             if (transactions != null)
@@ -108,7 +138,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 throw new Exception("Could not find any Transactions of certain Month");
         }
 
-        public decimal GetBalanceForCertainMonth(string userId, int month)
+        public decimal GetBalanceForCertainMonth(string userId, int month, int year)
         {
             decimal balance = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId && t.Date.Month == month)
@@ -286,6 +316,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public IncomeVsExpensesData GetIncomeVsExpensesData(string userId)
         {
+            int year = DateTime.Now.Year;
             var transactions = this.GetTransactions(userId);
 
             List<int> incomeData = new List<int>();
@@ -293,8 +324,8 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             for (int i = 1; i < 13; i++)
             {
-                incomeData.Add(GetTransactionOfCertainMonth(userId, "Income", i).Count);
-                expenseData.Add(GetTransactionOfCertainMonth(userId, "Expense", i).Count);
+                incomeData.Add(GetTransactionOfCertainMonth(userId, "Income", i, year).Count);
+                expenseData.Add(GetTransactionOfCertainMonth(userId, "Expense", i, year).Count);
             }
 
             IncomeVsExpensesData incomeVsExpensesData = new IncomeVsExpensesData();
@@ -313,6 +344,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public BalanceData GetBalanceData(string userId)
         {
+            int year = DateTime.Now.Year;
             BalanceData balanceData = new BalanceData();
 
             List<decimal> monthlyBalance = new List<decimal>();
@@ -321,7 +353,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             for (int i = 1; i < 13; i++)
             {
-                monthlyBalance.Add(GetBalanceForCertainMonth(userId, i));
+                monthlyBalance.Add(GetBalanceForCertainMonth(userId, i, year));
             }
 
             int currentYear = DateTime.Now.Year;

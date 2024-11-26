@@ -34,7 +34,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 
                 // amount
                 budgetDetail.BudgetAmount = budget.Amount;
-                budgetDetail.SpendAmount = _transactionRepository.GetAmountForCertainCategory(userId, budget.Category.Id);
+                budgetDetail.SpendAmount = _transactionRepository.GetAmountForCertainCategoryThisMonth(userId, budget.CategoryId);
 
                 // percentages
                 decimal total = budgetDetail.BudgetAmount;
@@ -49,6 +49,8 @@ namespace ExpenseTrackerApp.Data.Repositories
                     budgetDetail.SpendPercentage = 0;
                     budgetDetail.BudgetPercentage = 0;
                 }
+
+                budgetDetail.SpendLastMonth = _transactionRepository.GetSpendForCertainCategoryLastMonth(userId, budgetDetail.Budget.CategoryId);
 
                 // add to view model list
                 budgetViewModel.Budgets.Add(budgetDetail);
