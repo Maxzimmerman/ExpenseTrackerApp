@@ -10,6 +10,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetAmountForCertainCategoryThisMonth(string userId, int categoryId);
+        decimal GetMonthlyAverageForCertainCategory(string userId, int categoryId);
         AnalyticsData GetAnalyticsData(string userId);
         List<ExpenseTrackerApp.Models.Transaction> GetExpenses(string userId);
         List<ExpenseTrackerApp.Models.Transaction> GetIncoms(string userId);
