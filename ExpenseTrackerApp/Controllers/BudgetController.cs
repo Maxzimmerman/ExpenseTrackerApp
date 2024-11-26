@@ -2,10 +2,12 @@
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models.ViewModels.BudgetViewModels;
 using ExpenseTrackerApp.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerApp.Controllers
 {
+    [Authorize]
     public class BudgetController : BaseController
     {
         private readonly IBudgetRepository _budgetRepository;
@@ -23,8 +25,7 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Budgets()
         {
-            string userId = _userManageService.GetCurrentUserId(User);
-            var budgets = await _budgetRepository.GetBudgetViewModelAsync(userId);
+            var budgets = await _budgetRepository.GetBudgetViewModelAsync(_userManageService.GetCurrentUserId(User));
             return View(budgets);
         }
     }

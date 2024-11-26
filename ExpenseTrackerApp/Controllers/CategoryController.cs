@@ -2,6 +2,8 @@
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels.CategoryViewModels;
+using ExpenseTrackerApp.Services;
+using ExpenseTrackerApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,22 +17,20 @@ namespace ExpenseTrackerApp.Controllers
     public class CategoryController : BaseController
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IUserManageService _userManageService;
 
         public CategoryController(IFooterRepository footerRepository, 
             ICategoryRepository categoryRepository, 
-            UserManager<IdentityUser> userManager) : base(footerRepository)
+            IUserManageService userManageService) : base(footerRepository)
         {
             _categoryRepository = categoryRepository;
-            _userManager = userManager;
+            _userManageService = userManageService;
         }
 
-        public async Task<IActionResult> SettingsCategory()
+        [HttpGet]
+        public IActionResult SettingsCategory()
         {
-            var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
-            var currentUserId = currentUser.Id;
-
-            AddCategory addCategory = _categoryRepository.addCategoryData(currentUserId);
+            AddCategory addCategory = _categoryRepository.addCategoryData(_userManageService.GetCurrentUserId(User));
 
             ViewBag.CategoryTypes = addCategory.CategoryTypes;
             ViewBag.CategoryIcons = addCategory.CategoryIcons;
@@ -42,7 +42,7 @@ namespace ExpenseTrackerApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCategory(Category category)
+        public IActionResult AddCategory(Category category)
         {
             if(category == null)
             {
@@ -50,24 +50,18 @@ namespace ExpenseTrackerApp.Controllers
             }
             else
             {
-                var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
-                var currentUserId = currentUser.Id;
-
-                _categoryRepository.createCategory(category, currentUserId);
+                _categoryRepository.createCategory(category, _userManageService.GetCurrentUserId(User));
 
                 return RedirectToAction("Home", "Home");
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> LoadUpdateCategory(int id)
+        public IActionResult LoadUpdateCategory(int id)
         {
-            var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
-            var currentUserId = currentUser.Id;
-
             var category = _categoryRepository.findCategory(id);
 
-            AddCategory addCategory = _categoryRepository.addCategoryData(currentUserId);
+            AddCategory addCategory = _categoryRepository.addCategoryData(_userManageService.GetCurrentUserId(User));
 
             ViewBag.CategoryTypes = addCategory.CategoryTypes;
             ViewBag.CategoryIcons = addCategory.CategoryIcons;

@@ -6,6 +6,7 @@ using System.Security.Claims;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Data;
 using Microsoft.AspNetCore.Identity;
+using ExpenseTrackerApp.Services.IServices;
 
 namespace ExpenseTrackerApp.Controllers
 {
@@ -13,49 +14,42 @@ namespace ExpenseTrackerApp.Controllers
     public class TransactionController : BaseController
     {
         private readonly ITransactionRepository _transactionRepository;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IUserManageService _userManageService;
 
-        public TransactionController(ITransactionRepository transactionRepository, 
-            UserManager<IdentityUser> userManager,
+        public TransactionController(ITransactionRepository transactionRepository,
+            IUserManageService userManageService,
             IFooterRepository footerRepository) : base(footerRepository)
         {
             _transactionRepository = transactionRepository;
-            _userManager = userManager;
+            _userManageService = userManageService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Analytics()
+        public IActionResult Analytics()
         {
-            var currentUser = await _userManager.FindByIdAsync(User.Claims.First().Value);
-            var currentUserId = currentUser.Id;
-
-            AnalyticsData data = _transactionRepository.GetAnalyticsData(currentUserId);
-
+            AnalyticsData data = _transactionRepository.GetAnalyticsData(_userManageService.GetCurrentUserId(User));
             return View(data);
         }
 
         [HttpGet]
         public IActionResult Balance()
         {
-            var balanceData = _transactionRepository.GetBalanceData(User.Claims.First().Value);
-
+            var balanceData = _transactionRepository.GetBalanceData(_userManageService.GetCurrentUserId(User));
             return View(balanceData);
         }
 
         [HttpGet]
         public IActionResult Expenses()
         {
-            var expensesData = _transactionRepository.GetExpenseData(User.Claims.First().Value);
-
+            var expensesData = _transactionRepository.GetExpenseData(_userManageService.GetCurrentUserId(User));
             ViewBag.ChartData = expensesData.categorieDataList;
-
             return View(expensesData);
         }
 
         [HttpGet]
         public IActionResult Income()
         {
-            var incomsData = _transactionRepository.GetIncomeData(User.Claims.First().Value);
+            var incomsData = _transactionRepository.GetIncomeData(_userManageService.GetCurrentUserId(User));
 
             return View(incomsData);
         }
@@ -63,7 +57,7 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public IActionResult IncomeVsExpenses()
         {
-            var incomeVsExpensesData = _transactionRepository.GetIncomeVsExpensesData(User.Claims.First().Value);
+            var incomeVsExpensesData = _transactionRepository.GetIncomeVsExpensesData(_userManageService.GetCurrentUserId(User));
 
             return View(incomeVsExpensesData);
         }
@@ -71,7 +65,7 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public IActionResult TransactionHistory()
         {
-            var transactions = _transactionRepository.GetTransactions(User.Claims.First().Value); 
+            var transactions = _transactionRepository.GetTransactions(_userManageService.GetCurrentUserId(User)); 
 
             return View(transactions);
         }
