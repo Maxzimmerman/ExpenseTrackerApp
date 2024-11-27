@@ -45,6 +45,7 @@
                                                 <div class="create-new-category">
                                                     <form class="row" method="post" asp-controller="Budget" asp-action="AddBudget">
                                                         <input hidden asp-for="Id" />
+
                                                         <div class="mb-3 col-12">
                                                             <label class="form-label">Amount </label>
                                                             <input asp-for="Amount"  type="text" class="form-control" placeholder="Amount" autocomplete="username" aria-required="true">
@@ -74,11 +75,6 @@
                                                 <div class="create-new-category">
                                                     <form class="row" method="post" asp-controller="Budget" asp-action="UpdateBudget">
                                                         <input hidden asp-for="Id" />
-                                                        <input hidden asp-for="Category.Id" />
-                                                        <input hidden  asp-for="Category.ApplicationUserId"/>
-                                                        <input hidden asp-for="Category.CategoryColorId" />
-                                                        <input hidden asp-for="Category.CategoryTypeId" />
-                                                        <input hidden asp-for="Category.CategoryIconId" />
                                                         <div class="mb-3 col-12">
                                                             <label class="form-label">Amount </label>
                                                             <input asp-for="Amount" type="text" class="form-control" placeholder="Amount" autocomplete="username" aria-required="true">
