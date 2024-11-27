@@ -238,8 +238,9 @@ namespace ExpenseTrackerApp.Data.Repositories
         // Analytics Page Start
         public AnalyticsData GetAnalyticsData(string userId)
         {
-            int transactions = _applicationDbContext.transactions.Count();
-            int categories = _applicationDbContext.categories.Count();
+            int transactions = _applicationDbContext.transactions.Where(t => t.ApplicationUserId==userId).Count();
+            int categories = _categoryRepository.CountAllCategoriesForUser(userId);
+
             decimal dailyAverage = GetDailyAverage(userId);
             decimal totalAmount = GetTotalAmount(userId);
             List<List<decimal>> weeklyExpenses = new List<List<decimal>>();

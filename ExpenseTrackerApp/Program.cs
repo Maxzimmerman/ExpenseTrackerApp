@@ -40,6 +40,7 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<IFooterRepository, FooterRepository>();
 builder.Services.AddScoped<IUserManageService, UserManageService>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
+builder.Services.AddScoped<ISocialLinksRepository, SocialLinksRepository>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 var app = builder.Build();

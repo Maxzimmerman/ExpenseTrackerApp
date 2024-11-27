@@ -7,18 +7,19 @@ namespace ExpenseTrackerApp.Data.Repositories
     public class FooterRepository : Repository<Footer>, IFooterRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly ISocialLinksRepository _socialLinksRepository;
 
-        public FooterRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
+        public FooterRepository(ApplicationDbContext applicationDbContext,
+            ISocialLinksRepository socialLinksRepository) : base(applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
+            _socialLinksRepository = socialLinksRepository;
         }
 
         public Footer GetFooter()
         {
             var footerModel = _applicationDbContext.footers.FirstOrDefault();
-            footerModel.SocialLinks = _applicationDbContext.socialLinks
-                .Where(link => link.FooterId == footerModel.Id)
-                .ToList();
+            footerModel.SocialLinks = _socialLinksRepository.socialLinks(footerModel.Id);
             return footerModel;
         }
     }

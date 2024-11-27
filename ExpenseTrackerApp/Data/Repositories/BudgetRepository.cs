@@ -27,13 +27,8 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public AddBudgetViewModel addBudgetData(string userId)
         {
-            IEnumerable<SelectListItem> categories =
-                _applicationDbContext.categories.Select(c => new SelectListItem
-                {
-                    Text = c.Title,
-                    Value = c.Id.ToString()
-                });
-
+            IEnumerable<SelectListItem> categories = _categoryRepository.GetAllCategoriesAsSelectListItems(userId);
+                
             var budgets = _applicationDbContext.budgets
                 .Include(b => b.Category)
                 .Include(b => b.Category.CategoryColor)

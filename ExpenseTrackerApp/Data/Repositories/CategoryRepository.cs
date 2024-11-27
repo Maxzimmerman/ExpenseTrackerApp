@@ -3,6 +3,7 @@ using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels.CategoryViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {
@@ -17,6 +18,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public AddCategory addCategoryData(string userId)
         {
+            // Todo
             IEnumerable<SelectListItem> categoryTypes =
                 _applicationDbContext.categoriesTypes.Select(ct => new SelectListItem
                 {
@@ -24,6 +26,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                     Value = ct.Id.ToString()
                 }).ToList();
 
+            // Todo
             IEnumerable<SelectListItem> categoryIcons =
                 _applicationDbContext.categoriesIcons.Select(ci => new SelectListItem
                 {
@@ -31,6 +34,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                     Value = ci.Id.ToString()
                 }).ToList();
 
+            // Todo
             IEnumerable<SelectListItem> categoryColors =
                 _applicationDbContext.categoriesColors.Select(cc => new SelectListItem
                 {
@@ -63,8 +67,11 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public void createCategory(Category category, string id)
         {
+            //Todo
             var categoryIcon = _applicationDbContext.categoriesIcons.FirstOrDefault(c => c.Id == category.CategoryIconId);
+            //Todo
             var categoryType = _applicationDbContext.categoriesTypes.FirstOrDefault(c => c.Id == category.CategoryTypeId);
+            //Todo
             var categoryColor = _applicationDbContext.categoriesColors.FirstOrDefault(c => c.Id == category.CategoryColorId);
 
             if (categoryIcon == null)
@@ -116,6 +123,33 @@ namespace ExpenseTrackerApp.Data.Repositories
                 return category;
             else
                 throw new Exception("Couldn't find any category");
+        }
+
+        public List<Category> GetAllCategories(string userId)
+        {
+            var categories = _applicationDbContext.categories
+                .Where(c => c.ApplicationUserId == userId)
+                .ToList();
+
+            if (categories != null)
+                return categories;
+            else
+                throw new Exception("Could not find any category");
+        }
+
+        public IEnumerable<SelectListItem> GetAllCategoriesAsSelectListItems(string userId)
+        {
+            IEnumerable<SelectListItem> categories =
+                _applicationDbContext.categories.Select(c => new SelectListItem
+                {
+                    Text = c.Title,
+                    Value = c.Id.ToString()
+                });
+
+            if(categories != null)
+                return categories;
+            else
+                throw new Exception("Could not find any category");
         }
 
         public List<Category> GetAllCategoriesWithTransactions(string userId)
@@ -178,6 +212,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 throw new Exception("Could not find any category");
         }
 
+        //Todo
         public bool CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(string userId, string categoryName)
         {
             decimal amount = _applicationDbContext.transactions
@@ -190,6 +225,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 return false;
         }
 
+        //Todo
         public decimal GetTotalAmountOfAllCategories(string userId, string ExpenseOrIncomd)
         {
             decimal amount = _applicationDbContext.transactions
@@ -197,6 +233,12 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Sum(t => System.Math.Abs(t.Amount));
 
             return amount;
+        }
+
+        public int CountAllCategoriesForUser(string userId)
+        {
+            int categoriesCount = _applicationDbContext.categories.Count();
+            return categoriesCount;
         }
     }
 }
