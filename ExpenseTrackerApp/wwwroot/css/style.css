@@ -16153,9 +16153,9 @@ div {
   font-weight: 400;
 }
 @media only screen and (max-width: 991px) {
-  .bottom .bottom-widget {
-    margin-bottom: 30px;
-  }
+    .bottom .bottom-widget {
+        margin-bottom: 30px;
+    }
 }
 .bottom .bottom-widget .widget-title {
   font-size: 18px;
@@ -16169,15 +16169,20 @@ div {
   margin-bottom: 10px;
   display: inline-block;
 }
-
 .footer {
   background: #F6F9FC;
-  padding: 20px 0px;
+  padding: 50px 0px;
   position: fixed;
   bottom: 0;
   right: 0;
-  left: 80px;
+  left: 0;
   border-radius: 6px;
+}
+@media screen and (min-width: 1000px) {
+    .footer {
+        left: 80px;
+        padding: 20px 0px;
+    }
 }
 .footer .copyright {
   position: relative;
