@@ -1,0 +1,144 @@
+﻿@model Budget
+
+<body class="dashboard">
+    <div id="main-wrapper">
+        <div class="content-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title">
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-xl-4">
+                                    <div class="page-title-content">
+                                        <h3>Categories</h3>
+                                        <p class="mb-2">Welcome Trackify Finance Management</p>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="breadcrumbs">
+                                        <a asp-controller="Home" asp-action="Home">Home </a>
+                                        <span><i class="fi fi-rr-angle-small-right"></i></span>
+                                        <a asp-controller="Budget" asp-action="SettingsBudget">Budgets</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xxl-12 col-xl-12">
+                        <div class="settings-menu">
+                            <a asp-controller="UserManage" asp-action="SettingsProfile">Profile</a>
+                            <a asp-controller="Category" asp-action="SettingsCategory">Categories</a>
+                            <a asp-controller="Budget" asp-action="SettingsBudget">Budgets</a>
+                        </div>
+                        <div class="row">
+                            @{
+                                if (Model == null)
+                                {
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="card-title">Create a new categories</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="create-new-category">
+                                                    <form class="row" method="post" asp-controller="Budget" asp-action="AddBudget">
+                                                        <input hidden asp-for="Id" />
+                                                        <div class="mb-3 col-12">
+                                                            <label class="form-label">Amount </label>
+                                                            <input asp-for="Amount"  type="text" class="form-control" placeholder="Amount" autocomplete="username" aria-required="true">
+                                                        </div>
+                                                        <div class="mb-3 col-6">
+                                                            <label class="form-label">Category </label>
+                                                            <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select" aria-required="true">
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <button class="btn btn-success w-100">Create new budget</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-xxl-4 col-xl-4 col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4 class="card-title">Update Category</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="create-new-category">
+                                                    <form class="row" method="post" asp-controller="Budget" asp-action="UpdateBudget">
+                                                        <input hidden asp-for="Id" />
+                                                        <input hidden asp-for="Category.Id" />
+                                                        <input hidden  asp-for="Category.ApplicationUserId"/>
+                                                        <input hidden asp-for="Category.CategoryColorId" />
+                                                        <input hidden asp-for="Category.CategoryTypeId" />
+                                                        <input hidden asp-for="Category.CategoryIconId" />
+                                                        <div class="mb-3 col-12">
+                                                            <label class="form-label">Amount </label>
+                                                            <input asp-for="Amount" type="text" class="form-control" placeholder="Amount" autocomplete="username" aria-required="true">
+                                                        </div>
+                                                        <div class="mb-3 col-6">
+                                                            <label class="form-label">Category </label>
+                                                            <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select" aria-required="true">
+                                                                <option selected>@Model.Category.Title</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <button class="btn btn-success w-100">Update Budget</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+
+                            <div class="col-xxl-8 col-xl-8 col-lg-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Budgets</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="category-type">
+                                            <ul>
+                                                @{
+                                                    foreach (Budget budget in ViewBag.Budgets)
+                                                    {
+                                                        <li>
+                                                            <div class="left-category">
+                                                                <span class="drag-icon">
+                                                                    <i class="fi fi-ss-grip-lines"></i>
+                                                                </span>
+                                                                <span class="category-icon">
+                                                                    <i class="@budget.Category.CategoryColor.code fi @budget.Category.CategoryIcon.Code"></i>
+                                                                    @budget.Category.Title Budget: @budget.Amount
+                                                                </span>
+                                                            </div>
+                                                            <div class="right-category">
+                                                                <a asp-controller="Budget" asp-action="LoadUpdateBudget" asp-route-id="@budget.Id"><span><i class="fi fi-rs-pencil"></i></span></a>
+                                                                <a asp-controller="Budget" asp-action="DeleteBudget" asp-route-id="@budget.Id"><span><i class="fi fi-rr-trash"></i></span></a>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <partial name="~/Views/Footer/_Footer.cshtml" />
+    </div>
+</body>
