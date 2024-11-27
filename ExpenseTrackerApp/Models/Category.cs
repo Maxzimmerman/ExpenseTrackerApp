@@ -12,9 +12,6 @@ namespace ExpenseTrackerApp.Models
         [MaxLength(30)]
         public string Title { get; set; }
 
-        [Required]
-        public decimal monthlyBudget { get; set; }
-
         [ForeignKey("CategoryType")]
         public int CategoryTypeId { get; set; }
         public CategoryType CategoryType { get; set; }

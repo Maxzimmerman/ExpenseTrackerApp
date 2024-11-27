@@ -27,9 +27,6 @@ namespace ExpenseTrackerApp.Data
             base.OnModelCreating(modelBuilder);
 
             // Configure decimal properties
-            modelBuilder.Entity<Category>()
-                .Property(c => c.monthlyBudget)
-                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<ApplicationUser>()
                 .Property(a => a.Balance)
