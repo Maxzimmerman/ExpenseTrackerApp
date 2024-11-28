@@ -10,37 +10,29 @@ namespace ExpenseTrackerApp.Data.Repositories
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly ICategoryTypeRepsitory _categoryTypeRepsitory;
+        private readonly ICategoryIconRepository _categoryIconRepository;
+        private readonly ICategoryColorRepository _categoryColorRepository;
+        private readonly Lazy<ITransactionRepository> _transactionRepository;
 
-        public CategoryRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
+        public CategoryRepository(ApplicationDbContext applicationDbContext,
+            ICategoryTypeRepsitory categoryTypeRepsitory,
+            ICategoryIconRepository categoryIconRepository,
+            ICategoryColorRepository categoryColorRepository,
+            Lazy<ITransactionRepository> transactionRepository) : base(applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
+            _categoryTypeRepsitory = categoryTypeRepsitory;
+            _categoryIconRepository = categoryIconRepository;
+            _categoryColorRepository = categoryColorRepository;
+            _transactionRepository = transactionRepository;
         }
 
         public AddCategory addCategoryData(string userId)
         {
-            // Todo
-            IEnumerable<SelectListItem> categoryTypes =
-                _applicationDbContext.categoriesTypes.Select(ct => new SelectListItem
-                {
-                    Text = ct.Name,
-                    Value = ct.Id.ToString()
-                }).ToList();
-
-            // Todo
-            IEnumerable<SelectListItem> categoryIcons =
-                _applicationDbContext.categoriesIcons.Select(ci => new SelectListItem
-                {
-                    Text = ci.Name,
-                    Value = ci.Id.ToString()
-                }).ToList();
-
-            // Todo
-            IEnumerable<SelectListItem> categoryColors =
-                _applicationDbContext.categoriesColors.Select(cc => new SelectListItem
-                {
-                    Text = cc.Name,
-                    Value = cc.Id.ToString()
-                }).ToList();
+            IEnumerable<SelectListItem> categoryTypes = _categoryTypeRepsitory.GetCategoryTypesAsSelectListItems();
+            IEnumerable<SelectListItem> categoryIcons = _categoryIconRepository.GetCategoryIconsAsSelectListItems();
+            IEnumerable<SelectListItem> categoryColors = _categoryColorRepository.GetCategoryColorsAsSelectListItems();
 
             var expenses = _applicationDbContext.categories
                 .Include(c => c.CategoryType)
@@ -65,14 +57,11 @@ namespace ExpenseTrackerApp.Data.Repositories
             return addCategory;
         }
 
-        public void createCategory(Category category, string id)
+        public void createCategory(Category category, string Userid)
         {
-            //Todo
-            var categoryIcon = _applicationDbContext.categoriesIcons.FirstOrDefault(c => c.Id == category.CategoryIconId);
-            //Todo
-            var categoryType = _applicationDbContext.categoriesTypes.FirstOrDefault(c => c.Id == category.CategoryTypeId);
-            //Todo
-            var categoryColor = _applicationDbContext.categoriesColors.FirstOrDefault(c => c.Id == category.CategoryColorId);
+            var categoryIcon = _categoryIconRepository.GetCategoryBelongingToCertainCategory(category.CategoryIconId);
+            var categoryType = _categoryTypeRepsitory.GetCategoryTypeForCertainCategory(category.CategoryTypeId);
+            var categoryColor = _categoryColorRepository.GetCategoryColorFerCertainCategory(category.CategoryColorId);
 
             if (categoryIcon == null)
             {
@@ -92,7 +81,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             category.CategoryIcon = categoryIcon;
             category.CategoryType = categoryType;
             category.CategoryColor = categoryColor;
-            category.ApplicationUserId = id;
+            category.ApplicationUserId = Userid;
             _applicationDbContext.categories.Add(category);
             _applicationDbContext.SaveChanges();
         }
@@ -140,7 +129,8 @@ namespace ExpenseTrackerApp.Data.Repositories
         public IEnumerable<SelectListItem> GetAllCategoriesAsSelectListItems(string userId)
         {
             IEnumerable<SelectListItem> categories =
-                _applicationDbContext.categories.Select(c => new SelectListItem
+                _applicationDbContext.categories.Where(c => c.ApplicationUserId == userId)
+                .Select(c => new SelectListItem
                 {
                     Text = c.Title,
                     Value = c.Id.ToString()
@@ -200,6 +190,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             foreach(var category in categories)
             {
+                // only add if its amount is above zero
                 if(this.CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(userId, category.Title))
                 {
                     categoriesWithTransactions.Add(category);
@@ -212,12 +203,9 @@ namespace ExpenseTrackerApp.Data.Repositories
                 throw new Exception("Could not find any category");
         }
 
-        //Todo
         public bool CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(string userId, string categoryName)
         {
-            decimal amount = _applicationDbContext.transactions
-                .Where(t => t.ApplicationUserId == userId && t.Category.Title == categoryName)
-                .Sum(t => t.Amount);
+            decimal amount = _transactionRepository.Value.GetTotalAmountForCertainCategory(userId, categoryName);
 
             if (amount != 0)
                 return true;
@@ -225,14 +213,9 @@ namespace ExpenseTrackerApp.Data.Repositories
                 return false;
         }
 
-        //Todo
-        public decimal GetTotalAmountOfAllCategories(string userId, string ExpenseOrIncomd)
+        public decimal GetTotalAmountOfAllCategories(string userId, string expenseOrIncom)
         {
-            decimal amount = _applicationDbContext.transactions
-                .Where(t => t.ApplicationUserId == userId && t.Category.CategoryType.Name == ExpenseOrIncomd)
-                .Sum(t => System.Math.Abs(t.Amount));
-
-            return amount;
+            return _transactionRepository.Value.GetTotalAmountForAllCategories(userId, expenseOrIncom);
         }
 
         public int CountAllCategoriesForUser(string userId)

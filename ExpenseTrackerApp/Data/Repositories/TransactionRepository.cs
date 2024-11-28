@@ -411,5 +411,22 @@ namespace ExpenseTrackerApp.Data.Repositories
         }
 
         // Balance Page End
+
+        public decimal GetTotalAmountForCertainCategory(string userId, string categoryName)
+        {
+            decimal amount = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId && t.Category.Title == categoryName)
+                .Sum(t => t.Amount);
+            return amount;
+        }
+
+        public decimal GetTotalAmountForAllCategories(string userId, string expenseOrIncom)
+        {
+            decimal amount = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId && t.Category.CategoryType.Name == expenseOrIncom)
+                .Sum(t => Math.Abs(t.Amount));
+
+            return amount;
+        }
     }
 }

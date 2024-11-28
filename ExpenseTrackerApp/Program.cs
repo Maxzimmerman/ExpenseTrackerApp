@@ -1,3 +1,4 @@
+using ExpenseTrackerApp;
 using ExpenseTrackerApp.Data;
 using ExpenseTrackerApp.Data.Repositories;
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
@@ -35,13 +36,17 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IFooterRepository, FooterRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IFooterRepository, FooterRepository>();
 builder.Services.AddScoped<IUserManageService, UserManageService>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 builder.Services.AddScoped<ISocialLinksRepository, SocialLinksRepository>();
+builder.Services.AddScoped<ICategoryTypeRepsitory, CategoryTypeRepository>();
+builder.Services.AddScoped<ICategoryIconRepository, CategoryIconRepository>();
+builder.Services.AddScoped<ICategoryColorRepository, CategoryColorRepository>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped(typeof(Lazy<>), typeof(LazyService<>));
 
 var app = builder.Build();
 

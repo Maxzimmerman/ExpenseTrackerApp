@@ -12,18 +12,20 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         decimal GetAmountForCertainCategoryThisMonth(string userId, int categoryId);
         decimal GetMonthlyAverageForCertainCategory(string userId, int categoryId);
         AnalyticsData GetAnalyticsData(string userId);
-        List<ExpenseTrackerApp.Models.Transaction> GetExpenses(string userId);
-        List<ExpenseTrackerApp.Models.Transaction> GetIncoms(string userId);
-        List<ExpenseTrackerApp.Models.Transaction> GetTransactions(string userId);
-        public ExpenseAndIncomeData GetExpenseData(string userId);
-        public ExpenseAndIncomeData GetIncomeData(string userId);
-        public List<Models.Transaction> GetTransactionOfCertainMonth(string userId, string ExpenseOrIncome, int month, int year);
-        public IncomeVsExpensesData GetIncomeVsExpensesData(string userId);
-        public decimal GetBalanceForCertainMonth(string userId, int month, int year);
-        public BalanceData GetBalanceData(string userId);
-        public decimal GetBalanceForCertainDay(string userId, int year, int month, int week);
-        public decimal GetAmountForTransactionOfCertainWeek(string userid, int year, int month, int day);
-        public decimal GetDailyAverage(string userId);
-        public decimal GetTotalAmount(string userId);
+        List<Models.Transaction> GetExpenses(string userId);
+        List<Models.Transaction> GetIncoms(string userId);
+        List<Models.Transaction> GetTransactions(string userId);
+        ExpenseAndIncomeData GetExpenseData(string userId);
+        ExpenseAndIncomeData GetIncomeData(string userId);
+        List<Models.Transaction> GetTransactionOfCertainMonth(string userId, string ExpenseOrIncome, int month, int year);
+        IncomeVsExpensesData GetIncomeVsExpensesData(string userId);
+        decimal GetBalanceForCertainMonth(string userId, int month, int year);
+        BalanceData GetBalanceData(string userId);
+        decimal GetBalanceForCertainDay(string userId, int year, int month, int week);
+        decimal GetAmountForTransactionOfCertainWeek(string userid, int year, int month, int day);
+        decimal GetDailyAverage(string userId);
+        decimal GetTotalAmount(string userId);
+        decimal GetTotalAmountForCertainCategory(string userId, string categoryName);
+        decimal GetTotalAmountForAllCategories(string userId, string expenseOrIncom);
     }
 }
