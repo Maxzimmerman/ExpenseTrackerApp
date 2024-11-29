@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 
 namespace ExpenseTrackerApp.Controllers
@@ -76,7 +77,7 @@ namespace ExpenseTrackerApp.Controllers
                     return RedirectToAction("VerifyEmail", "UserManage");
                 }
 
-                if (await _userManageService.SignIn(signInviewModel))
+                if (Microsoft.AspNetCore.Identity.SignInResult.Success == await _userManageService.SignIn(signInviewModel))
                 {
                     return RedirectToAction("Home", "Home");
                 }
@@ -86,9 +87,9 @@ namespace ExpenseTrackerApp.Controllers
         }
 
         [Authorize]
-        public new async Task<IActionResult> SignOut()
+        public IActionResult SignOut()
         {
-            await _userManageService.SignOut();
+            _userManageService.SignOut();
             return RedirectToAction("Home", "Home");
         }
 
@@ -139,11 +140,83 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
-            if (await _userManageService.ConfirmEmail(userId, token))
+            if (await _userManageService.ConfirmEmail(userId, token) == IdentityResult.Success)
                 return RedirectToAction("SignIn", "UserManage");
             return View("Error");
         }
 
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(SendResetEmailModelView model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = _userRepository.findByEmail(model.EmailAddress);
+            if (user == null)
+            {
+                return RedirectToAction("UserWasNotFound", "UserManage");
+            }
+
+            var resetToken = await _userManageService.GeneratePasswordResetTokenAsync(user);
+
+            var resetLink = Url.Action(
+                "ResetPassword",
+                "UserManage",
+                new { token = resetToken, email = model.EmailAddress },
+                Request.Scheme);
+
+            await _userManageService.SendPasswordResetEmail(model.EmailAddress, resetLink);
+
+            return RedirectToAction("ResetEmailHasBeenSend", "UserManage");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            if (token == null || email == null)
+            {
+                return RedirectToAction("Error");
+            }
+
+            var model = new ResetPasswordViewModel { Token = token, EmailAdress = email };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _userManageService.ResetPasswordAsync(model.EmailAdress, model.Token, model.Password);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("SignIn", "UserManage");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ResetEmailHasBeenSend()
+        {
+            return View();
+        }
 
         [HttpGet]
         public IActionResult AccessDenied()
@@ -159,6 +232,12 @@ namespace ExpenseTrackerApp.Controllers
 
         [HttpGet]
         public IActionResult UserAlreadyExists()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult UserWasNotFound()
         {
             return View();
         }

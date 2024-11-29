@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
-using static Humanizer.In;
+
 
 namespace ExpenseTrackerApp.Services
 {
@@ -33,28 +33,23 @@ namespace ExpenseTrackerApp.Services
             _userRepository = userRepository;
             _emailSender = emailSender;
             _urlHelperFactory = urlHelperFactory;
-            _httpContextAccessor = httpContextAccessor; 
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<bool> ConfirmEmail(string userId, string token)
+        public async Task<IdentityResult> ConfirmEmail(string userId, string token)
         {
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
             {
-                return false;
+                return IdentityResult.Failed(new IdentityError { Description = "User not found or the token was not provided" });
             }
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return false;
+                return IdentityResult.Failed(new IdentityError { Description = "User not found" });
             }
 
-            var result = await _userManager.ConfirmEmailAsync(user, token);
-            if (result.Succeeded)
-            {
-                return true;
-            }
-            return false;
+            return await _userManager.ConfirmEmailAsync(user, token);
         }
 
         public async Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal user)
@@ -82,31 +77,14 @@ namespace ExpenseTrackerApp.Services
             return userId;
         }
 
-        public async Task<bool> SignIn(SignInviewModel signInviewModel)
+        public async Task<Microsoft.AspNetCore.Identity.SignInResult> SignIn(SignInviewModel signInviewModel)
         {
-            var result = await _signInManager.PasswordSignInAsync(signInviewModel.Email, signInviewModel.Password, signInviewModel.RememberMe, lockoutOnFailure: false);
-
-            if (result.Succeeded)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return await _signInManager.PasswordSignInAsync(signInviewModel.Email, signInviewModel.Password, signInviewModel.RememberMe, lockoutOnFailure: false);
         }
 
-        public async Task<bool> SignOut()
+        public async void SignOut()
         {
-            try
-            {
-                await _signInManager.SignOutAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            await _signInManager.SignOutAsync();
         }
 
         public async Task<ApplicationUser> SignUp(SignUpviewModel signUpviewModel)
@@ -161,6 +139,29 @@ namespace ExpenseTrackerApp.Services
                 throw new Exception("Coudn't change password");
             }
             return updatedUser;
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(string email, string token, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+            }
+
+            return await _userManager.ResetPasswordAsync(user, token, newPassword);
+        }
+
+        public async Task SendPasswordResetEmail(string email, string resetLink)
+        {
+            var subject = "Reset your password";
+            var body = $"Click {resetLink} to reset your password.";
+            await _emailSender.SendEmailAsync(email, subject, body);
         }
     }
 }
