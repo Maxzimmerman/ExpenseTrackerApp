@@ -1,0 +1,20 @@
+﻿@model List<Message>
+
+@{
+    foreach (Message message in Model)
+    {
+
+        <a class="">
+            <div class="d-flex align-items-center">
+                <span class="me-3 icon success">
+                    <i class="fi fi-bs-check"></i>
+                </span>
+                <div>
+                    <p>@message.Description</p>
+                    <span>@message.Date</span>
+                </div>
+            </div>
+        </a>
+
+    }
+}

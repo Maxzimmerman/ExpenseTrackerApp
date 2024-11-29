@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ExpenseTrackerApp.styles.css" asp-append-version="true" />
-    
+
     <link rel="stylesheet" href="~/css/style.css">
     <link rel="stylesheet" href="~/vendor/toastr/toastr.min.css">
 </head>
@@ -27,10 +27,31 @@
                             </div>
                         </div>
                         <div class="header-right">
-                            <div class="dark-light-toggle" onclick="themeToggle()">
+                            <div class="dark-light-toggle"
+                                 onclick="themeToggle()"
+                                 hx-get="/Message/RecentMessages" 
+                                 hx-target="#recent-messages"
+                                 hx-trigger="click">
                                 <span class="dark"><i class="fi fi-rr-eclipse-alt"></i></span>
                                 <span class="light"><i class="fi fi-rr-eclipse-alt"></i></span>
                             </div>
+                            <div class="nav-item dropdown notification">
+                                <div data-bs-toggle="dropdown">
+                                    <div class="notify-bell icon-menu">
+                                        <span><i class="fi fi-rs-bells"></i></span>
+                                    </div>
+                                </div>
+                                <div tabindex="-1" role="menu" aria-hidden="true"
+                                     class="dropdown-menu dropdown-menu-end">
+                                    <h4>Recent Notification</h4>
+                                    <div class="lists" id="recent-messages">
+                                    </div>
+                                    <div class="more">
+                                        <a asp-controller="Message" asp-action="Messages">More<i class="fi fi-bs-angle-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="dropdown profile_log dropdown">
                                 <div data-bs-toggle="dropdown">
                                     <div class="user icon-menu active">
@@ -96,12 +117,12 @@
                     </a>
                 </li>
                 @* <li>
-                    <a asp-controller="Home" asp-action="Goals">
-                        <span>
-                            <i class="fi fi-sr-bullseye-arrow"></i>
-                        </span>
-                        <span class="nav-text">Goals</span>
-                    </a>
+                <a asp-controller="Home" asp-action="Goals">
+                <span>
+                <i class="fi fi-sr-bullseye-arrow"></i>
+                </span>
+                <span class="nav-text">Goals</span>
+                </a>
                 </li> *@
                 <li>
                     <a asp-controller="Transaction" asp-action="Analytics">
@@ -141,7 +162,8 @@
     <script src="~/vendor/chartjs/chartjs.js"></script>
     <script src="~/js/scripts.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/htmx.min.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

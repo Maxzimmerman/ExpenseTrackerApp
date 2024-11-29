@@ -15,18 +15,21 @@ namespace ExpenseTrackerApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUserRepository _userRepository;
         private readonly IUserManageService _userManageService;
+        private readonly IMessageRepository _messageRepository;
 
         public HomeController(ILogger<HomeController> logger, 
             IUserRepository userRepository, 
             IUserManageService userManageService,
-            IFooterRepository footerRepository) : base(footerRepository)
+            IFooterRepository footerRepository,
+            IMessageRepository messageRepository) : base(footerRepository)
         {
             _logger = logger;
             _userManageService = userManageService;
             _userRepository = userRepository;
+            _messageRepository = messageRepository;
         }
 
-        public async Task<IActionResult> Home()
+        public IActionResult Home()
         {
             if(User.Identity.IsAuthenticated)
             {

@@ -11,7 +11,7 @@ namespace ExpenseTrackerApp.Services.IServices
         void SignOut();
         Task<ApplicationUser> SignUp(SignUpviewModel signUpviewModel);
         Task<IdentityResult> ConfirmEmail(string userId, string token);
-        Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal user);
+        Task<ApplicationUser?> GetCurrentUser(ClaimsPrincipal user);
         string GetCurrentUserId(ClaimsPrincipal user);
         Task<ApplicationUser> UpdateUser(ApplicationUser user, string currentPassword);
         Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user);

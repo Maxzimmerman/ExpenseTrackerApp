@@ -45,6 +45,7 @@ builder.Services.AddScoped<ISocialLinksRepository, SocialLinksRepository>();
 builder.Services.AddScoped<ICategoryTypeRepsitory, CategoryTypeRepository>();
 builder.Services.AddScoped<ICategoryIconRepository, CategoryIconRepository>();
 builder.Services.AddScoped<ICategoryColorRepository, CategoryColorRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 // Lazy Repositories
 builder.Services.AddScoped(typeof(Lazy<ITransactionRepository>), serviceProvider =>

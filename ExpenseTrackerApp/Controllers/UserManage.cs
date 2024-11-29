@@ -17,14 +17,17 @@ namespace ExpenseTrackerApp.Controllers
     {
         private readonly IUserManageService _userManageService;
         private readonly IUserRepository _userRepository;
+        private readonly IMessageRepository _messageRepository;
 
         public UserManage(
             IUserManageService userManageService,
             IFooterRepository footerRepository,
-            IUserRepository userRepository) : base(footerRepository)
+            IUserRepository userRepository,
+            IMessageRepository messageRepository) : base(footerRepository)
         {
             _userManageService = userManageService;
             _userRepository = userRepository;
+            _messageRepository = messageRepository;
         }
 
         [HttpGet]
@@ -49,6 +52,7 @@ namespace ExpenseTrackerApp.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManageService.SignUp(signUpviewModel);
+                _messageRepository.CreateMessageWithUserId(user.Id, "Account created successfully");
                 return View("VerifyEmail");
             }
             return View("BadRequest");
@@ -198,9 +202,17 @@ namespace ExpenseTrackerApp.Controllers
                 return View(model);
             }
 
+            var user = _userRepository.findByEmail(model.EmailAdress);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid email address.");
+                return View(model);
+            }
+
             var result = await _userManageService.ResetPasswordAsync(model.EmailAdress, model.Token, model.Password);
             if (result.Succeeded)
             {
+                _messageRepository.CreateMessageWithUserId(user.Id, "Changes password successfully");
                 return RedirectToAction("SignIn", "UserManage");
             }
 

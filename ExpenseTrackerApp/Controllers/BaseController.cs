@@ -21,6 +21,7 @@ namespace ExpenseTrackerApp.Controllers
         {
             var footerModel = _footerRepository.GetFooter();
             ViewData["Footer"] = footerModel;
+
             base.OnActionExecuted(context);
         }
     }

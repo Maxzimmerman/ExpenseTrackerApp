@@ -52,7 +52,7 @@ namespace ExpenseTrackerApp.Services
             return await _userManager.ConfirmEmailAsync(user, token);
         }
 
-        public async Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal user)
+        public async Task<ApplicationUser?> GetCurrentUser(ClaimsPrincipal user)
         {
             var userId = user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)

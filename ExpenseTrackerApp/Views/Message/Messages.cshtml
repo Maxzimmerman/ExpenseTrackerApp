@@ -1,0 +1,60 @@
+﻿@model List<Message>
+
+<body class="dashboard">
+    <div id="main-wrapper">
+        <div class="content-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title">
+                            <div class="row align-items-center justify-content-between">
+                                <div class="col-xl-4">
+                                    <div class="page-title-content">
+                                        <h3>Notifications</h3>
+                                        <p class="mb-2">Welcome Ekash Finance Management</p>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="breadcrumbs">
+                                        <a asp-controller="Home" asp-action="Home">Home </a>
+                                        <span><i class="fi fi-rr-angle-small-right"></i></span>
+                                        <a asp-controller="Message" asp-action="Messages">Notifications</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Recent Notification </h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="notification">
+                                    <div class="lists">
+                                        @{
+                                            foreach(Message message in Model)
+                                            {
+                                                <a class="" >
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="me-3 icon success"><i class="fi fi-bs-check"></i></span>
+                                                        <div>
+                                                            <p>@message.Description</p>
+                                                            <span>@message.Date</span>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
