@@ -127,7 +127,8 @@ namespace ExpenseTrackerApp.Services
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 // Use IHttpContextAccessor to construct the link
                 var context = _httpContextAccessor.HttpContext;
-                var urlHelper = _urlHelperFactory.GetUrlHelper(new ActionContext(context, context.GetRouteData(), new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor()));
+                var urlHelper = _urlHelperFactory.GetUrlHelper(
+                    new ActionContext(context, context.GetRouteData(), new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor()));
 
                 var confirmationLink = urlHelper.Action(
                     action: "ConfirmEmail",
