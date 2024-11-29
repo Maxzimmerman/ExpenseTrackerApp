@@ -36,6 +36,7 @@ namespace ExpenseTrackerApp.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUp(SignUpviewModel signUpviewModel)
         {
+            // check if user already exists
             var existingUser = _userRepository.findByEmail(signUpviewModel.Email);
 
             if (existingUser != null)
@@ -43,6 +44,7 @@ namespace ExpenseTrackerApp.Controllers
                 return RedirectToAction("UserAlreadyExists", "UserManage");
             }
 
+            // sign up user
             if (ModelState.IsValid)
             {
                 var user = await _userManageService.SignUp(signUpviewModel);
