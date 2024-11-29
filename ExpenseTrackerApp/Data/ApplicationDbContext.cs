@@ -47,7 +47,7 @@ namespace ExpenseTrackerApp.Data
                 .HasOne(m => m.ApplicationUser)
                 .WithMany()
                 .HasForeignKey(m => m.ApplicationUserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Budget>()
                 .HasOne(b => b.Category)
