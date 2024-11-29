@@ -2,40 +2,34 @@
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Mail;
 using System.Net;
+using Microsoft.Extensions.Options;
 
 namespace ExpenseTrackerApp.Services
 {
     public class EmailSender : IEmailSender
     {
-        private readonly IConfiguration _configuration;
+        private readonly MailSettings _mailSettings;
 
-        public EmailSender(IConfiguration configuration)
+        public EmailSender(IOptions<MailSettings> mailSettings)
         {
-            _configuration = configuration;
+            _mailSettings = mailSettings.Value;
         }
 
-        public async Task SendEmailAsync(string email, string subject, string message)
+        public Task SendEmailAsync(string from, string subject, string message)
         {
-            var smtpClient = new SmtpClient
+            var smtpClient = new SmtpClient(_mailSettings.Server)
             {
-                Host = _configuration["Email:Smtp:Host"],
-                Port = int.Parse(_configuration["Email:Smtp:Port"]),
-                Credentials = new NetworkCredential(
-                _configuration["Email:Smtp:Username"],
-                _configuration["Email:Smtp:Password"]),
-                EnableSsl = true
+                EnableSsl = true,
+                Credentials = new NetworkCredential(_mailSettings.UserName, _mailSettings.Password)
             };
 
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress(_configuration["Email:Smtp:From"]),
-                Subject = subject,
-                Body = message,
-                IsBodyHtml = true,
-            };
-            mailMessage.To.Add(email);
-
-            await smtpClient.SendMailAsync(mailMessage);
+            return smtpClient.SendMailAsync(
+                new MailMessage(
+                    from: _mailSettings.UserName,
+                    to: from,
+                    subject: subject,
+                    message
+                ));
         }
     }
 }

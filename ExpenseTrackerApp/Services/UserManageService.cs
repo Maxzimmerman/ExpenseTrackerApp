@@ -62,6 +62,9 @@ namespace ExpenseTrackerApp.Services
 
         public string GetCurrentUserId(ClaimsPrincipal user)
         {
+            if (user == null || !user.Identity.IsAuthenticated)
+                throw new InvalidOperationException("User is not authenticated.");
+
             var userId = user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
             {
@@ -97,7 +100,7 @@ namespace ExpenseTrackerApp.Services
             }
         }
 
-        public async Task<bool> SignUp(SignUpviewModel signUpviewModel)
+        public async Task<ApplicationUser> SignUp(SignUpviewModel signUpviewModel)
         {
             var user = new ApplicationUser
             {
@@ -113,15 +116,15 @@ namespace ExpenseTrackerApp.Services
             {
                 // Generate confirmation token
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = $"https://https://localhost:7082/UserManage/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+                var confirmationLink = $"https://localhost:7082/UserManage/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
 
                 // Send confirmation email
                 await _emailSender.SendEmailAsync(user.Email, "Confirm your email",
-                    $"Please confirm your account by clicking this link: <a href='{confirmationLink}'>Confirm Email</a>");
+                    $"Please confirm your account by clicking this link: {confirmationLink}");
 
-                return true;
+                return user;
             }
-            return false;
+            throw new Exception("Couldn't create user");
         }
 
         public async Task<ApplicationUser> UpdateUser(ApplicationUser user, string currentPassword)

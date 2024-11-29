@@ -1,4 +1,3 @@
-using ExpenseTrackerApp;
 using ExpenseTrackerApp.Data;
 using ExpenseTrackerApp.Data.Repositories;
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
@@ -18,6 +17,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     options.SignIn.RequireConfirmedAccount = true;
+    options.User.RequireUniqueEmail = true;
     options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -45,6 +45,7 @@ builder.Services.AddScoped<ISocialLinksRepository, SocialLinksRepository>();
 builder.Services.AddScoped<ICategoryTypeRepsitory, CategoryTypeRepository>();
 builder.Services.AddScoped<ICategoryIconRepository, CategoryIconRepository>();
 builder.Services.AddScoped<ICategoryColorRepository, CategoryColorRepository>();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped(typeof(Lazy<>), typeof(LazyService<>));
 

@@ -19,6 +19,11 @@ namespace ExpenseTrackerApp.Data.Repositories
             _applicationDbContext = applicationDbContext;
         }
 
+        public ApplicationUser? findByEmail(string email)
+        {
+            return _applicationDbContext.applicationUsers.FirstOrDefault(u => u.Email == email);
+        }
+
         public ApplicationUser getUserById(string id)
         {
             var user = _applicationDbContext.applicationUsers.FirstOrDefault(u => u.Id == id);

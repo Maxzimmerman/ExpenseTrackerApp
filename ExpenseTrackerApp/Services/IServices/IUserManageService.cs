@@ -8,7 +8,7 @@ namespace ExpenseTrackerApp.Services.IServices
     {
         Task<bool> SignIn(SignInviewModel signInviewModel);
         Task<bool> SignOut();
-        Task<bool> SignUp(SignUpviewModel signUpviewModel);
+        Task<ApplicationUser> SignUp(SignUpviewModel signUpviewModel);
         Task<bool> ConfirmEmail(string userId, string token);
         Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal user);
         string GetCurrentUserId(ClaimsPrincipal user);

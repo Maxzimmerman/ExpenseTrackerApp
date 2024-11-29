@@ -1,4 +1,4 @@
-﻿namespace ExpenseTrackerApp
+﻿namespace ExpenseTrackerApp.Services
 {
     public class LazyService<T> : Lazy<T>
     {

@@ -15,12 +15,15 @@ namespace ExpenseTrackerApp.Controllers
     public class UserManage : BaseController
     {
         private readonly IUserManageService _userManageService;
+        private readonly IUserRepository _userRepository;
 
         public UserManage(
             IUserManageService userManageService,
-            IFooterRepository footerRepository) : base(footerRepository)
+            IFooterRepository footerRepository,
+            IUserRepository userRepository) : base(footerRepository)
         {
             _userManageService = userManageService;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -33,14 +36,17 @@ namespace ExpenseTrackerApp.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUp(SignUpviewModel signUpviewModel)
         {
+            var existingUser = _userRepository.findByEmail(signUpviewModel.Email);
+
+            if (existingUser != null)
+            {
+                return RedirectToAction("UserAlreadyExists", "UserManage");
+            }
+
             if (ModelState.IsValid)
             {
-                if (await _userManageService.SignUp(signUpviewModel))
-                {
-                    return RedirectToAction("Home", "Home");
-                }
-                return View("BadRequest");
-
+                var user = await _userManageService.SignUp(signUpviewModel);
+                return View("VerifyEmail");
             }
             return View("BadRequest");
         }
@@ -57,16 +63,24 @@ namespace ExpenseTrackerApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = _userRepository.findByEmail(signInviewModel.Email);
+                if (user == null)
+                {
+                    return RedirectToAction("AccessDenied", "UserManage");
+                }
+
+                if (!user.EmailConfirmed)
+                {
+                    return RedirectToAction("VerifyEmail", "UserManage");
+                }
+
                 if (await _userManageService.SignIn(signInviewModel))
                 {
                     return RedirectToAction("Home", "Home");
                 }
                 return RedirectToAction("AccessDenied", "UserManage");
             }
-            else
-            {
-                return RedirectToAction("AccessDenied", "UserManage");
-            }
+            return RedirectToAction("AccessDenied", "UserManage");
         }
 
         [Authorize]
@@ -131,6 +145,18 @@ namespace ExpenseTrackerApp.Controllers
 
         [HttpGet]
         public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult VerifyEmail()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult UserAlreadyExists()
         {
             return View();
         }

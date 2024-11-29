@@ -7,7 +7,8 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
     public interface IUserRepository : IRepository<ApplicationUser> 
     {
-        ApplicationUser getUserById(string id);
+        ApplicationUser? getUserById(string id);
         ApplicationUser updateUser(ApplicationUser user);
+        ApplicationUser findByEmail(string email);
     }
 }
