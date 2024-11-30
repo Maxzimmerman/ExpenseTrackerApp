@@ -35,11 +35,13 @@
                                 <div class="notification">
                                     <div class="lists">
                                         @{
-                                            foreach(Message message in Model)
+                                            foreach (Message message in Model)
                                             {
-                                                <a class="" >
+                                                <a class="">
                                                     <div class="d-flex align-items-center">
-                                                        <span class="me-3 icon success"><i class="fi fi-bs-check"></i></span>
+                                                        <span class="me-3 icon @message.IconBackground">
+                                                            <i class="fi @message.IconType"></i>
+                                                        </span>
                                                         <div>
                                                             <p>@message.Description</p>
                                                             <span>@message.Date</span>

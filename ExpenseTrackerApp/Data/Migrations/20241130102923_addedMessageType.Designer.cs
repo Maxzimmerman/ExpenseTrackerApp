@@ -4,6 +4,7 @@ using ExpenseTrackerApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpenseTrackerApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241130102923_addedMessageType")]
+    partial class addedMessageType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -180,7 +182,27 @@ namespace ExpenseTrackerApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("IconBackground")
+                    b.Property<int>("MessageTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("MessageTypeId");
+
+                    b.ToTable("messages");
+                });
+
+            modelBuilder.Entity("ExpenseTrackerApp.Models.MessageType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("IconBackgroundColor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -190,9 +212,7 @@ namespace ExpenseTrackerApp.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("messages");
+                    b.ToTable("messageTypes");
                 });
 
             modelBuilder.Entity("ExpenseTrackerApp.Models.SocialLink", b =>
@@ -545,7 +565,15 @@ namespace ExpenseTrackerApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ExpenseTrackerApp.Models.MessageType", "MessageType")
+                        .WithMany()
+                        .HasForeignKey("MessageTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("MessageType");
                 });
 
             modelBuilder.Entity("ExpenseTrackerApp.Models.SocialLink", b =>

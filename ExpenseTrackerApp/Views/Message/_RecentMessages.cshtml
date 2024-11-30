@@ -3,11 +3,10 @@
 @{
     foreach (Message message in Model)
     {
-
         <a class="">
             <div class="d-flex align-items-center">
-                <span class="me-3 icon success">
-                    <i class="fi fi-bs-check"></i>
+                <span class="me-3 icon @message.IconBackground">
+                    <i class="fi @message.IconType"></i>
                 </span>
                 <div>
                     <p>@message.Description</p>
@@ -15,6 +14,5 @@
                 </div>
             </div>
         </a>
-
     }
 }

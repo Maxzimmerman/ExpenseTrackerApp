@@ -15,6 +15,12 @@ namespace ExpenseTrackerApp.Models
         public DateTime Date { get; set; }
 
         [Required]
+        public string IconBackground { get; set; } = string.Empty;
+
+        [Required]
+        public string IconType { get; set; } = string.Empty;
+
+        [Required]
         [ForeignKey("ApplicationUser")]
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }

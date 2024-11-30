@@ -52,7 +52,7 @@ namespace ExpenseTrackerApp.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManageService.SignUp(signUpviewModel);
-                _messageRepository.CreateMessageWithUserId(user.Id, "Account created successfully");
+                _messageRepository.CreateMessageWithUserId(user.Id, "Account created successfully", "success", "fi-bs-check");
                 return View("VerifyEmail");
             }
             return View("BadRequest");
@@ -212,7 +212,7 @@ namespace ExpenseTrackerApp.Controllers
             var result = await _userManageService.ResetPasswordAsync(model.EmailAdress, model.Token, model.Password);
             if (result.Succeeded)
             {
-                _messageRepository.CreateMessageWithUserId(user.Id, "Changes password successfully");
+                _messageRepository.CreateMessageWithUserId(user.Id, "Changes password successfully", "success", "fi-bs-check");
                 return RedirectToAction("SignIn", "UserManage");
             }
 

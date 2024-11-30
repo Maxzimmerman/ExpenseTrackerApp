@@ -1,24 +1,33 @@
 (function ($) {
-    "use strict"
+    "use strict";
 
-    toastr.success("Complete your profile to make it easier to finance", "Complete your profile!", {
-        // timeOut: 500000,
-        closeButton: !0,
-        debug: !1,
-        newestOnTop: !0,
-        progressBar: !0,
-        positionClass: "toast-top-right demo_rtl_class",
-        preventDuplicates: !0,
-        onclick: null,
-        showDuration: "300",
-        hideDuration: "1000",
-        extendedTimeOut: "1000",
-        showEasing: "swing",
-        hideEasing: "linear",
-        showMethod: "fadeIn",
-        hideMethod: "fadeOut",
-        tapToDismiss: !1,
-        closeHtml: '<span class="progress-count"></span> <i class="close-toast fi fi-rr-cross-small"></i> <a href="#">Suggest</a>'
-    })
+    /**
+     * Displays a toast notification
+     * @param {string} message - The message to display in the toast.
+     */
+    function showMessage(message) {
+        toastr.success(message, "Notification", {
+            timeOut: 500000,
+            closeButton: true,
+            debug: false,
+            newestOnTop: true,
+            progressBar: true,
+            positionClass: "toast-top-right demo_rtl_class",
+            preventDuplicates: true,
+            onclick: null,
+            showDuration: "300",
+            hideDuration: "1000",
+            extendedTimeOut: "1000",
+            showEasing: "swing",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut",
+            tapToDismiss: false,
+            closeHtml: '<span class="progress-count"></span> <i class="close-toast fi fi-rr-cross-small"></i> <a href="#">Suggest</a>'
+        });
+    }
 
-})(jQuery)
+    // Expose the function to the global scope
+    window.showMessage = showMessage;
+
+})(jQuery);

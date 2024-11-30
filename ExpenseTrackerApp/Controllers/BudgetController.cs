@@ -15,20 +15,39 @@ namespace ExpenseTrackerApp.Controllers
     {
         private readonly IBudgetRepository _budgetRepository;
         private readonly IUserManageService _userManageService;
+        private readonly IMessageRepository _messageRepository;
 
         public BudgetController(
             IBudgetRepository budgetRepository,
             IUserManageService userManageService,
-            IFooterRepository footerRepository) : base(footerRepository)
+            IFooterRepository footerRepository,
+            IMessageRepository messageRepository) : base(footerRepository)
         {
             _budgetRepository = budgetRepository;
             _userManageService = userManageService;
+            _messageRepository = messageRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> Budgets()
         {
             var budgets = await _budgetRepository.GetBudgetViewModelAsync(_userManageService.GetCurrentUserId(User));
+
+            // Add Message if monthly budget is reached
+            foreach(BudgetDetailViewModel budget in budgets.Budgets)
+            {
+                // message don't exists and budget is reached create a message
+                string message = $"Reached budget for {budget.Budget.Category.Title}";
+                string userId = _userManageService.GetCurrentUserId(User);
+                if (budget.SpendThisMonth >= budget.Budget.Amount && !_messageRepository.ContainsMessageThisMonth(
+                    userId, 
+                    message,
+                    DateTime.Now.Year,
+                    DateTime.Now.Month
+                    ))
+                    _messageRepository.CreateMessageWithUserId(userId, message, "fail", "fi-sr-cross-small");
+            }
+
             return View(budgets);
         }
 

@@ -13,6 +13,16 @@ namespace ExpenseTrackerApp.Data.Repositories
             _applicationDbContext = applicationDbContext;
         }
 
+        public bool ContainsMessageThisMonth(string userId, string message, int year, int month)
+        {
+            return _applicationDbContext.messages
+                .Include(m => m.ApplicationUser)
+                .Any(m => m.ApplicationUserId == userId &&
+                            m.Description == message &&
+                            m.Date.Year == year &&
+                            m.Date.Month == month);
+        }
+
         public List<Message> GetAllMessages(string userId)
         {
             return _applicationDbContext.messages
@@ -42,12 +52,14 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .FirstOrDefault(m => m.Id == id);
         }
         
-        public void CreateMessageWithUserId(string userId, string description)
+        public void CreateMessageWithUserId(string userId, string description, string backgroundColor, string iconType)
         {
             Message message = new Message();
             message.ApplicationUserId = userId;
             message.Description = description;
             message.Date = DateTime.Now;
+            message.IconBackground = backgroundColor;
+            message.IconType = iconType;
 
             _applicationDbContext.messages.Add(message);
             _applicationDbContext.SaveChanges();

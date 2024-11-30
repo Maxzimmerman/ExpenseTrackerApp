@@ -33,8 +33,15 @@ namespace ExpenseTrackerApp.Controllers
         {
             if(User.Identity.IsAuthenticated)
             {
-                var user = _userRepository.getUserById(_userManageService.GetCurrentUserId(User));
-                return View(user);
+                try
+                {
+                    var user = _userRepository.getUserById(_userManageService.GetCurrentUserId(User));
+                    return View(user);
+                }
+                catch
+                {
+                    return RedirectToAction("SignIn", "UserManage");
+                }
             }
             else
             {

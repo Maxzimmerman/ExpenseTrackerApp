@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ExpenseTrackerApp.styles.css" asp-append-version="true" />
-
     <link rel="stylesheet" href="~/css/style.css">
     <link rel="stylesheet" href="~/vendor/toastr/toastr.min.css">
 </head>
@@ -28,63 +27,72 @@
                         </div>
                         <div class="header-right">
                             <div class="dark-light-toggle"
-                                 onclick="themeToggle()"
-                                 hx-get="/Message/RecentMessages" 
-                                 hx-target="#recent-messages"
-                                 hx-trigger="click">
+                                 onclick="themeToggle()">
                                 <span class="dark"><i class="fi fi-rr-eclipse-alt"></i></span>
                                 <span class="light"><i class="fi fi-rr-eclipse-alt"></i></span>
                             </div>
-                            <div class="nav-item dropdown notification">
-                                <div data-bs-toggle="dropdown">
-                                    <div class="notify-bell icon-menu">
-                                        <span><i class="fi fi-rs-bells"></i></span>
+                            @{
+                                if (User.Identity.IsAuthenticated)
+                                {
+                                    <div class="nav-item" onclick="showMessage('Basic Message')">
+                                        ShowMessage
                                     </div>
-                                </div>
-                                <div tabindex="-1" role="menu" aria-hidden="true"
-                                     class="dropdown-menu dropdown-menu-end">
-                                    <h4>Recent Notification</h4>
-                                    <div class="lists" id="recent-messages">
-                                    </div>
-                                    <div class="more">
-                                        <a asp-controller="Message" asp-action="Messages">More<i class="fi fi-bs-angle-right"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="dropdown profile_log dropdown">
-                                <div data-bs-toggle="dropdown">
-                                    <div class="user icon-menu active">
-                                        <span><i class="fi fi-rr-user"></i></span>
-                                    </div>
-                                </div>
-                                <div tabindex="-1" role="menu" aria-hidden="true"
-                                     class="dropdown-menu dropdown-menu dropdown-menu-end">
-                                    <div class="user-email">
-                                        <div class="user">
-                                            <span class="thumb">
-                                                <img class="rounded-full"
-                                                     src="~/images/avatar/3.jpg" alt="">
-                                            </span>
-                                            <div class="user-info">
-                                                <h5>@User.Identity.Name</h5>
+                                    <div class="nav-item dropdown notification">
+                                        <div data-bs-toggle="dropdown"
+                                             hx-get="/Message/RecentMessages"
+                                             hx-target="#recent-messages"
+                                             hx-trigger="click">
+                                            <div class="notify-bell icon-menu">
+                                                <span><i class="fi fi-rs-bells"></i></span>
+                                            </div>
+                                        </div>
+                                        <div tabindex="-1" role="menu" aria-hidden="true"
+                                             class="dropdown-menu dropdown-menu-end">
+                                            <h4>Recent Notification</h4>
+                                            <div class="lists" id="recent-messages">
+                                            </div>
+                                            <div class="more">
+                                                <a asp-controller="Message" asp-action="Messages">More<i class="fi fi-bs-angle-right"></i></a>
                                             </div>
                                         </div>
                                     </div>
-                                    <a class="dropdown-item" asp-controller="UserManage" asp-action="Profile">
-                                        <span><i class="fi fi-rr-user"></i></span>
-                                        Profile
-                                    </a>
-                                    <a class="dropdown-item" asp-controller="UserManage" asp-action="SettingsProfile">
-                                        <span><i class="fi fi-rr-settings"></i></span>
-                                        Settings
-                                    </a>
-                                    <a class="dropdown-item logout" asp-controller="UserManage" asp-action="SignOut">
-                                        <span><i class="fi fi-bs-sign-out-alt"></i></span>
-                                        Logout
-                                    </a>
-                                </div>
-                            </div>
+
+
+                                    <div class="dropdown profile_log dropdown">
+                                        <div data-bs-toggle="dropdown">
+                                            <div class="user icon-menu active">
+                                                <span><i class="fi fi-rr-user"></i></span>
+                                            </div>
+                                        </div>
+                                        <div tabindex="-1" role="menu" aria-hidden="true"
+                                             class="dropdown-menu dropdown-menu dropdown-menu-end">
+                                            <div class="user-email">
+                                                <div class="user">
+                                                    <span class="thumb">
+                                                        <img class="rounded-full"
+                                                             src="~/images/avatar/3.jpg" alt="">
+                                                    </span>
+                                                    <div class="user-info">
+                                                        <h5>@User.Identity.Name</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a class="dropdown-item" asp-controller="UserManage" asp-action="Profile">
+                                                <span><i class="fi fi-rr-user"></i></span>
+                                                Profile
+                                            </a>
+                                            <a class="dropdown-item" asp-controller="UserManage" asp-action="SettingsProfile">
+                                                <span><i class="fi fi-rr-settings"></i></span>
+                                                Settings
+                                            </a>
+                                            <a class="dropdown-item logout" asp-controller="UserManage" asp-action="SignOut">
+                                                <span><i class="fi fi-bs-sign-out-alt"></i></span>
+                                                Logout
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            }
                         </div>
                     </div>
                 </div>
@@ -156,11 +164,13 @@
             @RenderBody()
         </main>
     </div>
-    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/vendor/jquery/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
-    <script src="~/vendor/chartjs/chartjs.js"></script>
-    <script src="~/js/scripts.js"></script>
+    <script src="~/vendor/chartjs/chartjs.js" asp-append-version="true"></script>
+    <script src="~/vendor/toastr/toastr.min.js" asp-append-version="true"></script>
+    <script src="~/vendor/toastr/toastr-init.js" asp-append-version="true"></script>
+    <script src="~/js/scripts.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/js/htmx.min.js" asp-append-version="true"></script>
