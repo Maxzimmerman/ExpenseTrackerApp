@@ -94,7 +94,7 @@
                                                                     <td>
                                                                         @expense.Description
                                                                     </td>
-                                                                    <td>
+                                                                    <td class="text-danger">
                                                                         @expense.Amount
                                                                     </td>
                                                                 </tr>
@@ -119,9 +119,6 @@
             var ctx = document.getElementById("chartjsDonut");
             var data = @Html.Raw(JsonSerializer.Serialize(Model.categorieDataList.Select(c => c.Percentage).ToList()));
             var labels = @Html.Raw(JsonSerializer.Serialize(Model.categorieDataList.Select(c => c.Title).ToList()));
-
-            console.log(data);
-            console.log(labels);
 
             new Chart(ctx, {
                 type: "doughnut",

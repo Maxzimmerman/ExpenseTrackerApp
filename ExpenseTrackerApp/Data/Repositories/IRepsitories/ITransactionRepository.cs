@@ -23,7 +23,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         BalanceData GetBalanceData(string userId);
         decimal GetBalanceForCertainDay(string userId, int year, int month, int week);
         decimal GetAmountForTransactionOfCertainWeek(string userid, int year, int month, int day);
-        decimal GetDailyAverage(string userId);
+        decimal GetDailyChangeAverageForCurrentMonth(string userId);
         decimal GetTotalAmount(string userId);
         decimal GetTotalAmountForCertainCategory(string userId, string categoryName);
         decimal GetTotalAmountForAllCategories(string userId, string expenseOrIncom);

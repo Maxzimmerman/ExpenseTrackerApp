@@ -3,7 +3,7 @@
     public class IncomeVsExpensesData
     {
         public List<ExpenseTrackerApp.Models.Transaction> transactions;
-        public List<int> incomsChartData;
-        public List<int> expensesChartData;
+        public List<decimal> incomsChartData;
+        public List<decimal> expensesChartData;
     }
 }

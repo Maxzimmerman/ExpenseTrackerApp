@@ -67,6 +67,11 @@
                                                         @{
                                                             foreach(var transaction in Model.transactions)
                                                             {
+                                                                string textColor = "";
+                                                                if (transaction.Category.CategoryType.Name == "Expense")
+                                                                    textColor = "text-danger";
+                                                                else if (transaction.Category.CategoryType.Name == "Income")
+                                                                    textColor = "text-success";
                                                                 <tr>
                                                                     <td>
                                                                         <span class="table-category-icon">
@@ -80,7 +85,7 @@
                                                                     <td>
                                                                         @transaction.Description
                                                                     </td>
-                                                                    <td>
+                                                                    <td class="@textColor">
                                                                         @transaction.Amount
                                                                     </td>
                                                                 </tr>

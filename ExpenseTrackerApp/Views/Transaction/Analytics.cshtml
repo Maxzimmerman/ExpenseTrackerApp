@@ -46,7 +46,7 @@
                                         </span>
                                     </div>
                                     <div class="widget-content">
-                                        <p>Daily Average</p>
+                                        <p>Daily Average @DateTime.Now.ToString("MMMM")</p>
                                         <h3>$@Model.DailyAverageValue</h3>
                                     </div>
                                 </div>
@@ -94,10 +94,10 @@
                             <div class="col-xl-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4 class="card-title">Weekly Expenses </h4>
+                                        <h4 class="card-title">Monthly Change</h4>
                                     </div>
                                     <div class="card-body">
-                                        <canvas id="chartjsWeeklyExpenses"></canvas>
+                                        <canvas id="chartjsMonthlyExpenses"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -111,24 +111,26 @@
     <script>
         // Transaction Graph
         setTimeout(() => {
-            var ctx = document.getElementById("chartjsWeeklyExpenses");
+            var ctx = document.getElementById("chartjsMonthlyExpenses");
             ctx.height = 100;
 
             // Data passed from the server
-            var weeklyExpenses = @Html.Raw(JsonSerializer.Serialize(Model.weeklyEspenses));
+            var monthlyExpenses = @Html.Raw(JsonSerializer.Serialize(Model.MonhtlyChange));
 
             new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                    datasets: weeklyExpenses.map((expenses, index) => ({
-                        label: 'Week ' + (index + 1),
-                        data: expenses,
-                        backgroundColor: 'rgba(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ', 1)'
-                    }))
+                    datasets: [{
+                        label: 'Monthly Balance',
+                        data: monthlyExpenses,
+                        backgroundColor: 'rgba(75, 192, 192, 1)', // Fixed color for consistency
+                        borderColor: 'rgba(75, 192, 192, 0.2)', // Border color
+                        borderWidth: 1
+                    }]
                 },
                 options: {
-                    responsive: true,
+                    responsive: !0,
                     maintainAspectRatio: false,
                     legend: {
                         display: false
@@ -141,22 +143,22 @@
                                 display: false
                             },
                             ticks: {
-                                display: true, // Show main x-axis line
+                                display: true, // hide main x-axis line
                                 beginAtZero: true
                             },
-                            barPercentage: 0.5, // Adjusted to fit properly
-                            categoryPercentage: 0.5
+                            barPercentage: 2,
+                            categoryPercentage: 0.2
                         }],
                         yAxes: [{
                             stacked: true,
                             gridLines: {
-                                drawBorder: false, // Hide main y-axis line
+                                drawBorder: false, // hide main y-axis line
                                 display: false
                             },
                             ticks: {
                                 display: true,
                                 beginAtZero: true
-                            }
+                            },
                         }]
                     },
                     tooltips: {

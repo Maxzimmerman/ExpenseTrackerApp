@@ -6,7 +6,7 @@
         public decimal? TotalAmount;
         public int? TotalTransactions;
         public int? NumberOfCategories;
-        public List<List<decimal>> weeklyEspenses;
+        public List<decimal> MonhtlyChange;
 
         public AnalyticsData(int? totalTransactions, int? numberOfCategories, decimal? dailyAverage, decimal? totalAmount)
         {
