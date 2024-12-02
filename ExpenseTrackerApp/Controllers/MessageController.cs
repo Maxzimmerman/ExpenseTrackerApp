@@ -3,6 +3,7 @@ using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace ExpenseTrackerApp.Controllers
 {
@@ -34,6 +35,13 @@ namespace ExpenseTrackerApp.Controllers
         {
             var recentMessages = _messageRepository.GetRecentMessages(_userManageService.GetCurrentUserId(User));
             return PartialView("_RecentMessages", recentMessages);
+        }
+
+        [HttpGet]
+        public IActionResult GetMessagesForeNoficationMessagePopUp()
+        {
+            var messages = _messageRepository.GetMessageCreateInTheCurrentMinute(_userManageService.GetCurrentUserId(User));
+            return Json(messages);
         }
     }
 }

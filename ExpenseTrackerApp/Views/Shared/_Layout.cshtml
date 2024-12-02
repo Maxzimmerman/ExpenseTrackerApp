@@ -34,9 +34,27 @@
                             @{
                                 if (User.Identity.IsAuthenticated)
                                 {
-                                    <div class="nav-item" onclick="showMessage('Basic Message')">
-                                        ShowMessage
-                                    </div>
+                                    <!-- Get Messages every few seconds and show message -->
+                                    <script>
+                                        function fetchNewMessages() {
+                                            $.ajax({
+                                                url: '@Url.Action("GetMessagesForeNoficationMessagePopUp", "Message")',
+                                                type: 'GET',
+                                                success: function (data) {
+                                                    if (data && data.length > 0) {
+                                                        data.forEach(function (message) {
+                                                            showMessage(message.description, message.id);
+                                                        });
+                                                    }
+                                                },
+                                                error: function (err) {
+                                                    console.log('Error fetching new messages:', err);
+                                                }
+                                            });
+                                        }
+                                        setInterval(fetchNewMessages, 1000);
+                                    </script>
+
                                     <div class="nav-item dropdown notification">
                                         <div data-bs-toggle="dropdown"
                                              hx-get="/Message/RecentMessages"
@@ -124,14 +142,6 @@
                         <span class="nav-text">Budgets</span>
                     </a>
                 </li>
-                @* <li>
-                <a asp-controller="Home" asp-action="Goals">
-                <span>
-                <i class="fi fi-sr-bullseye-arrow"></i>
-                </span>
-                <span class="nav-text">Goals</span>
-                </a>
-                </li> *@
                 <li>
                     <a asp-controller="Transaction" asp-action="Analytics">
                         <span>

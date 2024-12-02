@@ -45,7 +45,16 @@ namespace ExpenseTrackerApp.Controllers
                     DateTime.Now.Year,
                     DateTime.Now.Month
                     ))
-                    _messageRepository.CreateMessageWithUserId(userId, message, "fail", "fi-sr-cross-small");
+                {
+                    _messageRepository.CreateMessageWithUserId(
+                        userId,
+                        message,
+                        "fail",
+                        "fi-sr-cross-small",
+                        "Budget",
+                        "Budgets"
+                    );
+                }
             }
 
             return View(budgets);

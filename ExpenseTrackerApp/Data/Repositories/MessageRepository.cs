@@ -15,13 +15,15 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public bool ContainsMessageThisMonth(string userId, string message, int year, int month)
         {
+            var currentDate = DateTime.Now;
             return _applicationDbContext.messages
                 .Include(m => m.ApplicationUser)
-                .Any(m => m.ApplicationUserId == userId &&
-                            m.Description == message &&
-                            m.Date.Year == year &&
-                            m.Date.Month == month);
+                .Any(m => m.ApplicationUserId == userId
+                && m.Description == message
+                && m.Date.Year == year
+                && m.Date.Month == month);
         }
+
 
         public List<Message> GetAllMessages(string userId)
         {
@@ -52,7 +54,12 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .FirstOrDefault(m => m.Id == id);
         }
         
-        public void CreateMessageWithUserId(string userId, string description, string backgroundColor, string iconType)
+        public void CreateMessageWithUserId(string userId, 
+            string description, 
+            string backgroundColor, 
+            string iconType, 
+            string linkController, 
+            string linkAction)
         {
             Message message = new Message();
             message.ApplicationUserId = userId;
@@ -60,6 +67,8 @@ namespace ExpenseTrackerApp.Data.Repositories
             message.Date = DateTime.Now;
             message.IconBackground = backgroundColor;
             message.IconType = iconType;
+            message.ControllerLink = linkController;
+            message.ActionLink = linkAction;
 
             _applicationDbContext.messages.Add(message);
             _applicationDbContext.SaveChanges();
@@ -73,6 +82,18 @@ namespace ExpenseTrackerApp.Data.Repositories
                 _applicationDbContext.SaveChanges();
             }
             throw new Exception("message was null");
+        }
+
+        public List<Message> GetMessageCreateInTheCurrentMinute(string userId)
+        {
+            DateTime now = DateTime.Now;
+            return _applicationDbContext.messages
+                .Where(m => m.ApplicationUserId == userId
+                && m.Date.Year == now.Year
+                && m.Date.Month == now.Month
+                && m.Date.Hour == now.Hour
+                && m.Date.Minute == now.Minute)
+                .ToList();
         }
     }
 }

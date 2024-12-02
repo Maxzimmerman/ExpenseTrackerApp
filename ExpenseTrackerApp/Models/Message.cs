@@ -21,6 +21,12 @@ namespace ExpenseTrackerApp.Models
         public string IconType { get; set; } = string.Empty;
 
         [Required]
+        public string ControllerLink { get; set; } = string.Empty;
+
+        [Required]
+        public string ActionLink { get; set; } = string.Empty;
+
+        [Required]
         [ForeignKey("ApplicationUser")]
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }

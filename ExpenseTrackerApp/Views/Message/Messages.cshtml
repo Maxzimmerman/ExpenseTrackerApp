@@ -37,7 +37,7 @@
                                         @{
                                             foreach (Message message in Model)
                                             {
-                                                <a class="">
+                                                <a asp-controller="@message.ControllerLink" asp-action="@message.ActionLink">
                                                     <div class="d-flex align-items-center">
                                                         <span class="me-3 icon @message.IconBackground">
                                                             <i class="fi @message.IconType"></i>
