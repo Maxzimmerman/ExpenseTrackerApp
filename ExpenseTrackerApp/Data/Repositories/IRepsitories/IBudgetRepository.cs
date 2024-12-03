@@ -12,5 +12,6 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         void updateBudget(Budget budget);
         Task<BudgetViewModel> GetBudgetViewModelAsync(string userId);
         Task<List<Budget>> GetAllBudgets(string userId);
+        decimal GetSumOfAllBudgets(string userId);
     }
 }

@@ -1,4 +1,4 @@
-﻿@model ExpenseTrackerApp.Models.ApplicationUser
+﻿@model ExpenseTrackerApp.Models.ViewModels.UserViewModels.ProfileViewModel
 
 <body class="dashboard">
     <div id="main-wrapper">
@@ -33,20 +33,15 @@
                                     <div class="d-flex">
                                         <img src="./images/avatar/1.jpg" alt="">
                                         <div class="flex-grow-1">
-                                            <h4 class="mb-0">@Model.ApplicationUserName</h4>
-                                            <p>@Model.Email</p>
+                                            <h4 class="mb-0">@Model.User.ApplicationUserName</h4>
+                                            <p>@Model.User.Email</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="profile-reg">
-                                    <div class="registered">
-                                        <h5>@Model.registeredSince.ToString("d MMMM yyyy")</h5>
+                                <div class="profile-reg d-flex">
+                                    <div class="registered col-12">
+                                        <h5>@Model.User.registeredSince.ToString("d MMMM yyyy")</h5>
                                         <p>Registered</p>
-                                    </div>
-                                    <span class="reg_divider"></span>
-                                    <div class="rank">
-                                        <h5>Referral</h5>
-                                        <p>05</p>
                                     </div>
                                 </div>
                             </div>
@@ -61,20 +56,19 @@
                                             <div class="d-flex justify-content-between">
                                                 <div>
                                                     <span>Spend</span>
-                                                    <h3>$1458.30</h3>
+                                                    <h3>$@Model.TotalSpend</h3>
                                                 </div>
                                                 <div class="text-end">
                                                     <span>Budget</span>
-                                                    <h3>$1458.30</h3>
+                                                    <h3>$@Model.TotalBudget</h3>
                                                 </div>
                                             </div>
                                             <div class="progress">
-                                                <div class="progress-bar" style="width: 25%;" role="progressbar">
+                                                <div class="progress-bar" style="width: @Model.SpendPercentage%;" role="progressbar">
                                                 </div>
                                             </div>
                                             <div class="d-flex justify-content-between mt-2">
-                                                <span>25%</span>
-                                                <span>75%</span>
+                                                <span>@Model.SpendPercentage%</span>
                                             </div>
                                         </div>
                                     </div>

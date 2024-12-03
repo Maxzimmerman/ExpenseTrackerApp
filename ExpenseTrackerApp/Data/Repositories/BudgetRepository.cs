@@ -108,17 +108,19 @@ namespace ExpenseTrackerApp.Data.Repositories
                 budgetDetail.SpendAmount = _transactionRepository.GetAmountForCertainCategoryThisMonth(userId, budget.CategoryId);
 
                 // percentages
-                decimal total = budgetDetail.BudgetAmount;
-                if (total != 0)
+                decimal totalBudget = budgetDetail.BudgetAmount;
+                if (totalBudget != 0)
                 {
-                    budgetDetail.SpendPercentage = Math.Round((double)(budgetDetail.SpendAmount / total) * 100, 2);
-                    budgetDetail.BudgetPercentage = Math.Round(100 - budgetDetail.SpendPercentage, 2);
+                    double spendPercentage = Math.Round((double)(budgetDetail.SpendAmount / totalBudget) * 100, 2);
+                    if (spendPercentage > 100)
+                        budgetDetail.SpendPercentage = 100;
+                    else
+                        budgetDetail.SpendPercentage = spendPercentage;
                 }
                 else
                 {
                     // Handle edge case where total budget is zero
                     budgetDetail.SpendPercentage = 0;
-                    budgetDetail.BudgetPercentage = 0;
                 }
 
                 budgetDetail.SpendLastMonth = _transactionRepository.GetSpendForCertainCategoryLastMonth(userId, budgetDetail.Budget.CategoryId);
@@ -149,6 +151,24 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Where(b => b.Category.ApplicationUserId == userId)
                 .ToListAsync();
             return budgets;
+        }
+
+        public decimal GetSumOfAllBudgets(string userId)
+        {
+            try
+            {
+                decimal amount = _applicationDbContext.budgets
+                    .Include(b => b.Category)
+                    .Where(b => b.Category.ApplicationUserId == userId)
+                    .Sum(b => b.Amount);
+                return amount;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+                Console.WriteLine($"Error in GetSumOfAllBudgets: {ex.Message}");
+                return 0m;
+            }
         }
     }
 }

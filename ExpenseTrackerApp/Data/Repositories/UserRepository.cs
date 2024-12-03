@@ -7,16 +7,23 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using ExpenseTrackerApp.Data;
 using Microsoft.AspNetCore.Authorization;
+using ExpenseTrackerApp.Models.ViewModels.UserViewModels;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {
     public class UserRepository : Repository<ApplicationUser>, IUserRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IBudgetRepository _budgetRepository;
 
-        public UserRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
+        public UserRepository(ApplicationDbContext applicationDbContext,
+            ITransactionRepository transactionRepository,
+            IBudgetRepository budgetRepository) : base(applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
+            _transactionRepository = transactionRepository;
+            _budgetRepository = budgetRepository;
         }
 
         public ApplicationUser? findByEmail(string email)
@@ -46,6 +53,27 @@ namespace ExpenseTrackerApp.Data.Repositories
             }
             else
                 throw new Exception("Couldn't find the user");
+        }
+
+        // Pages
+        public ProfileViewModel getProfileData(string userId)
+        {
+            ProfileViewModel profileViewModel = new ProfileViewModel();
+            profileViewModel.TotalSpend = _transactionRepository.GetTotalSpendAmount(userId);
+            try
+            {
+                profileViewModel.TotalBudget = _budgetRepository.GetSumOfAllBudgets(userId);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            double spendPercentage = Math.Round((double)(profileViewModel.TotalSpend / profileViewModel.TotalBudget) * 100, 2);
+            if (spendPercentage > 100)
+                profileViewModel.SpendPercentage = 100;
+            else
+                profileViewModel.SpendPercentage = spendPercentage;
+            return profileViewModel;
         }
     }
 }

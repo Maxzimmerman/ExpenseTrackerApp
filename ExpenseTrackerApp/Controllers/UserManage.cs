@@ -139,7 +139,9 @@ namespace ExpenseTrackerApp.Controllers
             try
             {
                 var user = await _userManageService.GetCurrentUser(User);
-                return View(user);
+                ProfileViewModel profileViewModel = _userRepository.getProfileData(user.Id);
+                profileViewModel.User = user;
+                return View(profileViewModel);
             }
             catch
             {

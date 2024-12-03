@@ -250,7 +250,7 @@ namespace ExpenseTrackerApp.Data.Repositories
         }
 
 
-        public decimal GetTotalAmount(string userId)
+        public decimal GetTotalChangeAmount(string userId)
         {
             decimal expenses = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId &&
@@ -265,6 +265,17 @@ namespace ExpenseTrackerApp.Data.Repositories
             return expenses + incomes;
         }
 
+        public decimal GetTotalSpendAmount(string userId)
+        {
+            decimal expenses = _applicationDbContext.transactions
+                .Include(t => t.Category)
+                .Include(t => t.Category.CategoryType)
+                .Where(t => t.ApplicationUserId == userId &&
+                t.Category.CategoryType.Name == "Expense")
+                .Sum(t => t.Amount);
+            return expenses;
+        }
+
         // General End
         // Analytics Page Start
         public AnalyticsData GetAnalyticsData(string userId)
@@ -273,7 +284,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             int categories = _categoryRepository.CountAllCategoriesForUser(userId);
 
             decimal dailyAverage = GetDailyChangeAverageForCurrentMonth(userId);
-            decimal totalAmount = GetTotalAmount(userId);
+            decimal totalAmount = GetTotalChangeAmount(userId);
             List<decimal> MonhtlyChanges = new List<decimal>();
             var year = DateTime.Now.Year;
 

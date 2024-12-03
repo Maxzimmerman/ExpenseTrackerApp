@@ -112,7 +112,7 @@
         // Transaction Graph
         setTimeout(() => {
             var ctx = document.getElementById("chartjsMonthlyExpenses");
-            ctx.height = 100;
+            ctx.height = 300;
 
             // Data passed from the server
             var monthlyExpenses = @Html.Raw(JsonSerializer.Serialize(Model.MonhtlyChange));
