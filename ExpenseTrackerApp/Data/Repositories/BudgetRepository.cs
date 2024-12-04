@@ -89,7 +89,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             if (budget != null)
                 return budget;
             else
-                throw new Exception("Coudn't find any budget");
+                throw new Exception("Couldn't find any budget");
         }
 
         public async Task<BudgetViewModel> GetBudgetViewModelAsync(string userId)
