@@ -21,7 +21,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public decimal GetMonthlyAverageForCertainCategory(string userId, int categoryId)
         {
-            var currentYear = DateTime.Now.Year;
+            var currentYear = DateTime.UtcNow.Year;
 
             var monthlySums = _applicationDbContext.transactions
                 .Include(t => t.Category)
@@ -39,7 +39,7 @@ namespace ExpenseTrackerApp.Data.Repositories
         public List<decimal> GetExpensesForAllMonthsForCertainCategory(string userId, int categoryId)
         {
             List<decimal> expensesMonths = new List<decimal>();
-            int currentYear = DateTime.Now.Year;
+            int currentYear = DateTime.UtcNow.Year;
             for (int monthIndex = 1; monthIndex < 13; monthIndex++)
             {
                 decimal monthExpens = _applicationDbContext.transactions
@@ -57,8 +57,8 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId)
         {
-            int year = DateTime.Now.Year;
-            int lastMonth = DateTime.Now.Month - 1;
+            int year = DateTime.UtcNow.Year;
+            int lastMonth = DateTime.UtcNow.Month - 1;
 
             decimal amount = _applicationDbContext.transactions
                 .Include(t => t.Category)
@@ -74,8 +74,8 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId)
         {
-            int year = DateTime.Now.Year;
-            int month = DateTime.Now.Month - 1;
+            int year = DateTime.UtcNow.Year;
+            int month = DateTime.UtcNow.Month - 1;
 
             decimal amount = _applicationDbContext.transactions
                 .Include(t => t.Category)
@@ -91,8 +91,8 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public decimal GetAmountForCertainCategoryThisMonth(string userId, int categoryId)
         {
-            int year = DateTime.Now.Year;
-            int month = DateTime.Now.Month;
+            int year = DateTime.UtcNow.Year;
+            int month = DateTime.UtcNow.Month;
 
             decimal amount = _applicationDbContext.transactions
                 .Include(t => t.Category)
@@ -226,19 +226,19 @@ namespace ExpenseTrackerApp.Data.Repositories
             var expenses = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId
                 && t.Category.CategoryType.Name == "Expense"
-                && t.Date.Year == DateTime.Now.Year
-                && t.Date.Month == DateTime.Now.Month)
+                && t.Date.Year == DateTime.UtcNow.Year
+                && t.Date.Month == DateTime.UtcNow.Month)
                 .Sum(t => t.Amount);
 
             var incoms = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId
                 && t.Category.CategoryType.Name == "Income"
-                && t.Date.Year == DateTime.Now.Year
-                && t.Date.Month == DateTime.Now.Month)
+                && t.Date.Year == DateTime.UtcNow.Year
+                && t.Date.Month == DateTime.UtcNow.Month)
                 .Sum(t => t.Amount);
 
             // Get the number of days in the current month
-            int daysInMonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+            int daysInMonth = DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month);
 
             if (daysInMonth == 0)
                 return 0;
@@ -285,7 +285,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             decimal dailyAverage = GetDailyChangeAverageForCurrentMonth(userId);
             decimal totalAmount = GetTotalChangeAmount(userId);
             List<decimal> MonhtlyChanges = new List<decimal>();
-            var year = DateTime.Now.Year;
+            var year = DateTime.UtcNow.Year;
 
             for (int month = 1; month < 13; month++)
             {
@@ -386,7 +386,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public IncomeVsExpensesData GetIncomeVsExpensesData(string userId)
         {
-            int year = DateTime.Now.Year;
+            int year = DateTime.UtcNow.Year;
             var transactions = this.GetTransactions(userId);
 
             List<decimal> incomeData = new List<decimal>();
@@ -414,7 +414,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public BalanceData GetBalanceData(string userId)
         {
-            int year = DateTime.Now.Year;
+            int year = DateTime.UtcNow.Year;
             BalanceData balanceData = new BalanceData();
 
             List<decimal> monthlyBalance = new List<decimal>();
@@ -426,8 +426,8 @@ namespace ExpenseTrackerApp.Data.Repositories
                 monthlyBalance.Add(GetBalanceForCertainMonth(userId, i, year));
             }
 
-            int currentYear = DateTime.Now.Year;
-            int currentMonth = DateTime.Now.Month;
+            int currentYear = DateTime.UtcNow.Year;
+            int currentMonth = DateTime.UtcNow.Month;
             int numberOfDays = DateTime.DaysInMonth(currentYear, currentMonth);
 
             for (int i = 1; i < numberOfDays + 1; i++)

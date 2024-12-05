@@ -93,35 +93,5 @@ namespace ExpenseTrackerApp.Data
                 .HasForeignKey(c => c.CategoryColorId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
-
-        public override int SaveChanges()
-        {
-            foreach (var entry in ChangeTracker.Entries())
-            {
-                foreach (var property in entry.Properties)
-                {
-                    if (property.CurrentValue is DateTime dateTime && dateTime.Kind != DateTimeKind.Utc)
-                    {
-                        property.CurrentValue = dateTime.ToUniversalTime();
-                    }
-                }
-            }
-            return base.SaveChanges();
-        }
-
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            foreach (var entry in ChangeTracker.Entries())
-            {
-                foreach (var property in entry.Properties)
-                {
-                    if (property.CurrentValue is DateTime dateTime && dateTime.Kind != DateTimeKind.Utc)
-                    {
-                        property.CurrentValue = dateTime.ToUniversalTime();
-                    }
-                }
-            }
-            return await base.SaveChangesAsync(cancellationToken);
-        }
     }
 }

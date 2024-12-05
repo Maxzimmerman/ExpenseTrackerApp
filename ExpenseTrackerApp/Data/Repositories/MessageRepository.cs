@@ -24,7 +24,6 @@ namespace ExpenseTrackerApp.Data.Repositories
                 && m.Date.Month == month);
         }
 
-
         public List<Message> GetAllMessages(string userId)
         {
             return _applicationDbContext.messages
@@ -36,8 +35,8 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public List<Message> GetRecentMessages(string userId)
         {
-            int currentMonth = DateTime.Now.Month;
-            int currentYear = DateTime.Now.Year;
+            int currentMonth = DateTime.UtcNow.Month;
+            int currentYear = DateTime.UtcNow.Year;
             return _applicationDbContext.messages
                 .Include(m => m.ApplicationUser)
                 .Where(m => m.ApplicationUser.Id == userId
@@ -64,7 +63,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             Message message = new Message();
             message.ApplicationUserId = userId;
             message.Description = description;
-            message.Date = DateTime.Now;
+            message.Date = DateTime.UtcNow;
             message.IconBackground = backgroundColor;
             message.IconType = iconType;
             message.ControllerLink = linkController;
@@ -86,7 +85,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public List<Message> GetMessageCreateInTheCurrentMinute(string userId)
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
             return _applicationDbContext.messages
                 .Where(m => m.ApplicationUserId == userId
                 && m.Date.Year == now.Year
