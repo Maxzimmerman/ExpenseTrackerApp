@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  expensetrackerapp:
+    image: ${DOCKER_REGISTRY-}expensetrackerapp
+    build:
+      context: .
+      dockerfile: ExpenseTrackerApp/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      - expensetrackerapp.database
+
+  expensetrackerapp.database:
+    image: postgres:latest
+    container_name: expensetrackerapp.database
+    environment:
+      - POSTGRES_DB=geo
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/expensetrackerapp-db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432

@@ -4,7 +4,6 @@ using System.Transactions;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels.TransactionViewModels;
 using System.Diagnostics.Eventing.Reader;
-using Humanizer;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {

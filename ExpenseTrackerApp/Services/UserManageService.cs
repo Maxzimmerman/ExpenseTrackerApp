@@ -95,7 +95,7 @@ namespace ExpenseTrackerApp.Services
                 UserName = signUpviewModel.Email,
                 Email = signUpviewModel.Email,
                 ApplicationUserName = signUpviewModel.Name,
-                registeredSince = DateTime.Today
+                registeredSince = DateTime.UtcNow
             };
 
             var result = await _userManager.CreateAsync(user, signUpviewModel.Password);

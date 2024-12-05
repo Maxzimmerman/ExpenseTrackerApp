@@ -1,5 +1,4 @@
 ﻿using ExpenseTrackerApp.Data;
-using ExpenseTrackerApp.Data.Migrations;
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels.UserViewModels;

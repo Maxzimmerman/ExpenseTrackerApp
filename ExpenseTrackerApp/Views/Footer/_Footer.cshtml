@@ -1,5 +1,7 @@
 ﻿@{
-    var footer = ViewData["Footer"] as Footer;
+    var footer = new Footer();
+    if (ViewData["Footer"] != null)
+        footer = ViewData["Footer"] as Footer;
 }
 
 <div class="footer">
@@ -21,9 +23,12 @@
                 <div class="footer-social">
                     <ul>
                         @{
-                            foreach(SocialLink socialLink in footer.SocialLinks)
+                            if(footer.SocialLinks != null)
                             {
-                                <li><a href="@socialLink.Url"><i class="fi @socialLink.IconClass"></i></a></li>
+                                foreach (SocialLink socialLink in footer.SocialLinks)
+                                {
+                                    <li><a href="@socialLink.Url"><i class="fi @socialLink.IconClass"></i></a></li>
+                                }
                             }
                         }
                     </ul>

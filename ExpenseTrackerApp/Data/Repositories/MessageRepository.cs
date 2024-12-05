@@ -15,7 +15,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public bool ContainsMessageThisMonth(string userId, string message, int year, int month)
         {
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.UtcNow;
             return _applicationDbContext.messages
                 .Include(m => m.ApplicationUser)
                 .Any(m => m.ApplicationUserId == userId
