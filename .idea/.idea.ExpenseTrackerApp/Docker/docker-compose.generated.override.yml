@@ -1,0 +1,23 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.4"
+services:
+  expensetrackerapp:
+    build:
+      context: "C:\\Users\\Max Zimmermann\\RiderProjects\\ExpenseTrackerApp"
+      dockerfile: "ExpenseTrackerApp/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/ExpenseTrackerApp.dll"
+    environment:
+      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net8.0/ExpenseTrackerApp.staticwebassets.runtime.CT.json"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "expensetrackerapp:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\Max Zimmermann\\AppData\\Roaming\\Microsoft\\UserSecrets:/root/.microsoft/usersecrets"
+    - "C:\\Users\\Max Zimmermann\\.nuget\\packages:/root/.nuget/packages"
+    - "C:\\Users\\Max Zimmermann\\RiderProjects\\ExpenseTrackerApp\\ExpenseTrackerApp:/app:rw"
+    - "C:\\Users\\Max Zimmermann\\RiderProjects\\ExpenseTrackerApp:/src:rw"
+    working_dir: "/app"
