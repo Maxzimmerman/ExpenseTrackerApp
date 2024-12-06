@@ -182,7 +182,7 @@ namespace ExpenseTrackerApp.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamptz with time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -252,7 +252,7 @@ namespace ExpenseTrackerApp.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamptz with time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -352,7 +352,7 @@ namespace ExpenseTrackerApp.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamptz with time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -495,7 +495,7 @@ namespace ExpenseTrackerApp.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("registeredSince")
-                        .HasColumnType("timestamptz with time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });

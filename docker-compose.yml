@@ -9,6 +9,13 @@ services:
     ports:
       - "5000:5000"
       - "5001:5001"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    environment:
+      - ASPNETCORE_URLS=https://+:5001;http://+:5000
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ASPNETCORE_HTTPS_PORT=5001
     depends_on:
       - expensetrackerapp.database
 
@@ -16,7 +23,7 @@ services:
     image: postgres:latest
     container_name: expensetrackerapp.database
     environment:
-      - POSTGRES_DB=geo
+      - POSTGRES_DB=expensetrackerdb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
