@@ -138,15 +138,13 @@ namespace ExpenseTrackerApp.Controllers
             try
             {
                 var user = await _userManageService.GetCurrentUser(User);
-                ProfileViewModel profileViewModel = new ProfileViewModel();
-                var profileData = _userRepository.getProfileData(user.Id);
-                profileViewModel = profileData;
+                ProfileViewModel profileViewModel = _userRepository.getProfileData(user.Id);
                 profileViewModel.User = user;
                 return View(profileViewModel);
             }
             catch
             {
-                return View();
+                return View(new ProfileViewModel());
             }
         }
 

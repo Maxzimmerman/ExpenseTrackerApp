@@ -29,6 +29,5 @@ README.md
 !.git/packed-refs
 !.git/refs/heads
 /**
-# Ignore PostgreSQL database runtime files
-containers/expensetrackerapp-db/
-*.generated.override.yml
+!ExpenseTrackerApp/ExpenseTrackerApp.csproj
+!ExpenseTrackerApp/

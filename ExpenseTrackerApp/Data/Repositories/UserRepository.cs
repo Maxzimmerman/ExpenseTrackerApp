@@ -68,7 +68,11 @@ namespace ExpenseTrackerApp.Data.Repositories
             {
                 Console.WriteLine(ex.Message);
             }
-            double spendPercentage = Math.Round((double)(profileViewModel.TotalSpend / profileViewModel.TotalBudget) * 100, 2);
+
+            double spendPercentage = 0;
+            if(profileViewModel.TotalBudget > 0)
+                spendPercentage = Math.Round((double)(profileViewModel.TotalSpend / profileViewModel.TotalBudget) * 100, 2);
+            
             if (spendPercentage > 100)
                 profileViewModel.SpendPercentage = 100;
             else
