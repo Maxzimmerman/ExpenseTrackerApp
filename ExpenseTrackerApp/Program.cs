@@ -6,6 +6,7 @@ using ExpenseTrackerApp.Services.IServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/UserManage/AccessDenied";
     options.SlidingExpiration = true;
 });
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ConfigureHttpsDefaults(httpsOptions =>
+    {
+        httpsOptions.ServerCertificate = new X509Certificate2("/app/ExpenseTrackerApp/https_certificate/aspnetapp.pfx", "YourCertificatePassword");
+    });
+});
+
 
 
 builder.Services.AddControllersWithViews();
