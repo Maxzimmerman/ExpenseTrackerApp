@@ -34,7 +34,9 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.ConfigureHttpsDefaults(httpsOptions =>
     {
-        httpsOptions.ServerCertificate = new X509Certificate2("/app/ExpenseTrackerApp/https_certificate/aspnetapp.pfx", "YourCertificatePassword");
+        httpsOptions.ServerCertificate = new X509Certificate2(
+            "/app/ExpenseTrackerApp/https_certificate/aspnetapp.pfx", 
+            "YourCertificatePassword");
     });
 });
 
