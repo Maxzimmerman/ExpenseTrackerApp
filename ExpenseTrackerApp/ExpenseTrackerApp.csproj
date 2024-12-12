@@ -25,9 +25,7 @@
   <ItemGroup>
     <Folder Include="Areas\User\Controllers\" />
     <Folder Include="Areas\User\Views\" />
-    <Folder Include="CustomExceptions\" />
     <Folder Include="https_certificate\" />
-    <Folder Include="Plan\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +34,26 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\UserManage\AccessDenied.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="CustomExceptions\**" />
+    <Compile Remove="Plan\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="CustomExceptions\**" />
+    <EmbeddedResource Remove="Plan\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="CustomExceptions\**" />
+    <Content Remove="Plan\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="CustomExceptions\**" />
+    <None Remove="Plan\**" />
   </ItemGroup>
 
 </Project>
