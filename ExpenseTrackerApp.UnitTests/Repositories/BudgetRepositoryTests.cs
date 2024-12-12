@@ -28,6 +28,105 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
                 .UseInMemoryDatabase($"TestDatabase_{Guid.NewGuid()}")
                 .Options;
         }
+        
+        // AddBudgetData Start
+        [Fact]
+        public void addBudgetDataSuccessTest()
+        {
+            // Arrange
+
+            // DataBase Start
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+
+            // DataBase End
+
+            // Providing Data Start
+            var userId = "123";
+
+            IEnumerable<SelectListItem> mockCategories = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Category1", Value = "1" },
+                new SelectListItem { Text = "Category2", Value = "2" }
+            };
+
+            var categoryColor = new CategoryColor { Id = 1, code = "code1", Name = "Red" };
+            var categoryIcon = new CategoryIcon { Id = 1, Code = "icon1", Name = "Book" };
+
+            var categories = new List<Category>
+            {
+                new Category
+                {
+                    Id = 1,
+                    Title = "Budget1",
+                    ApplicationUserId = userId,
+                    CategoryColor = categoryColor,
+                    CategoryIcon = categoryIcon
+                },
+            };
+
+            var budgets = new List<Budget>
+            {
+                new Budget { Amount = 100, Category = categories[0] }
+            };
+
+            context.categoriesColors.Add(categoryColor);
+            context.categoriesIcons.Add(categoryIcon);
+            context.categories.AddRange(categories);
+            context.budgets.AddRange(budgets);
+            context.SaveChanges();
+
+            categoryRepositoryMock.Setup(repo => repo.GetAllCategoriesAsSelectListItems(userId))
+                .Returns(mockCategories);
+
+            var repository = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context
+            );
+
+            // Act
+            var result = repository.addBudgetData("123");
+
+            // Assert
+            result.Categories.Should().BeEquivalentTo(mockCategories);
+            result.Budgets.Should().BeEquivalentTo(budgets);
+        }
+        // AddBudgetData end
+        
+        // Create Budget Start
+
+        [Fact]
+        public void createBudgetSuccessTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            
+            var mockCatgory = new Category() { Id=1, Title="Category1", ApplicationUserId = "1"};
+            categoryRepositoryMock.Setup(repo => repo.findCategory(1)).Returns(mockCatgory);
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object, 
+                categoryRepositoryMock.Object, 
+                context);
+            
+            // Act
+            var budget = new Budget()
+            {
+                CategoryId = 1,
+                Category = mockCatgory,
+                Amount = 100,
+            };
+            
+            budgetRepo.createBudget(budget);
+
+            // Assert
+            var savedBudget = context.budgets.FirstOrDefault(b => b.Id == budget.Id);
+            Assert.NotNull(savedBudget);
+            Assert.Equal(budget.Id, savedBudget.Id);
+        }
+        
+        // Create Budget End
 
         // Test FindBudget Start
         [Fact]
@@ -95,68 +194,5 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
         }
 
         // Test find Budget end
-
-        [Fact]
-        public void addBudgetDataSuccessTest()
-        {
-            // Arrange
-
-            // DataBase Start
-            var options = CreateDbContextOptions();
-            var context = new ApplicationDbContext(options);
-
-            // DataBase End
-
-            // Providing Data Start
-            var userId = "123";
-
-            IEnumerable<SelectListItem> mockCategories = new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Category1", Value = "1" },
-                new SelectListItem { Text = "Category2", Value = "2" }
-            };
-
-            var categoryColor = new CategoryColor { Id = 1, code = "code1", Name = "Red" };
-            var categoryIcon = new CategoryIcon { Id = 1, Code = "icon1", Name = "Book" };
-
-            var categories = new List<Category>
-            {
-                new Category
-                {
-                    Id = 1,
-                    Title = "Budget1",
-                    ApplicationUserId = userId,
-                    CategoryColor = categoryColor,
-                    CategoryIcon = categoryIcon
-                },
-            };
-
-            var budgets = new List<Budget>
-            {
-                new Budget { Amount = 100, Category = categories[0] }
-            };
-
-                context.categoriesColors.Add(categoryColor);
-            context.categoriesIcons.Add(categoryIcon);
-            context.categories.AddRange(categories);
-            context.budgets.AddRange(budgets);
-            context.SaveChanges();
-
-            categoryRepositoryMock.Setup(repo => repo.GetAllCategoriesAsSelectListItems(userId))
-                .Returns(mockCategories);
-
-            var repository = new BudgetRepository(
-                transactionRepositoryMock.Object,
-                categoryRepositoryMock.Object,
-                context
-            );
-
-            // Act
-            var result = repository.addBudgetData("123");
-
-            // Assert
-            result.Categories.Should().BeEquivalentTo(mockCategories);
-            result.Budgets.Should().BeEquivalentTo(budgets);
-        }
     }
 }
