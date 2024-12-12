@@ -69,8 +69,6 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             {
                 new Budget { Amount = 100, Category = categories[0] }
             };
-            
-            
 
             context.categoriesColors.Add(categoryColor);
             context.categoriesIcons.Add(categoryIcon);
@@ -97,7 +95,6 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
         // AddBudgetData end
         
         // Create Budget Start
-
         [Fact]
         public void createBudgetSuccessTest()
         {
@@ -127,8 +124,98 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             Assert.NotNull(savedBudget);
             Assert.Equal(budget.Id, savedBudget.Id);
         }
-        
+
+        [Fact]
+        public void createBudgetFailTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            
+            categoryRepositoryMock.Setup(repo => repo.findCategory(1)).Returns(new Category());
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context
+            );
+            
+            // Act
+            var exception = Assert.Throws<NullReferenceException>(() => budgetRepo.createBudget(null));
+
+            // Assert
+            Assert.Equal("Object reference not set to an instance of an object.", exception.Message);
+        }
+
+        [Fact]
+        public void createBudgetFailCategoryNullTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            
+            categoryRepositoryMock.Setup(repo => repo.findCategory(1)).Returns(new Category());
+            var budgetRepo = new BudgetRepository
+            (
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context
+            );
+
+            // Act
+            var budget = new Budget() { Id = 1, Amount = 100, Category = null };
+            var exception = Assert.Throws<Exception>(() => budgetRepo.createBudget(budget));
+            
+            Assert.Equal("Categorie not found.", exception.Message);
+        }
         // Create Budget End
+        
+        // Delete Budget Start
+        [Fact]
+        public void deleteBudgetSuccessTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            
+            categoryRepositoryMock.Setup(repo => repo.findCategory(1)).Returns(new Category());
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object, 
+                categoryRepositoryMock.Object, 
+                context
+                );
+            
+            // Act
+            var budget = new Budget();
+            context.budgets.Add(budget);
+            context.SaveChanges();
+            
+            budgetRepo.deleteBudget(budget.Id);
+            
+            // Assert
+            var savedBudget = context.budgets.FirstOrDefault(b => b.Id == budget.Id);
+            Assert.Null(savedBudget);
+        }
+
+        [Fact]
+        public void deleteBudgetFailTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            
+            categoryRepositoryMock.Setup(repo => repo.findCategory(1)).Returns(new Category());
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context
+            );
+            
+            // Act
+            var exception = Assert.Throws<Exception>(() => budgetRepo.deleteBudget(1));
+            Assert.Equal("Budget not found.", exception.Message);
+        }
+        
+        // Delete Budget End
 
         // Test FindBudget Start
         [Fact]
@@ -187,14 +274,11 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
                 );
 
             // Act
-
             var exception = Assert.Throws<Exception>(() => budgetRepository.findBudget(1));
 
             // Assert
-
             Assert.Equal("Couldn't find any budget", exception.Message);
         }
-
         // Test find Budget end
     }
 }

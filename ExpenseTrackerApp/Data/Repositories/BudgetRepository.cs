@@ -48,7 +48,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             var category = _categoryRepository.findCategory(budget.CategoryId);
             if(category == null)
             {
-                throw new Exception($"Categorie With ID {category} not found.");
+                throw new Exception("Categorie not found.");
             }
 
             budget.Category = category;
@@ -66,7 +66,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             }
             else
             {
-                throw new Exception($"Budget not found.");
+                throw new Exception("Budget not found.");
             } 
         }
 
