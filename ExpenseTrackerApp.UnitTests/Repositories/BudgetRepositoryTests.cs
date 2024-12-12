@@ -69,6 +69,8 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             {
                 new Budget { Amount = 100, Category = categories[0] }
             };
+            
+            
 
             context.categoriesColors.Add(categoryColor);
             context.categoriesIcons.Add(categoryIcon);
