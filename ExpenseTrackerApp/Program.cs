@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
+using ExpenseTrackerApp.SeedDataBase;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +75,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    // Apply pending migrations
+    context.Database.Migrate();
+
+    // Run the CSV seeding logic
+    var seeder = new SeedCategoryType(context);
+    seeder.ReadCSV();
+    
     app.UseMigrationsEndPoint();
     app.ApplyMigrations();
 }

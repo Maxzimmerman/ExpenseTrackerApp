@@ -8,6 +8,8 @@ EXPOSE 443
 # Copy the HTTPS certificate into the container
 # Correct the destination path
 COPY ExpenseTrackerApp/https_certificate/aspnetapp.pfx /app/ExpenseTrackerApp/https_certificate/aspnetapp.pfx
+# Copy the CSV file into the container
+COPY ExpenseTrackerApp/SeedDataBase/Data/CategoryType.csv /app/ExpenseTrackerApp/SeedDataBase/Data/CategoryType.csv
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
