@@ -69,12 +69,25 @@ namespace ExpenseTrackerApp.Data.Repositories
                 throw new Exception("Budget not found.");
             } 
         }
-
+        
         public void updateBudget(Budget budget)
         {
+            if (budget == null)
+                throw new NullReferenceException("Budget cannot be null.");
+
+            var existingEntity = _applicationDbContext.budgets.Local
+                .FirstOrDefault(b => b.Id == budget.Id);
+
+            if (existingEntity != null)
+            {
+                // Detach the existing entity to prevent conflict
+                _applicationDbContext.Entry(existingEntity).State = EntityState.Detached;
+            }
+
             _applicationDbContext.budgets.Update(budget);
             _applicationDbContext.SaveChanges();
         }
+
 
         public Budget findBudget(int id)
         {

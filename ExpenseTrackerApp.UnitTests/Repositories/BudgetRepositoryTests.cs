@@ -214,8 +214,65 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             var exception = Assert.Throws<Exception>(() => budgetRepo.deleteBudget(1));
             Assert.Equal("Budget not found.", exception.Message);
         }
-        
         // Delete Budget End
+        
+        // Update Budget Start
+        [Fact]
+        public void updateBudgetSuccessTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            
+            categoryRepositoryMock.Setup(repo => repo.findCategory(1)).Returns(new Category());
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context
+            );
+            
+            var budget = new Budget() { Id = 1, Amount = 100, CategoryId = 1 };
+            var updatedBudget = new Budget() { Id = 1, Amount = 200, CategoryId = 1 };
+            
+            context.budgets.Add(budget);
+            context.SaveChanges();
+            
+            // Act
+            
+            budgetRepo.updateBudget(updatedBudget);
+            
+            // Assert
+            var savedBudget = context.budgets.FirstOrDefault(b => b.Id == budget.Id);
+            Assert.NotNull(savedBudget);
+            Assert.Equal(updatedBudget.Amount, savedBudget.Amount);
+        }
+        
+        [Fact]
+        public void updateBudgetFailBudgetNullTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            
+            categoryRepositoryMock.Setup(repo => repo.findCategory(1)).Returns(new Category());
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context
+            );
+            
+            var budget = new Budget() { Id = 1, Amount = 100, CategoryId = 1 };
+            
+            context.budgets.Add(budget);
+            context.SaveChanges();
+            
+            // Act
+            var exception = Assert.Throws<NullReferenceException>(() => budgetRepo.updateBudget(null));
+            // Assert
+            
+            Assert.Equal("Budget cannot be null.", exception.Message);
+        }
+        // Update Budget End
 
         // Test FindBudget Start
         [Fact]
