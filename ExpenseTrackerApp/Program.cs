@@ -81,8 +81,12 @@ if (app.Environment.IsDevelopment())
     context.Database.Migrate();
 
     // Run the CSV seeding logic
-    var seeder = new SeedCategoryType(context);
-    seeder.ReadCSV();
+    var seederCategoryType = new SeedCategoryType(context);
+    var seederCategoryIcon = new SeedCategoryIcon(context);
+    var seederCategoryColor = new SeedCategoryColor(context);
+    seederCategoryType.ReadCSV();
+    seederCategoryIcon.ReadCSV();
+    seederCategoryColor.ReadCSV();
     
     app.UseMigrationsEndPoint();
     app.ApplyMigrations();
