@@ -1,20 +1,20 @@
-using ExpenseTrackerApp.Data;
+﻿using ExpenseTrackerApp.Data;
 using ExpenseTrackerApp.Models;
 
-namespace ExpenseTrackerApp.SeedDataBase;
+namespace ExpenseTrackerApp.SeedDataBase.Data;
 
-public class SeedCategoryType
+public class SeedFooter
 {
     private readonly ApplicationDbContext _context;
 
-    public SeedCategoryType(ApplicationDbContext context)
+    public SeedFooter(ApplicationDbContext context)
     {
         _context = context;
     }
 
     public void ReadCSV()
     {
-        string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ExpenseTrackerApp", "SeedDataBase", "Data", "CategoryType.csv");
+        string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ExpenseTrackerApp", "SeedDataBase", "Data", "Footer.csv");
         try
         {
             // Open the CSV file
@@ -31,20 +31,18 @@ public class SeedCategoryType
                     // Ensure values have the correct format
                     if (values.Length >= 2)
                     {
-                        var type = new CategoryType
+                        var footer = new Footer()
                         {
-                            Id = int.Parse(values[0].Trim()),
-                            Name = values[1].Trim().Trim('"'),
-                            // Remove extra spaces and quotes
+                            CopryRightHolder = values[1].Trim().Trim('"')
                         };
 
                         // Add to context
-                        _context.categoriesTypes.Add(type);
+                        _context.footers.Add(footer);
                     }
                 }
 
                 // Save changes after adding all items
-                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!! ADDED CATEGORY TYPE ENTRIES !!!!!!!!!!!!!");
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!! ADDED FOOTER ENTRIES !!!!!!!!!!!!!");
                 _context.SaveChanges();
             }
         }

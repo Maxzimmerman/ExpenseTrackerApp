@@ -1,20 +1,20 @@
-using ExpenseTrackerApp.Data;
+﻿using ExpenseTrackerApp.Data;
 using ExpenseTrackerApp.Models;
 
 namespace ExpenseTrackerApp.SeedDataBase;
 
-public class SeedCategoryType
+public class SeedSocialLinks
 {
     private readonly ApplicationDbContext _context;
 
-    public SeedCategoryType(ApplicationDbContext context)
+    public SeedSocialLinks(ApplicationDbContext context)
     {
         _context = context;
     }
 
     public void ReadCSV()
     {
-        string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ExpenseTrackerApp", "SeedDataBase", "Data", "CategoryType.csv");
+        string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ExpenseTrackerApp", "SeedDataBase", "Data", "SocialLinks.csv");
         try
         {
             // Open the CSV file
@@ -31,20 +31,21 @@ public class SeedCategoryType
                     // Ensure values have the correct format
                     if (values.Length >= 2)
                     {
-                        var type = new CategoryType
+                        var socialLink = new SocialLink()
                         {
-                            Id = int.Parse(values[0].Trim()),
-                            Name = values[1].Trim().Trim('"'),
-                            // Remove extra spaces and quotes
+                            Platform = values[1].Trim().Trim('"'),
+                            Url = values[2].Trim().Trim('"'),
+                            IconClass = values[3].Trim().Trim('"'),
+                            FooterId = int.Parse(values[4].Trim().Trim('"'))
                         };
 
                         // Add to context
-                        _context.categoriesTypes.Add(type);
+                        _context.socialLinks.Add(socialLink);
                     }
                 }
 
                 // Save changes after adding all items
-                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!! ADDED CATEGORY TYPE ENTRIES !!!!!!!!!!!!!");
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!! ADDED SOCIAL LINKS ENTRIES !!!!!!!!!!!!!");
                 _context.SaveChanges();
             }
         }

@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
+using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.SeedDataBase;
+using ExpenseTrackerApp.SeedDataBase.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,12 +83,16 @@ if (app.Environment.IsDevelopment())
     context.Database.Migrate();
 
     // Run the CSV seeding logic
-    var seederCategoryType = new SeedCategoryType(context);
-    var seederCategoryIcon = new SeedCategoryIcon(context);
-    var seederCategoryColor = new SeedCategoryColor(context);
-    seederCategoryType.ReadCSV();
-    seederCategoryIcon.ReadCSV();
-    seederCategoryColor.ReadCSV();
+    //var seederCategoryType = new SeedCategoryType(context);
+    //var seederCategoryIcon = new SeedCategoryIcon(context);
+    //var seederCategoryColor = new SeedCategoryColor(context);
+    //var seedFooter = new SeedFooter(context);
+    //var seedSocialLinks = new SeedSocialLinks(context);
+    //seedFooter.ReadCSV();
+    //seedSocialLinks.ReadCSV();
+    //seederCategoryType.ReadCSV();
+    //seederCategoryIcon.ReadCSV();
+    //seederCategoryColor.ReadCSV();
     
     app.UseMigrationsEndPoint();
     app.ApplyMigrations();

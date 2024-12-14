@@ -30,12 +30,12 @@ public class SeedCategoryIcon
                     string[] values = line.Split(',');
 
                     // Ensure values have the correct format
-                    if (values.Length >= 2)
+                    if (values.Length >= 3)
                     {
                         var icon = new CategoryIcon()
                         {
-                            Id = int.Parse(values[0].Trim()),
-                            Name = values[1].Trim().Trim('"') // Remove extra spaces and quotes
+                            Name = values[1].Trim().Trim('"'), 
+                            Code = values[2].Trim().Trim('"')// Remove extra spaces and quotes
                         };
 
                         // Add to context
@@ -44,7 +44,7 @@ public class SeedCategoryIcon
                 }
 
                 // Save changes after adding all items
-                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!! ADDED ENTRIES !!!!!!!!!!!!!");
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!! ADDED CATEGORY ICON ENTRIES !!!!!!!!!!!!!");
                 _context.SaveChanges();
             }
         }

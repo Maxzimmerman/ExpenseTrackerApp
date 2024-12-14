@@ -12,6 +12,8 @@ COPY ExpenseTrackerApp/https_certificate/aspnetapp.pfx /app/ExpenseTrackerApp/ht
 COPY ExpenseTrackerApp/SeedDataBase/Data/CategoryType.csv /app/ExpenseTrackerApp/SeedDataBase/Data/CategoryType.csv
 COPY ExpenseTrackerApp/SeedDataBase/Data/CategoryColor.csv /app/ExpenseTrackerApp/SeedDataBase/Data/CategoryColor.csv
 COPY ExpenseTrackerApp/SeedDataBase/Data/CategoryIcon.csv /app/ExpenseTrackerApp/SeedDataBase/Data/CategoryIcon.csv
+COPY ExpenseTrackerApp/SeedDataBase/Data/Footer.csv /app/ExpenseTrackerApp/SeedDataBase/Data/Footer.csv
+COPY ExpenseTrackerApp/SeedDataBase/Data/SocialLinks.csv /app/ExpenseTrackerApp/SeedDataBase/Data/SocialLinks.csv
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release

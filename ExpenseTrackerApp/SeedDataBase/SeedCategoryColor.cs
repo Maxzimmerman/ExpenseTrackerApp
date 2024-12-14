@@ -5,7 +5,6 @@ namespace ExpenseTrackerApp.SeedDataBase;
 
 public class SeedCategoryColor
 {
-    
     private readonly ApplicationDbContext _context;
 
     public SeedCategoryColor(ApplicationDbContext context)
@@ -30,12 +29,12 @@ public class SeedCategoryColor
                     string[] values = line.Split(',');
 
                     // Ensure values have the correct format
-                    if (values.Length >= 2)
+                    if (values.Length >= 3)
                     {
                         var color = new CategoryColor
                         {
-                            Id = int.Parse(values[0].Trim()),
-                            Name = values[1].Trim().Trim('"') // Remove extra spaces and quotes
+                            Name = values[1].Trim().Trim('"'), // Remove extra spaces and quotes
+                            code = values[2].Trim().Trim('"')
                         };
 
                         // Add to context
@@ -44,7 +43,7 @@ public class SeedCategoryColor
                 }
 
                 // Save changes after adding all items
-                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!! ADDED ENTRIES !!!!!!!!!!!!!");
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!! ADDED CATEGORY COLOR ENTRIES !!!!!!!!!!!!!");
                 _context.SaveChanges();
             }
         }
