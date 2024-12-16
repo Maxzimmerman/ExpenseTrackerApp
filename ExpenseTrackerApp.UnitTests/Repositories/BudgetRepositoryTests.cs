@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 using ExpenseTrackerApp.Models.ViewModels.BudgetViewModels;
+using ExpenseTrackerApp.UnitTests.Helpers.AddDummyData;
 using FluentAssertions;
 
 namespace ExpenseTrackerApp.UnitTests.Repositories
@@ -34,15 +35,9 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
         public void addBudgetDataSuccessTest()
         {
             // Arrange
-
-            // DataBase Start
             var options = CreateDbContextOptions();
             var context = new ApplicationDbContext(options);
-
-            // DataBase End
-
-            // Providing Data Start
-            var userId = "123";
+            var (user, budgets) = AddDummyBudgetData.AddBudgetsWithAllRelations(context, 100);
 
             IEnumerable<SelectListItem> mockCategories = new List<SelectListItem>
             {
@@ -50,33 +45,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
                 new SelectListItem { Text = "Category2", Value = "2" }
             };
 
-            var categoryColor = new CategoryColor { Id = 1, code = "code1", Name = "Red" };
-            var categoryIcon = new CategoryIcon { Id = 1, Code = "icon1", Name = "Book" };
-
-            var categories = new List<Category>
-            {
-                new Category
-                {
-                    Id = 1,
-                    Title = "Budget1",
-                    ApplicationUserId = userId,
-                    CategoryColor = categoryColor,
-                    CategoryIcon = categoryIcon
-                },
-            };
-
-            var budgets = new List<Budget>
-            {
-                new Budget { Amount = 100, Category = categories[0] }
-            };
-
-            context.categoriesColors.Add(categoryColor);
-            context.categoriesIcons.Add(categoryIcon);
-            context.categories.AddRange(categories);
-            context.budgets.AddRange(budgets);
-            context.SaveChanges();
-
-            categoryRepositoryMock.Setup(repo => repo.GetAllCategoriesAsSelectListItems(userId))
+            categoryRepositoryMock.Setup(repo => repo.GetAllCategoriesAsSelectListItems(user.Id))
                 .Returns(mockCategories);
 
             var repository = new BudgetRepository(
@@ -86,7 +55,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             );
 
             // Act
-            var result = repository.addBudgetData("123");
+            var result = repository.addBudgetData(user.Id);
 
             // Assert
             result.Categories.Should().BeEquivalentTo(mockCategories);
@@ -165,6 +134,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             var budget = new Budget() { Id = 1, Amount = 100, Category = null };
             var exception = Assert.Throws<Exception>(() => budgetRepo.createBudget(budget));
             
+            // Assert
             Assert.Equal("Categorie not found.", exception.Message);
         }
         // Create Budget End
@@ -176,6 +146,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             // Arrange
             var options = CreateDbContextOptions();
             var context = new ApplicationDbContext(options);
+            var budget = AddDummyBudgetData.AddOneBudget(context, 0);
             
             categoryRepositoryMock.Setup(repo => repo.findCategory(1)).Returns(new Category());
             var budgetRepo = new BudgetRepository(
@@ -185,10 +156,6 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
                 );
             
             // Act
-            var budget = new Budget();
-            context.budgets.Add(budget);
-            context.SaveChanges();
-            
             budgetRepo.deleteBudget(budget.Id);
             
             // Assert
@@ -212,6 +179,8 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             
             // Act
             var exception = Assert.Throws<Exception>(() => budgetRepo.deleteBudget(1));
+            
+            // Assert
             Assert.Equal("Budget not found.", exception.Message);
         }
         // Delete Budget End
@@ -223,6 +192,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             // Arrange
             var options = CreateDbContextOptions();
             var context = new ApplicationDbContext(options);
+            var budget = AddDummyBudgetData.AddOneBudget(context, 200);
             
             categoryRepositoryMock.Setup(repo => repo.findCategory(1)).Returns(new Category());
             var budgetRepo = new BudgetRepository(
@@ -231,14 +201,9 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
                 context
             );
             
-            var budget = new Budget() { Id = 1, Amount = 100, CategoryId = 1 };
             var updatedBudget = new Budget() { Id = 1, Amount = 200, CategoryId = 1 };
             
-            context.budgets.Add(budget);
-            context.SaveChanges();
-            
             // Act
-            
             budgetRepo.updateBudget(updatedBudget);
             
             // Assert
@@ -261,11 +226,6 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
                 context
             );
             
-            var budget = new Budget() { Id = 1, Amount = 100, CategoryId = 1 };
-            
-            context.budgets.Add(budget);
-            context.SaveChanges();
-            
             // Act
             var exception = Assert.Throws<NullReferenceException>(() => budgetRepo.updateBudget(null));
             // Assert
@@ -273,6 +233,129 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             Assert.Equal("Budget cannot be null.", exception.Message);
         }
         // Update Budget End
+        
+        // GetBudgetViewModelAsync Start
+        [Fact]
+        public void getBudgetViewModelAsyncSuccessTest()
+        {
+            
+        }
+
+        [Fact]
+        public void getBudgetViewModelAsyncFailTest()
+        {
+            
+        }
+        // GetBudgetViewModelAsync End
+        
+        // GetAllBudgets Start
+        [Fact]
+        public void getAllBudgetsSuccessTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var (user, budgets)  = AddDummyBudgetData.AddBudgetsWithAllRelations(context,0);
+
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context);
+
+            // Act
+            Task<List<Budget>> result = budgetRepo.GetAllBudgets(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(budgets.Count, result.Result.Count());
+        }
+
+        [Fact]
+        public void getAllBudgetsNotEntriesTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var user = AddDummyBudgetData.AddUser(context);
+
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context);
+
+            // Act
+            Task<List<Budget>> result = budgetRepo.GetAllBudgets(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(0, result.Result.Count());
+        }
+        // GetAllBudgets End
+        
+        // GetSumOfAllBudgets Start
+        [Fact]
+        public void getSumOfAllBudgetsSuccessTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var (user, budgets) = AddDummyBudgetData.AddBudgetsWithAllRelations(context, 100);
+            
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object, 
+                categoryRepositoryMock.Object, 
+                context);
+
+            // Act
+            var result = budgetRepo.GetSumOfAllBudgets(user.Id);
+
+            // Assert
+            Assert.Equal(200, result);
+        }
+
+        [Fact]
+        public void getSumOfAllBudgetsIsZeroTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var (user, budgets) = AddDummyBudgetData.AddBudgetsWithAllRelations(context, 0);
+
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object, 
+                categoryRepositoryMock.Object, 
+                context);
+            
+            // Act
+            var result = budgetRepo.GetSumOfAllBudgets(user.Id);
+
+            // Assert
+            Assert.Equal(0, result);
+        }
+
+        [Fact]
+        public void getSumOfAllBudgetsIsNoEntriesTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var user = AddDummyBudgetData.AddUser(context);
+            
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object, 
+                categoryRepositoryMock.Object, 
+                context);
+            
+            context.Users.Add(user);
+            context.SaveChanges();
+
+            // Act
+            var result = budgetRepo.GetSumOfAllBudgets(user.Id);
+
+            // Assert
+            Assert.Equal(0, result);
+        }
+        // GetSumOfAllBudgets End
 
         // Test FindBudget Start
         [Fact]
@@ -281,26 +364,9 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             // Db
             var options = CreateDbContextOptions();
             using var context = new ApplicationDbContext(options);
+            var budget = AddDummyBudgetData.AddOneBudgetWithAllRelations(context);
 
             // Arrange
-            var budget = new Budget
-            {
-                Id = 1,
-                Amount = 100,
-                Category = new Category
-                {
-                    Title = "Category1",
-                    ApplicationUserId = "user1",
-                    CategoryColor = new CategoryColor { Id = 1, code = "code1", Name = "name1" },
-                    CategoryIcon = new CategoryIcon { Id = 1, Code = "code1", Name = "name1" },
-                    CategoryType = new CategoryType { Id = 1, Name = "name1" },
-                    ApplicationUser = new ApplicationUser { Balance = 1, ApplicationUserName = "user1" }
-                }
-            };
-
-            context.budgets.Add(budget);
-            context.SaveChanges();
-
             var budgetRepository = new BudgetRepository(
                 transactionRepositoryMock.Object,
                 categoryRepositoryMock.Object,
@@ -308,7 +374,6 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             );
 
             // Act
-
             var result = budgetRepository.findBudget(1);
 
             // Assert
