@@ -83,4 +83,36 @@ public static class AddDummyBudgetData
         
         return (user, budgets);
     }
+    
+    public static (ApplicationUser, List<Budget>) AddBudgetWithAllRelations(ApplicationDbContext context, decimal amount)
+    {
+        var user = new ApplicationUser()
+        {
+            ApplicationUserName = "User1", 
+            Balance = amount, 
+            registeredSince = DateTime.Now
+        };
+
+        var category = new Category()
+        {
+            Id = 1,
+            Title = "Category 1",
+            CategoryIcon = new CategoryIcon() { Id = 1, Name = "Icon", Code = "icon"},
+            CategoryColor = new CategoryColor() { Id = 1, Name = "Color", code = "color" },
+            CategoryType = new CategoryType() { Id = 1, Name = "Type" },
+            ApplicationUserId = user.Id,
+        };
+
+        var budgets = new List<Budget>()
+        {
+            new Budget() { Id = 1, Amount = amount, CategoryId = category.Id },
+        };
+            
+        context.Users.Add(user);
+        context.categories.Add(category);
+        context.budgets.AddRange(budgets);
+        context.SaveChanges();
+        
+        return (user, budgets);
+    }
 }

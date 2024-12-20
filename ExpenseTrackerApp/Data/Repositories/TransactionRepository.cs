@@ -89,7 +89,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             return Math.Round(amount, 2);
         }
 
-        public decimal GetAmountForCertainCategoryThisMonth(string userId, int categoryId)
+        public decimal GetSpendAmountForCertainCategoryThisMonth(string userId, int categoryId)
         {
             int year = DateTime.UtcNow.Year;
             int month = DateTime.UtcNow.Month;

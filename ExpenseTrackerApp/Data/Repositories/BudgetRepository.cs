@@ -118,7 +118,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 
                 // amount
                 budgetDetail.BudgetAmount = budget.Amount;
-                budgetDetail.SpendAmount = _transactionRepository.GetAmountForCertainCategoryThisMonth(userId, budget.CategoryId);
+                budgetDetail.SpendAmount = _transactionRepository.GetSpendAmountForCertainCategoryThisMonth(userId, budget.CategoryId);
 
                 // percentages
                 decimal totalBudget = budgetDetail.BudgetAmount;
@@ -137,7 +137,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 }
 
                 budgetDetail.SpendLastMonth = _transactionRepository.GetSpendForCertainCategoryLastMonth(userId, budgetDetail.Budget.CategoryId);
-                budgetDetail.SpendThisMonth = _transactionRepository.GetAmountForCertainCategoryThisMonth(userId, budget.CategoryId);
+                budgetDetail.SpendThisMonth = _transactionRepository.GetSpendAmountForCertainCategoryThisMonth(userId, budget.CategoryId);
                 budgetDetail.SpendMonthlyAverage = _transactionRepository.GetMonthlyAverageForCertainCategory(userId, budget.CategoryId);
 
                 // chart data budgets and expenses for whole year seperatet in months

@@ -58,8 +58,32 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             var result = repository.addBudgetData(user.Id);
 
             // Assert
+            Assert.NotNull(result);
             result.Categories.Should().BeEquivalentTo(mockCategories);
             result.Budgets.Should().BeEquivalentTo(budgets);
+        }
+
+        [Fact]
+        public void addBudgetDataSuccessNoDataTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            ApplicationUser user = AddDummyBudgetData.AddUser(context);
+
+            var budgetRep = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context
+            );
+            
+            // Act
+            var result = budgetRep.addBudgetData(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(0, result.Budgets.Count);
+            Assert.Equal(0, result.Categories.Count());
         }
         // AddBudgetData end
         
@@ -236,9 +260,146 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
         
         // GetBudgetViewModelAsync Start
         [Fact]
-        public void getBudgetViewModelAsyncSuccessTest()
+        public void getBudgetViewModelAsyncOneBudgetAndZeroValuesSuccessTest()
         {
-            
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var (user, budgets) = AddDummyBudgetData.AddBudgetWithAllRelations(context, 0);
+
+            transactionRepositoryMock.Setup(t => 
+                t.GetSpendAmountForCertainCategoryThisMonth(user.Id, budgets[0].CategoryId)).Returns(0);
+            transactionRepositoryMock.Setup(t =>
+                t.GetSpendForCertainCategoryLastMonth(user.Id, budgets[0].CategoryId)).Returns(0);
+            transactionRepositoryMock.Setup(t => 
+                t.GetMonthlyAverageForCertainCategory(user.Id, budgets[0].CategoryId)).Returns(0);
+            transactionRepositoryMock.Setup(t =>
+                t.GetExpensesForAllMonthsForCertainCategory(user.Id, budgets[0].CategoryId)).Returns(new List<decimal> ());
+                
+            var budgetRepo = new BudgetRepository(transactionRepositoryMock.Object, 
+                categoryRepositoryMock.Object, 
+                context);
+            // Act
+            var result = budgetRepo.GetBudgetViewModelAsync(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Result.Budgets.Count);
+            Assert.Equal(0, result.Result.Budgets[0].Budget.Amount);
+            Assert.Equal(0, result.Result.Budgets[0].BudgetAmount);
+            Assert.Equal(0, result.Result.Budgets[0].SpendAmount);
+            Assert.Equal(0, result.Result.Budgets[0].SpendPercentage);
+            Assert.Equal(0, result.Result.Budgets[0].SpendThisMonth);
+            Assert.Equal(0, result.Result.Budgets[0].SpendLastMonth);
+            Assert.Equal(0, result.Result.Budgets[0].SpendMonthlyAverage);
+            Assert.Equal(12, result.Result.Budgets[0].BudgetsForYear.Count);
+            Assert.Equal(0, result.Result.Budgets[0].ExpensesForYear.Count);
+        }
+        
+        [Fact]
+        public void getBudgetViewModelAsyncOneBudgetValuesSpend50PercentOfBudgetSuccessTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var (user, budgets) = AddDummyBudgetData.AddBudgetWithAllRelations(context, 100);
+
+            transactionRepositoryMock.Setup(t => 
+                t.GetSpendAmountForCertainCategoryThisMonth(user.Id, budgets[0].CategoryId)).Returns(50);
+            transactionRepositoryMock.Setup(t =>
+                t.GetSpendForCertainCategoryLastMonth(user.Id, budgets[0].CategoryId)).Returns(50);
+            transactionRepositoryMock.Setup(t => 
+                t.GetMonthlyAverageForCertainCategory(user.Id, budgets[0].CategoryId)).Returns((decimal)8.33);
+            transactionRepositoryMock.Setup(t =>
+                t.GetExpensesForAllMonthsForCertainCategory(user.Id, budgets[0].CategoryId)).Returns(new List<decimal> ()
+            {
+                50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
+            });
+                
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object, 
+                categoryRepositoryMock.Object, 
+                context);
+            // Act
+            var result = budgetRepo.GetBudgetViewModelAsync(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Result.Budgets.Count);
+            Assert.Equal(100, result.Result.Budgets[0].Budget.Amount);
+            Assert.Equal(100, result.Result.Budgets[0].BudgetAmount);
+            Assert.Equal(50, result.Result.Budgets[0].SpendAmount);
+            Assert.Equal(50, result.Result.Budgets[0].SpendPercentage);
+            Assert.Equal(50, result.Result.Budgets[0].SpendThisMonth);
+            Assert.Equal(50, result.Result.Budgets[0].SpendLastMonth);
+            Assert.Equal((decimal)8.33, result.Result.Budgets[0].SpendMonthlyAverage);
+            Assert.Equal(12, result.Result.Budgets[0].BudgetsForYear.Count);
+            Assert.Equal(12, result.Result.Budgets[0].ExpensesForYear.Count);
+        }
+        
+        [Fact]
+        public void getBudgetViewModelAsyncOneBudgetRealisticValuesPercentOfBudgetSuccessTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var (user, budgets) = AddDummyBudgetData.AddBudgetWithAllRelations(context, 1000);
+
+            transactionRepositoryMock.Setup(t => 
+                t.GetSpendAmountForCertainCategoryThisMonth(user.Id, budgets[0].CategoryId)).Returns(200);
+            transactionRepositoryMock.Setup(t =>
+                t.GetSpendForCertainCategoryLastMonth(user.Id, budgets[0].CategoryId)).Returns(0);
+            transactionRepositoryMock.Setup(t => 
+                t.GetMonthlyAverageForCertainCategory(user.Id, budgets[0].CategoryId)).Returns((decimal)16.66);
+            transactionRepositoryMock.Setup(t =>
+                t.GetExpensesForAllMonthsForCertainCategory(user.Id, budgets[0].CategoryId)).Returns(new List<decimal> ()
+            {
+                50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
+            });
+                
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object, 
+                categoryRepositoryMock.Object, 
+                context);
+            // Act
+            var result = budgetRepo.GetBudgetViewModelAsync(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(1, result.Result.Budgets.Count);
+            Assert.Equal(1000, result.Result.Budgets[0].Budget.Amount);
+            Assert.Equal(1000, result.Result.Budgets[0].BudgetAmount);
+            Assert.Equal(200, result.Result.Budgets[0].SpendAmount);
+            Assert.Equal(20, result.Result.Budgets[0].SpendPercentage);
+            Assert.Equal(200, result.Result.Budgets[0].SpendThisMonth);
+            Assert.Equal(0, result.Result.Budgets[0].SpendLastMonth);
+            Assert.Equal((decimal)16.66, result.Result.Budgets[0].SpendMonthlyAverage);
+            Assert.Equal(12, result.Result.Budgets[0].BudgetsForYear.Count);
+            Assert.Equal(12, result.Result.Budgets[0].ExpensesForYear.Count);
+        }
+        
+        // GetBudgetViewModelAsync Start
+
+        [Fact]
+        public void getBudgetViewModelAsyncSuccessNoDataTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var user = AddDummyBudgetData.AddUser(context);
+
+            var budgetRepo = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context
+            );
+
+            // Act
+            var result = budgetRepo.GetBudgetViewModelAsync(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(0, result.Result.Budgets.Count);
         }
 
         [Fact]
@@ -345,9 +506,6 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
                 transactionRepositoryMock.Object, 
                 categoryRepositoryMock.Object, 
                 context);
-            
-            context.Users.Add(user);
-            context.SaveChanges();
 
             // Act
             var result = budgetRepo.GetSumOfAllBudgets(user.Id);
