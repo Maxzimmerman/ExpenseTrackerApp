@@ -10,7 +10,7 @@ using FluentAssertions;
 
 namespace ExpenseTrackerApp.UnitTests.Repositories;
 
-public class CategoryColorRepositoryTests
+public class CategoryIconRepositoryTests
 {
     private DbContextOptions<ApplicationDbContext> CreateDbContextOptions()
     {
@@ -19,33 +19,33 @@ public class CategoryColorRepositoryTests
             .Options;
     }
     
-    // BetCategoryColorsAs Select List Items Start
+    // BetCategoryIconsAs Select List Items Start
     [Fact]
-    public void getCategoryColorsAsSelectListItemsSuccessTest()
+    public void getCategoryIconsAsSelectListItemsSuccessTest()
     {
         // Arrange
         var options = CreateDbContextOptions();
         var context = new ApplicationDbContext(options);
         
-        var categoryColors = new List<CategoryColor>()
+        var categoryIcons = new List<CategoryIcon>()
         {
-            new CategoryColor() { Name = "Color1", code = "color1"},
-            new CategoryColor() { Name = "Color2", code = "color2" },
+            new CategoryIcon() { Name = "Icon1", Code = "icon1"},
+            new CategoryIcon() { Name = "Icon2", Code = "icon2" },
         };
         
-        context.categoriesColors.AddRange(categoryColors);
+        context.categoriesIcons.AddRange(categoryIcons);
         context.SaveChanges();
 
-        var categoryColorRepo = new CategoryColorRepository(context);
+        var categoryIconRepo = new CategoryIconRepository(context);
 
         IEnumerable<SelectListItem> expectedResult = new List<SelectListItem>()
         {
-            new SelectListItem() { Text = "Color1", Value = "1" },
-            new SelectListItem() { Text = "Color2", Value = "2" },
+            new SelectListItem() { Text = "Icon1", Value = "1" },
+            new SelectListItem() { Text = "Icon2", Value = "2" },
         };
         
         // Act
-        var result = categoryColorRepo.GetCategoryColorsAsSelectListItems();
+        var result = categoryIconRepo.GetCategoryIconsAsSelectListItems();
         
         // Assert
         Assert.NotNull(result);
@@ -53,51 +53,51 @@ public class CategoryColorRepositoryTests
     }
 
     [Fact]
-    public void getCategoryColorsAsSelectListItemsFailTest()
+    public void getCategoryIconsAsSelectListItemsFailTest()
     {
         // Arrange
         var options = CreateDbContextOptions();
         var context = new ApplicationDbContext(options);
         
-        var categoryColorRepo = new CategoryColorRepository(context);
+        var categoryIconRepo = new CategoryIconRepository(context);
         
         // Act
-        var result = categoryColorRepo.GetCategoryColorsAsSelectListItems();
+        var result = categoryIconRepo.GetCategoryIconsAsSelectListItems();
         
         // Assert
         Assert.NotNull(result);
         result.Should().BeEmpty();
     }
-    // BetCategoryColorsAs Select List Items Start
+    // BetCategoryIconsAs Select List Items Start
     
-    // GetCategoryColorFerCertainCategory Start
+    // GetCategoryIconFerCertainCategory Start
     [Fact]
-    public void getGetCategoryColorFerCertainCategorySuccessTest()
+    public void getGetCategoryIconFerCertainCategorySuccessTest()
     {
         // Arrange
         var options = CreateDbContextOptions();
         var context = new ApplicationDbContext(options);
 
-        var categoryColors = new List<CategoryColor>()
+        var categoryIcons = new List<CategoryIcon>()
         {
-            new CategoryColor() { Name = "Color1", code = "color1" },
-            new CategoryColor() { Name = "Color2", code = "color2" },
+            new CategoryIcon() { Name = "Icon1", Code = "icon1"},
+            new CategoryIcon() { Name = "Icon2", Code = "icon2" },
         };
         
-        context.categoriesColors.AddRange(categoryColors);
+        context.categoriesIcons.AddRange(categoryIcons);
         context.SaveChanges();
         
-        var categoryColorRepo = new CategoryColorRepository(context);
+        var categoryIconRepo = new CategoryIconRepository(context);
         
         // Act
-        var result = categoryColorRepo.GetCategoryColorFerCertainCategory(1);
+        var result = categoryIconRepo.GetCategoryIconById(1);
         
         // Assert
         Assert.NotNull(result);
         Assert.Equal(1, result.Id);
-        Assert.Equal("Color1", result.Name);
-        Assert.Equal("color1", result.code);
-        result.Should().BeEquivalentTo(categoryColors[0]);
+        Assert.Equal("Icon1", result.Name);
+        Assert.Equal("icon1", result.Code);
+        result.Should().BeEquivalentTo(categoryIcons[0]);
     }
 
     [Fact]
@@ -107,14 +107,14 @@ public class CategoryColorRepositoryTests
         var options = CreateDbContextOptions();
         var context = new ApplicationDbContext(options);
         
-        var categoryColorRepo = new CategoryColorRepository(context);
+        var categoryIconRepo = new CategoryIconRepository(context);
         
         // Act
-        var exceptions = Assert.Throws<Exception>(() => categoryColorRepo.GetCategoryColorFerCertainCategory(1));
+        var exceptions = Assert.Throws<Exception>(() => categoryIconRepo.GetCategoryIconById(1));
         
         // Assert
-        Assert.Equal("Could not find CategoryColor", exceptions.Message);
+        Assert.Equal("Could not find CategoryIcon", exceptions.Message);
     }
     
-    // GetCategoryColorFerCertainCategory End
+    // GetCategoryIconFerCertainCategory End
 }

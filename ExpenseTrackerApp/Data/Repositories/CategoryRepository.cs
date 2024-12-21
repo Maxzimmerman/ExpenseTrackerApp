@@ -59,7 +59,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public void createCategory(Category category, string Userid)
         {
-            var categoryIcon = _categoryIconRepository.GetCategoryBelongingToCertainCategory(category.CategoryIconId);
+            var categoryIcon = _categoryIconRepository.GetCategoryIconById(category.CategoryIconId);
             var categoryType = _categoryTypeRepsitory.GetCategoryTypeForCertainCategory(category.CategoryTypeId);
             var categoryColor = _categoryColorRepository.GetCategoryColorFerCertainCategory(category.CategoryColorId);
 

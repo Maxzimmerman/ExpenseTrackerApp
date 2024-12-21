@@ -24,7 +24,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             return categoryIcons;
         }
 
-        public CategoryIcon? GetCategoryBelongingToCertainCategory(int categoryIconId)
+        public CategoryIcon? GetCategoryIconById(int categoryIconId)
         {
             var categoryIcon = _applicationDbContext.categoriesIcons.FirstOrDefault(c => c.Id == categoryIconId);
             if (categoryIcon != null)

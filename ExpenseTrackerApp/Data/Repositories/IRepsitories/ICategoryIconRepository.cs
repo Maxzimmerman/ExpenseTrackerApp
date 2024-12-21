@@ -6,6 +6,6 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
     public interface ICategoryIconRepository : IRepository<CategoryIcon>
     {
         IEnumerable<SelectListItem> GetCategoryIconsAsSelectListItems();
-        CategoryIcon? GetCategoryBelongingToCertainCategory(int categoryIconId);
+        CategoryIcon? GetCategoryIconById(int categoryIconId);
     }
 }
