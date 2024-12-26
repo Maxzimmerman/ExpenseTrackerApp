@@ -57,37 +57,38 @@ namespace ExpenseTrackerApp.Data.Repositories
             return addCategory;
         }
 
-        public void createCategory(Category category, string Userid)
+        public void createCategory(Category category, string userId)
         {
-            var categoryIcon = _categoryIconRepository.GetCategoryIconById(category.CategoryIconId);
             var categoryType = _categoryTypeRepsitory.GetCategoryTypeForCertainCategory(category.CategoryTypeId);
+            var categoryIcon = _categoryIconRepository.GetCategoryIconById(category.CategoryIconId);
             var categoryColor = _categoryColorRepository.GetCategoryColorFerCertainCategory(category.CategoryColorId);
 
             if (categoryIcon == null)
             {
-                throw new Exception($"CategoryIcon with ID {category.CategoryIconId} not found.");
+                throw new Exception("CategoryIcon not found.");
             }
 
             if (categoryType == null)
             {
-                throw new Exception($"CategoryType with ID {category.CategoryTypeId} not found.");
+                throw new Exception("CategoryType not found.");
             }
 
             if (categoryColor == null)
             {
-                throw new Exception($"CategoryColor with ID {category.CategoryColorId} not found.");
+                throw new Exception("CategoryColor not found.");
             }
 
             category.CategoryIcon = categoryIcon;
             category.CategoryType = categoryType;
             category.CategoryColor = categoryColor;
-            category.ApplicationUserId = Userid;
+            category.ApplicationUserId = userId;
             _applicationDbContext.categories.Add(category);
             _applicationDbContext.SaveChanges();
         }
 
         public void deleteCategory(int id)
         {
+            // the findCategory method will throw and exception if id is not valid
             var category = this.findCategory(id);
             _applicationDbContext.categories.Remove(category);
             _applicationDbContext.SaveChanges();
