@@ -81,7 +81,6 @@ public static class AddDummyCategoryData
         var categoryIcon = new CategoryIcon() { Name = "CategoryIcon 1", Code = "1" };
         var categoryColor = new CategoryColor() { Name = "CategoryColor 1", code = "1" };
         var category = new Category()
-        
         {
             Title = "Category 1", 
             ApplicationUser = user, 

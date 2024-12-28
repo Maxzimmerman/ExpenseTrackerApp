@@ -416,12 +416,60 @@ public class CategoryRespositoryTests
     public void updateCategorySuccessTest()
     {
         // Arrange
+        var options = CreateDbContextOptions(); // Ensure this creates a unique, isolated in-memory DB.
+        using (var context = new ApplicationDbContext(options))
+        {
+            var (user, category, categoryType, categoryIcon, categoryColor) =
+                AddDummyCategoryData.addOneCategoryWithAllRelations(context);
+
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+
+            var updatedCategory = new Category
+            {
+                Id = category.Id,
+                Title = "Updated Category",
+                ApplicationUser = user,
+                CategoryType = categoryType,
+                CategoryIcon = categoryIcon,
+                CategoryColor = categoryColor
+            };
+
+            // Act
+            categoryRepo.updateCategory(updatedCategory);
+
+            // Assert
+            var categoryDb = context.categories.FirstOrDefault(c => c.Id == updatedCategory.Id);
+            categoryDb.Should().NotBeNull();
+        }
+    }
+    
+    [Fact]
+    public void updateCategoryCategoryIsNullFailTest()
+    {
+        // Arrange
         var options = CreateDbContextOptions();
-        var context = new ApplicationDbContext(options);
+        using (var context = new ApplicationDbContext(options))
+        {
+            var CategoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+
+            // Act
+            var exception = Assert.Throws<NullReferenceException>(() => CategoryRepo.updateCategory(null));
         
-        // Act
-        
-        // Assert
+            // Assert
+            Assert.Equal("Category is null.", exception.Message);
+        }
     }
     // update Category Test End
 }
