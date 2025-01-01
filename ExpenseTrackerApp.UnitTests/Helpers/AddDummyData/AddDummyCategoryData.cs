@@ -86,7 +86,7 @@ public static class AddDummyCategoryData
             ApplicationUser = user, 
             CategoryType = categoryType,
             CategoryIcon = categoryIcon, 
-            CategoryColor = categoryColor
+            CategoryColor = categoryColor,
         };
             
         context.Users.Add(user);

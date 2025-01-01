@@ -393,21 +393,22 @@ public class CategoryRespositoryTests
     {
         // Arrange
         var options = CreateDbContextOptions();
-        var context = new ApplicationDbContext(options);
-
-        var categoryRepo = new CategoryRepository(
-            context,
-            mockCategoryTypeRepository.Object,
-            mockCategoryIconRepository.Object,
-            mockCategoryColorRepository.Object,
-            mockTransactionRepository.Object
-        );
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
         
-        // Act
-        // The CategoryRepositor.findCategory method will throw this exception
-        var exception = Assert.Throws<Exception>(() => categoryRepo.deleteCategory(1));
+            // Act
+            // The CategoryRepositor.findCategory method will throw this exception
+            var exception = Assert.Throws<Exception>(() => categoryRepo.deleteCategory(1));
         
-        Assert.Equal("Couldn't find any category", exception.Message);
+            Assert.Equal("Couldn't find any category", exception.Message);
+        }
     }
     // delete Category Test End
     
@@ -435,17 +436,32 @@ public class CategoryRespositoryTests
                 Id = category.Id,
                 Title = "Updated Category",
                 ApplicationUser = user,
+                ApplicationUserId = user.Id,
                 CategoryType = categoryType,
+                CategoryTypeId = categoryType.Id,
                 CategoryIcon = categoryIcon,
-                CategoryColor = categoryColor
+                CategoryIconId = categoryIcon.Id,
+                CategoryColor = categoryColor,
+                CategoryColorId = categoryColor.Id
             };
 
             // Act
             categoryRepo.updateCategory(updatedCategory);
 
             // Assert
-            var categoryDb = context.categories.FirstOrDefault(c => c.Id == updatedCategory.Id);
+            var categoryDb = context.categories
+                .Include(c => c.CategoryType)
+                .Include(c => c.CategoryIcon)
+                .Include(c => c.CategoryColor)
+                .Include(c => c.ApplicationUser)
+                .FirstOrDefault(c => c.Id == updatedCategory.Id);
+
             categoryDb.Should().NotBeNull();
+            categoryDb.Should().BeEquivalentTo(updatedCategory, options => options
+                .Excluding(c => c.CategoryType) // Exclude navigation properties to avoid lazy-loading issues
+                .Excluding(c => c.CategoryIcon)
+                .Excluding(c => c.CategoryColor)
+                .Excluding(c => c.ApplicationUser));
         }
     }
     
@@ -468,8 +484,62 @@ public class CategoryRespositoryTests
             var exception = Assert.Throws<NullReferenceException>(() => CategoryRepo.updateCategory(null));
         
             // Assert
-            Assert.Equal("Category is null.", exception.Message);
+            Assert.Equal(typeof(NullReferenceException), exception.GetType());
         }
     }
     // update Category Test End
+    
+    // find category test start
+    [Fact]
+    public void findCategorySuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var (user, category, categoryType, categoryIcon, categoryColor) =
+                AddDummyCategoryData.addOneCategoryWithAllRelations(context);
+
+            var categoryRepo = new CategoryRepository
+            (
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            // Act
+            var foundCategory = categoryRepo.findCategory(category.Id);
+
+            // Assert
+            Assert.NotNull(foundCategory);
+            foundCategory.Should().BeEquivalentTo(category);
+        }
+    }
+    
+    [Fact]
+    public void findCategoryNoCategoryFailTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository
+            (
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            // Act
+            var exception = Assert.Throws<Exception>(() => categoryRepo.findCategory(1));
+            
+            // Assert
+            Assert.Equal("Couldn't find any category", exception.Message);
+        }
+    }
+    // find category test end
 }
