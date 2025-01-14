@@ -121,8 +121,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             if (category != null)
                 return category;
-            else
-                throw new Exception("Couldn't find any category");
+            throw new Exception("Couldn't find any category");
         }
 
         public List<Category> GetAllCategories(string userId)
@@ -131,10 +130,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Where(c => c.ApplicationUserId == userId)
                 .ToList();
 
-            if (categories != null)
-                return categories;
-            else
-                throw new Exception("Could not find any category");
+            return categories;
         }
 
         public IEnumerable<SelectListItem> GetAllCategoriesAsSelectListItems(string userId)
@@ -147,22 +143,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                     Value = c.Id.ToString()
                 });
 
-            if(categories != null)
-                return categories;
-            else
-                throw new Exception("Could not find any category");
-        }
-
-        public List<Category> GetAllCategoriesWithTransactions(string userId)
-        {
-            var list = _applicationDbContext.categories
-                .Where(c => c.ApplicationUserId == userId)
-                .ToList();
-
-            if (list != null)
-                return list;
-            else
-                throw new Exception("Could not find any category");
+            return categories;
         }
 
         public List<Category> GetAllExpenseCategoriesWithTransactions(string userId)
@@ -172,10 +153,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == "Expense")
                 .ToList();
 
-            if (listExpenses != null)
-                return listExpenses;
-            else
-                throw new Exception("Could not find any category");
+            return listExpenses;
         }
 
         public List<Category> GetAllIncomeCategoriesWithTransactions(string userId)
@@ -185,10 +163,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == "Income")
                 .ToList();
 
-            if (listIncoms != null)
-                return listIncoms;
-            else
-                throw new Exception("Could not find any category");
+            return listIncoms;
         }
 
         public List<Category> GetAllCategoriesWithTransactions(string userId, string ExpenseOrIncom)
@@ -208,10 +183,7 @@ namespace ExpenseTrackerApp.Data.Repositories
                 }
             }
 
-            if (categoriesWithTransactions != null)
-                return categoriesWithTransactions;
-            else
-                throw new Exception("Could not find any category");
+            return categoriesWithTransactions;
         }
 
         public bool CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(string userId, string categoryName)
@@ -220,8 +192,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             if (amount != 0)
                 return true;
-            else
-                return false;
+            return false;
         }
 
         public decimal GetTotalAmountOfAllCategories(string userId, string expenseOrIncom)

@@ -542,4 +542,118 @@ public class CategoryRespositoryTests
         }
     }
     // find category test end
+    
+    // get all categories start
+    [Fact]
+    public void getAllCategoriesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var (user, categories, categoryTypes, categoryIcons, categoryColors) =
+                AddDummyCategoryData.AddCategoriesWithAllRelations(context);
+
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+                );
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllCategories(user.Id);
+
+            // Assert 
+            Assert.NotNull(resultCategories);
+            Assert.NotEmpty(resultCategories);
+            resultCategories.Should().BeEquivalentTo(categories);
+        }
+    }
+
+    [Fact]
+    public void getAllCategoriesNoCategoryTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+                );
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllCategories("testid");
+            
+            // Assert
+            Assert.NotNull(resultCategories);
+            Assert.Empty(resultCategories);
+        }
+    }
+    // get all categories end
+    
+    // get all categories as selectListItems start
+    [Fact]
+    public void GetAllCategoriesAsSelectListItemsSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            var (user, categories, categoryTypes, categoryIcons, categoryColors) =
+                AddDummyCategoryData.AddCategoriesWithAllRelations(context);
+            
+            var expectedResult = categories.Select(e => new SelectListItem()
+            {
+                Text = e.Title,
+                Value = e.Id.ToString(),
+            });
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllCategoriesAsSelectListItems(user.Id);
+            
+            // Assert
+            Assert.NotNull(resultCategories);
+            Assert.NotEmpty(resultCategories);
+            resultCategories.Should().BeEquivalentTo(expectedResult);
+        }
+    }
+
+    [Fact]
+    public void GetAllCategoriesAsSelectListItemsNoCategoriesTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllCategories("testid");
+
+            // Assert
+            Assert.NotNull(resultCategories);
+            Assert.Empty(resultCategories);
+        }
+    }
+    // get all categories as selectListItems end
 }
