@@ -166,35 +166,6 @@ namespace ExpenseTrackerApp.Data.Repositories
             return listIncoms;
         }
 
-        public List<Category> GetAllCategoriesWithTransactions(string userId, string ExpenseOrIncom)
-        {
-            List<Category> categoriesWithTransactions = new List<Category>();
-            var categories = _applicationDbContext.categories
-                .Include(c => c.CategoryType)
-                .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == ExpenseOrIncom)
-                .ToList();
-
-            foreach(var category in categories)
-            {
-                // only add if its amount is above zero
-                if(this.CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(userId, category.Title))
-                {
-                    categoriesWithTransactions.Add(category);
-                }
-            }
-
-            return categoriesWithTransactions;
-        }
-
-        public bool CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(string userId, string categoryName)
-        {
-            decimal amount = _transactionRepository.Value.GetTotalAmountForCertainCategory(userId, categoryName);
-
-            if (amount != 0)
-                return true;
-            return false;
-        }
-
         public decimal GetTotalAmountOfAllCategories(string userId, string expenseOrIncom)
         {
             return _transactionRepository.Value.GetTotalAmountForAllCategories(userId, expenseOrIncom);
@@ -202,7 +173,9 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public int CountAllCategoriesForUser(string userId)
         {
-            int categoriesCount = _applicationDbContext.categories.Count();
+            int categoriesCount = _applicationDbContext.categories
+                .Where(c => c.ApplicationUserId == userId)
+                .Count();
             return categoriesCount;
         }
     }

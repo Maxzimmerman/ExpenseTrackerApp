@@ -15,8 +15,6 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         IEnumerable<SelectListItem> GetAllCategoriesAsSelectListItems(string userId);
         List<Category> GetAllExpenseCategories(string userId);
         List<Category> GetAllIncomeCategories(string userId);
-        List<Category> GetAllCategoriesWithTransactions(string userId, string ExpenseOrIncom);
-        bool CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(string userId, string categoryName);
         decimal GetTotalAmountOfAllCategories(string userId, string expenseOrIncom);
         int CountAllCategoriesForUser(string userId);
     }

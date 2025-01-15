@@ -733,4 +733,85 @@ public class CategoryRespositoryTests
         }
     }
     // get all expense categories with transaction end
+    
+    // get all incomes categories with transaction start
+    [Fact]
+    public void getAllIncomeCategoriesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            var (user, categories, categoryTypes, categoryIcons, categoryColors) =
+                AddDummyCategoryData.AddCategoriesWithAllRelations(context);
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllIncomeCategories(user.Id);
+            
+            Assert.NotNull(resultCategories);
+            Assert.Equal(1, resultCategories.Count());
+        }
+    }
+    
+    [Fact]
+    public void getAllIncomeCategoriesNoExpensesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            var (user, categories, categoryTypes, categoryIcons, categoryColors) =
+                AddDummyCategoryData.AddCategoriesWithAllRelationsNoExpensesNorIncomes(context);
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllIncomeCategories(user.Id);
+            
+            Assert.NotNull(resultCategories);
+            Assert.Empty(resultCategories);
+        }
+    }
+    
+    [Fact]
+    public void getAllIncomeCategoriesNoCategoriesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllIncomeCategories("userid");
+            
+            Assert.NotNull(resultCategories);
+            Assert.Empty(resultCategories);
+        }
+    }
+    // get all incomes categories with transaction end
+    
+    // get total amount of all categories start
+    
+    // get total amount of all categories end
 }
