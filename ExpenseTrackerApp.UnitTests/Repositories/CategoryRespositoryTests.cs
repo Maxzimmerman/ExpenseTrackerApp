@@ -812,6 +812,76 @@ public class CategoryRespositoryTests
     // get all incomes categories with transaction end
     
     // get total amount of all categories start
+    [Fact]
+    public void getTotalAmountOfCatecoriesNoCategoriesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            string expenseOrIncome = "None";
+            string userId = "userid";
+            
+            var mockTransactionRepository = new Mock<ITransactionRepository>();
+            
+            mockTransactionRepository
+                .Setup(m => m.GetTotalAmountForAllCategories(userId, expenseOrIncome))
+                .Returns(0);
+
+            var lazyMockTransactionRepository = new Lazy<ITransactionRepository>(() => mockTransactionRepository.Object);
+
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                lazyMockTransactionRepository
+            );
+            
+            // Act
+
+            var resultAmount = categoryRepo.GetTotalAmountOfAllCategories(userId, expenseOrIncome);
+            
+            // Assert
+            Assert.Equal(0, resultAmount);
+        }
+    }
     
+    [Fact]
+    public void getTotalAmountOfCatecoriesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            string expenseOrIncome = "None";
+            
+            var (user, categories, categoryTypes, categoryIcons, categoryColors) =
+                AddDummyCategoryData.AddCategoriesWithAllRelationsNoExpensesNorIncomes(context);
+            
+            var mockTransactionRepository = new Mock<ITransactionRepository>();
+            
+            mockTransactionRepository
+                .Setup(m => m.GetTotalAmountForAllCategories(user.Id, expenseOrIncome))
+                .Returns(100);
+
+            var lazyMockTransactionRepository = new Lazy<ITransactionRepository>(() => mockTransactionRepository.Object);
+
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                lazyMockTransactionRepository
+            );
+            
+            // Act
+
+            var resultAmount = categoryRepo.GetTotalAmountOfAllCategories(user.Id, expenseOrIncome);
+            
+            // Assert
+            Assert.Equal(100, resultAmount);
+        }
+    }
     // get total amount of all categories end
 }
