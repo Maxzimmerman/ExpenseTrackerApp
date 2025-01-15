@@ -146,7 +146,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             return categories;
         }
 
-        public List<Category> GetAllExpenseCategoriesWithTransactions(string userId)
+        public List<Category> GetAllExpenseCategories(string userId)
         {
             var listExpenses = _applicationDbContext.categories
                 .Include(c => c.CategoryType)
@@ -156,7 +156,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             return listExpenses;
         }
 
-        public List<Category> GetAllIncomeCategoriesWithTransactions(string userId)
+        public List<Category> GetAllIncomeCategories(string userId)
         {
             var listIncoms = _applicationDbContext.categories
                 .Include(c => c.CategoryType)

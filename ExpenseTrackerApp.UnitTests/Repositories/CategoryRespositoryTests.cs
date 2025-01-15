@@ -599,7 +599,7 @@ public class CategoryRespositoryTests
     
     // get all categories as selectListItems start
     [Fact]
-    public void GetAllCategoriesAsSelectListItemsSuccessTest()
+    public void getAllCategoriesAsSelectListItemsSuccessTest()
     {
         // Arrange
         var options = CreateDbContextOptions();
@@ -633,7 +633,7 @@ public class CategoryRespositoryTests
     }
 
     [Fact]
-    public void GetAllCategoriesAsSelectListItemsNoCategoriesTest()
+    public void getAllCategoriesAsSelectListItemsNoCategoriesTest()
     {
         // Arrange
         var options = CreateDbContextOptions();
@@ -656,4 +656,81 @@ public class CategoryRespositoryTests
         }
     }
     // get all categories as selectListItems end
+    
+    // get all expense categories with transaction start
+    [Fact]
+    public void getAllExpenseCategoriesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            var (user, categories, categoryTypes, categoryIcons, categoryColors) =
+                AddDummyCategoryData.AddCategoriesWithAllRelations(context);
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllExpenseCategories(user.Id);
+            
+            Assert.NotNull(resultCategories);
+            Assert.Equal(1, resultCategories.Count());
+        }
+    }
+    
+    [Fact]
+    public void getAllExpenseCategoriesNoExpensesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            var (user, categories, categoryTypes, categoryIcons, categoryColors) =
+                AddDummyCategoryData.AddCategoriesWithAllRelationsNoExpensesNorIncomes(context);
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllExpenseCategories(user.Id);
+            
+            Assert.NotNull(resultCategories);
+            Assert.Empty(resultCategories);
+        }
+    }
+    
+    [Fact]
+    public void getAllExpenseCategoriesNoCategoriesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllExpenseCategories("userid");
+            
+            Assert.NotNull(resultCategories);
+            Assert.Empty(resultCategories);
+        }
+    }
+    // get all expense categories with transaction end
 }

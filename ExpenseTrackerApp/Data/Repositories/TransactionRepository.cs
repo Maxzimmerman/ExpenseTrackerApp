@@ -345,7 +345,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             List<ExpenseTrackerApp.Models.Transaction> expense = this.GetExpenses(userId);
             List<ExpenseAndIncomeCategoryData> expenseAndIncomeCategoryList = new List<ExpenseAndIncomeCategoryData>();
 
-            foreach (var category in _categoryRepository.GetAllExpenseCategoriesWithTransactions(userId))
+            foreach (var category in _categoryRepository.GetAllExpenseCategories(userId))
             {
                 ExpenseAndIncomeCategoryData expenseAndIncomeCategoryData = new ExpenseAndIncomeCategoryData();
                 expenseAndIncomeCategoryData.Title = category.Title;
@@ -366,7 +366,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             List<ExpenseTrackerApp.Models.Transaction> incoms = this.GetIncoms(userId);
             List<ExpenseAndIncomeCategoryData> expenseAndIncomeCategoryList = new List<ExpenseAndIncomeCategoryData>();
 
-            foreach (var category in _categoryRepository.GetAllIncomeCategoriesWithTransactions(userId))
+            foreach (var category in _categoryRepository.GetAllIncomeCategories(userId))
             {
                 ExpenseAndIncomeCategoryData expenseAndIncomeCategoryData = new ExpenseAndIncomeCategoryData();
                 expenseAndIncomeCategoryData.Title = category.Title;

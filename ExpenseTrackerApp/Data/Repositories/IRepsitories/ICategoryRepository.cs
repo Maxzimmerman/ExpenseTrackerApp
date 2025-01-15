@@ -13,8 +13,8 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         Category findCategory(int id);
         List<Category> GetAllCategories(string userId);
         IEnumerable<SelectListItem> GetAllCategoriesAsSelectListItems(string userId);
-        List<Category> GetAllExpenseCategoriesWithTransactions(string userId);
-        List<Category> GetAllIncomeCategoriesWithTransactions(string userId);
+        List<Category> GetAllExpenseCategories(string userId);
+        List<Category> GetAllIncomeCategories(string userId);
         List<Category> GetAllCategoriesWithTransactions(string userId, string ExpenseOrIncom);
         bool CheckIfAllAmountOfACategoriesTransactionsAreAboveZero(string userId, string categoryName);
         decimal GetTotalAmountOfAllCategories(string userId, string expenseOrIncom);
