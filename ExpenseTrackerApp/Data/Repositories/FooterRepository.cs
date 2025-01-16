@@ -1,6 +1,7 @@
 ﻿using ExpenseTrackerApp.Data.Repositories.IRepsitories;
 using ExpenseTrackerApp.Models;
 using Microsoft.EntityFrameworkCore;
+using Exception = System.Exception;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {
@@ -19,6 +20,8 @@ namespace ExpenseTrackerApp.Data.Repositories
         public Footer GetFooter()
         {
             Footer footerModel = _applicationDbContext.footers.FirstOrDefault();
+            if (footerModel == null)
+                throw new Exception("No footer found");
             footerModel.SocialLinks = _socialLinksRepository.getLinksBelongingToCertainFooter(footerModel.Id);
             return footerModel;
         }

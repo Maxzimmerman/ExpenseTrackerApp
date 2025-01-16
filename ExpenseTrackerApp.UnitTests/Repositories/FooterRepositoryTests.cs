@@ -23,16 +23,92 @@ namespace ExpenseTrackerApp.UnitTests.Repositories;
 
 public class FooterRepositoryTests
 {
-    private Mock<ISocialLinksRepository> mockSocialLinksRepository;
+    private Mock<ISocialLinksRepository> mockSocialLinksRepository = new Mock<ISocialLinksRepository>();
     private DbContextOptions<ApplicationDbContext> CreateDbContextOptions()
     {
         return new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase($"TestDatabase_{Guid.NewGuid()}")
             .Options;
     }
+    
+    [Fact]
+    public void getFooterNoFooterSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var footer = new Footer()
+            {
+                Id = 1,
+                CopryRightHolder = "test",
+            };
+            
+            List<SocialLink> socialLinks = new List<SocialLink>()
+            {
+                new SocialLink() {Id = 1, Footer = footer, Platform = "test1", Url = "url1", IconClass = "class1"},
+                new SocialLink() { Id = 2, Footer = footer, Platform = "test2", Url = "url2", IconClass = "class2"}
+            };
+            
+            context.Add(footer);
+            context.SaveChanges();
+            
+            mockSocialLinksRepository.Setup(m => m.getLinksBelongingToCertainFooter(1))
+                .Returns(socialLinks);
+
+            var footerRepo = new FooterRepository(
+                context,
+                mockSocialLinksRepository.Object
+            );
+            
+            // Act
+            var result = footerRepo.GetFooter();
+            
+            // Assert
+            Assert.NotNull(result);
+            result.Should().BeEquivalentTo(footer);
+            Assert.NotNull(result.SocialLinks);
+            Assert.Equal(2, result.SocialLinks.Count());
+        }
+    }
+    
+    [Fact]
+    public void getFooterNoFooterNoSocialLinksSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var footer = new Footer()
+            {
+                Id = 1,
+                CopryRightHolder = "test",
+            };
+            
+            context.Add(footer);
+            context.SaveChanges();
+            
+            mockSocialLinksRepository.Setup(m => m.getLinksBelongingToCertainFooter(1))
+                .Returns(new List<SocialLink>());
+
+            var footerRepo = new FooterRepository(
+                context,
+                mockSocialLinksRepository.Object
+            );
+            
+            // Act
+            var result = footerRepo.GetFooter();
+            
+            // Assert
+            Assert.NotNull(result);
+            result.Should().BeEquivalentTo(footer);
+            Assert.NotNull(result.SocialLinks);
+            Assert.Empty(result.SocialLinks);
+        }
+    }
 
     [Fact]
-    public void getFooterSuccessTest()
+    public void getFooterNoFooterFailTest()
     {
         // Arrange
         var options = CreateDbContextOptions();
@@ -47,10 +123,10 @@ public class FooterRepositoryTests
             );
             
             // Act
-            var result = footerRepo.GetFooter();
+            var exception = Assert.Throws<Exception>(() => footerRepo.GetFooter());
             
             // Assert
-            Assert.Null(result);
+            Assert.Equal("No footer found", exception.Message);
         }
     }
 }
