@@ -29,8 +29,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             var categoryType = _applicationDbContext.categoriesTypes.FirstOrDefault(c => c.Id == categoryTypeId);
             if (categoryType != null)
                 return categoryType;
-            else
-                throw new Exception("Could not find CategoryType");
+            throw new Exception("Could not find CategoryType");
         }
     }
 }

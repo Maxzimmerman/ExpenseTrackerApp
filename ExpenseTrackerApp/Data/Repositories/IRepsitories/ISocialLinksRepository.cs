@@ -4,6 +4,6 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
     public interface ISocialLinksRepository : IRepository<SocialLink>
     {
-        List<SocialLink> socialLinks(int footerId);
+        List<SocialLink> getLinksBelongingToCertainFooter(int footerId);
     }
 }

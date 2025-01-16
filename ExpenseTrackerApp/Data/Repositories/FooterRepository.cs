@@ -18,11 +18,8 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public Footer GetFooter()
         {
-            Footer footerModel = new Footer();
-            footerModel = _applicationDbContext.footers.FirstOrDefault();
-            if (footerModel == null)
-                return null;
-            footerModel.SocialLinks = _socialLinksRepository.socialLinks(footerModel.Id);
+            Footer footerModel = _applicationDbContext.footers.FirstOrDefault();
+            footerModel.SocialLinks = _socialLinksRepository.getLinksBelongingToCertainFooter(footerModel.Id);
             return footerModel;
         }
     }

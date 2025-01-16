@@ -72,7 +72,7 @@ public class CategoryColorRepositoryTests
     
     // GetCategoryColorFerCertainCategory Start
     [Fact]
-    public void getGetCategoryColorFerCertainCategorySuccessTest()
+    public void getCategoryColorFerCertainCategorySuccessTest()
     {
         // Arrange
         var options = CreateDbContextOptions();
@@ -101,7 +101,7 @@ public class CategoryColorRepositoryTests
     }
 
     [Fact]
-    public void getGetCategoryColorFerCertainCategoryFailTest()
+    public void getCategoryColorFerCertainCategoryFailTest()
     {
         // Arrange
         var options = CreateDbContextOptions();

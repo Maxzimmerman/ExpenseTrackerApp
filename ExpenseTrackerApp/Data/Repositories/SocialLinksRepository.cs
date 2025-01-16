@@ -12,7 +12,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             _applicationDbContext = applicationDbContext;
         }
 
-        public List<SocialLink> socialLinks(int footerId)
+        public List<SocialLink> getLinksBelongingToCertainFooter(int footerId)
         {
             return _applicationDbContext.socialLinks
                 .Where(link => link.FooterId == footerId)
