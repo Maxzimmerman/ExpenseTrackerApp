@@ -884,4 +884,81 @@ public class CategoryRespositoryTests
         }
     }
     // get total amount of all categories end
+    
+    // count all categories for user start
+    [Fact]
+    public void countAllCategoriesForUserSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            var (user, categories, categoryTypes, categoryIcons, categoryColors) =
+                AddDummyCategoryData.AddCategoriesWithAllRelationsNoExpensesNorIncomes(context);
+            
+            // Act
+            var resultCateroyCount = categoryRepo.CountAllCategoriesForUser(user.Id);
+            
+            // Assert
+            Assert.Equal(categories.Count(), resultCateroyCount);
+        }
+    }
+    
+    [Fact]
+    public void countAllCategoriesForUserNoCategoriesSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            // Act
+            var resultCateroyCount = categoryRepo.CountAllCategoriesForUser("userid");
+            
+            // Assert
+            Assert.Equal(0, resultCateroyCount);
+        }
+    }
+    
+    [Fact]
+    public void countAllCategoriesForUserNoUserBelongingToACategorySuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            var (user, categories, categoryTypes, categoryIcons, categoryColors) =
+                AddDummyCategoryData.AddCategoriesWithAllRelationsNoExpensesNorIncomes(context);
+            
+            // Act
+            var resultCateroyCount = categoryRepo.CountAllCategoriesForUser("userid");
+            
+            // Assert
+            Assert.Equal(0, resultCateroyCount);
+        }
+    }
+    // count all categories for user end
 }
