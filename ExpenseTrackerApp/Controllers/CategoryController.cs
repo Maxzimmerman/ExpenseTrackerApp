@@ -19,8 +19,8 @@ namespace ExpenseTrackerApp.Controllers
         private readonly ICategoryRepository _categoryRepository;
         private readonly IUserManageService _userManageService;
 
-        public CategoryController(IFooterRepository footerRepository, 
-            ICategoryRepository categoryRepository, 
+        public CategoryController(IFooterRepository footerRepository,
+            ICategoryRepository categoryRepository,
             IUserManageService userManageService) : base(footerRepository)
         {
             _categoryRepository = categoryRepository;
@@ -44,16 +44,13 @@ namespace ExpenseTrackerApp.Controllers
         [HttpPost]
         public IActionResult AddCategory(Category category)
         {
-            if(category == null)
+            if (category == null)
             {
                 return RedirectToAction("BadRequest");
             }
-            else
-            {
-                _categoryRepository.createCategory(category, _userManageService.GetCurrentUserId(User));
 
-                return RedirectToAction("Home", "Home");
-            }
+            _categoryRepository.createCategory(category, _userManageService.GetCurrentUserId(User));
+            return RedirectToAction("SettingsCategory");
         }
 
         [HttpGet]

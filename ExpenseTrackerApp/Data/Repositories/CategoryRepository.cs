@@ -96,17 +96,18 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public void updateCategory(Category category)
         {
-            var existingCategory = this.findCategory(category.Id);
+            if (category == null)
+                throw new ArgumentNullException(nameof(category));
             
-            existingCategory.Title = category.Title;
-            existingCategory.CategoryType = category.CategoryType;
-            existingCategory.CategoryTypeId = category.CategoryTypeId;
-            existingCategory.CategoryIcon = category.CategoryIcon;
-            existingCategory.CategoryIconId = category.CategoryIconId;
-            existingCategory.CategoryColor = category.CategoryColor;
-            existingCategory.CategoryColorId = category.CategoryColorId;
-            existingCategory.ApplicationUser = category.ApplicationUser;
-            existingCategory.ApplicationUserId = category.ApplicationUserId;
+            var existingCategory = _applicationDbContext.categories.Local
+                .FirstOrDefault(c => c.Id == category.Id);
+
+            if (existingCategory != null)
+            {
+                _applicationDbContext.Entry(existingCategory).State = EntityState.Detached;
+            }
+            
+            _applicationDbContext.categories.Update(category);
             _applicationDbContext.SaveChanges();
         }
 

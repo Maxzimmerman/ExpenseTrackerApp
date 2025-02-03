@@ -481,10 +481,10 @@ public class CategoryRespositoryTests
             );
 
             // Act
-            var exception = Assert.Throws<NullReferenceException>(() => CategoryRepo.updateCategory(null));
+            var exception = Assert.Throws<ArgumentNullException>(() => CategoryRepo.updateCategory(null));
         
             // Assert
-            Assert.Equal(typeof(NullReferenceException), exception.GetType());
+            Assert.Equal(typeof(ArgumentNullException), exception.GetType());
         }
     }
     // update Category Test End
