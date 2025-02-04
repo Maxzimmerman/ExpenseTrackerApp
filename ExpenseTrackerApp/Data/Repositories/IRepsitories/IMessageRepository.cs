@@ -13,7 +13,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
             string linkController, 
             string linkAction);
         void DeleteMessage(Message message);
-        bool ContainsMessageThisMonth(string userId, string message, int year, int month);
+        bool ContainsMessageThisMonth(string userId, string message);
         List<Message> GetMessageCreateInTheCurrentMinute(string userId);
     }
 }

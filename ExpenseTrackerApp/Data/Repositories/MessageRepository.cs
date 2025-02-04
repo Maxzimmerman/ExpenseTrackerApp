@@ -13,15 +13,15 @@ namespace ExpenseTrackerApp.Data.Repositories
             _applicationDbContext = applicationDbContext;
         }
 
-        public bool ContainsMessageThisMonth(string userId, string message, int year, int month)
+        public bool ContainsMessageThisMonth(string userId, string message)
         {
             var currentDate = DateTime.UtcNow;
             return _applicationDbContext.messages
                 .Include(m => m.ApplicationUser)
                 .Any(m => m.ApplicationUserId == userId
                 && m.Description == message
-                && m.Date.Year == year
-                && m.Date.Month == month);
+                && m.Date.Year == currentDate.Year
+                && m.Date.Month == currentDate.Month);
         }
 
         public List<Message> GetAllMessages(string userId)
@@ -75,12 +75,18 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public void DeleteMessage(Message message)
         {
+            var existingMessage = this.GetById(message.Id);
+            
+            if(existingMessage == null)
+                throw new Exception($"Message with id {message.Id} does not exist");
+            
             if(message != null)
             {
                 _applicationDbContext.messages.Remove(message);
                 _applicationDbContext.SaveChanges();
             }
-            throw new Exception("message was null");
+            else
+                throw new Exception("message was null");
         }
 
         public List<Message> GetMessageCreateInTheCurrentMinute(string userId)

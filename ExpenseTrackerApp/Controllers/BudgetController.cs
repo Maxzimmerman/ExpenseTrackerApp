@@ -41,9 +41,7 @@ namespace ExpenseTrackerApp.Controllers
                 string userId = _userManageService.GetCurrentUserId(User);
                 if (budget.SpendThisMonth >= budget.Budget.Amount && !_messageRepository.ContainsMessageThisMonth(
                     userId, 
-                    message,
-                    DateTime.Now.Year,
-                    DateTime.Now.Month
+                    message
                     ))
                 {
                     _messageRepository.CreateMessageWithUserId(
