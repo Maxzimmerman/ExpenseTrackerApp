@@ -1,4 +1,5 @@
 ﻿using System.Transactions;
+using ExpenseTrackerApp.Models.ViewModels;
 using ExpenseTrackerApp.Models.ViewModels.TransactionViewModels;
 using Microsoft.Extensions.Configuration.UserSecrets;
 
@@ -6,6 +7,11 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
     public interface ITransactionRepository : IRepository<Models.Transaction>
     {
+        // Todo
+        BalanceTrendsViewModel getBalanceTrendsData(string userId);
+
+        decimal getMonthlyBalanceAverageForCertainMonthThisYear(string userId, int month);
+        // Todo
         List<decimal> GetExpensesForAllMonthsForCertainCategory(string userId, int categoryId);
         decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId);

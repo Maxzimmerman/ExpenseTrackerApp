@@ -79,7 +79,7 @@ namespace ExpenseTrackerApp.Controllers
             else
             {
                 _budgetRepository.createBudget(budget);
-                return RedirectToAction("Home", "Home");
+                return RedirectToAction("SettingsBudget");
             }
         }
 

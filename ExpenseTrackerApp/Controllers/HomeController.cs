@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
+using ExpenseTrackerApp.Models.ViewModels;
 
 namespace ExpenseTrackerApp.Controllers
 {
@@ -16,37 +17,34 @@ namespace ExpenseTrackerApp.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IUserManageService _userManageService;
         private readonly IMessageRepository _messageRepository;
+        private readonly ITransactionRepository _transactionRepository;
 
-        public HomeController(ILogger<HomeController> logger, 
-            IUserRepository userRepository, 
+        public HomeController(ILogger<HomeController> logger,
+            IUserRepository userRepository,
             IUserManageService userManageService,
             IFooterRepository footerRepository,
-            IMessageRepository messageRepository) : base(footerRepository)
+            IMessageRepository messageRepository,
+            ITransactionRepository transactionRepository) : base(footerRepository)
         {
             _logger = logger;
             _userManageService = userManageService;
             _userRepository = userRepository;
             _messageRepository = messageRepository;
+            _transactionRepository = transactionRepository;
         }
 
         public IActionResult Home()
         {
-            if(User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated)
             {
-                try
-                {
-                    var user = _userRepository.getUserById(_userManageService.GetCurrentUserId(User));
-                    return View(user);
-                }
-                catch
-                {
-                    return RedirectToAction("SignIn", "UserManage");
-                }
+                var user = _userRepository.getUserById(_userManageService.GetCurrentUserId(User));
+                HomeViewModel homeViewModel = new HomeViewModel();
+                homeViewModel.User = user;
+                homeViewModel.IncomeVsExpensesData = _transactionRepository.GetIncomeVsExpensesData(user.Id);
+                homeViewModel.BalanceTrendsViewModel = _transactionRepository.getBalanceTrendsData(user.Id);
+                return View(homeViewModel);
             }
-            else
-            {
-                return RedirectToAction("SignIn", "UserManage");
-            }
+            return RedirectToAction("SignIn", "UserManage");
         }
 
         [Authorize]

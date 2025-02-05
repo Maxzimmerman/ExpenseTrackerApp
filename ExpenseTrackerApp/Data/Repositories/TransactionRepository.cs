@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Transactions;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels.TransactionViewModels;
+using ExpenseTrackerApp.Models.ViewModels;
 using System.Diagnostics.Eventing.Reader;
 
 namespace ExpenseTrackerApp.Data.Repositories
@@ -17,6 +18,57 @@ namespace ExpenseTrackerApp.Data.Repositories
         {
             _applicationDbContext = applicationDbContext;
             _categoryRepository = categoryRepository;
+        }
+
+        public BalanceTrendsViewModel getBalanceTrendsData(string userId)
+        {
+            BalanceTrendsViewModel balanceTrends = new BalanceTrendsViewModel();
+            List<decimal> monthlyTrends = new List<decimal>();
+            int thisYear = DateTime.UtcNow.Year;
+            int thisMonth = DateTime.UtcNow.Month;
+            int lastMonth = DateTime.UtcNow.AddMonths(-1).Month;
+            int month = DateTime.Now.Month;
+            decimal monthlyAverageThisMonth = 0;
+            decimal monthlyAverageLastMonth = 0;
+            
+            for (int i = 1; i < 13; i++)
+            {
+                monthlyTrends.Add(GetBalanceForCertainMonth(userId, i, thisYear));
+            }
+            
+            // calculate the balance trend percentage
+            monthlyAverageThisMonth = this.getMonthlyBalanceAverageForCertainMonthThisYear(userId, thisMonth);
+            monthlyAverageLastMonth = this.getMonthlyBalanceAverageForCertainMonthThisYear(userId, lastMonth);
+            double balancePercentage = 0;
+            
+            if (monthlyAverageThisMonth > 0 && monthlyAverageLastMonth > 0)
+                balancePercentage = (((double)monthlyAverageThisMonth - (double)monthlyAverageLastMonth) / (double)monthlyAverageLastMonth) * 100;
+
+            balanceTrends.Balance = this.GetBalanceForCertainMonth(userId, month, thisYear);
+            balanceTrends.Balances = monthlyTrends;
+            balanceTrends.BalancePercentage = balancePercentage;
+            return balanceTrends;
+        }
+        
+        public decimal getMonthlyBalanceAverageForCertainMonthThisYear(string userId, int month)
+        {
+            decimal expenses = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId
+                            && t.Date.Month == month
+                            && t.Date.Year == DateTime.UtcNow.Year
+                            && t.Category.CategoryType.Name == "Expense")
+                .Sum(t => t.Amount); 
+
+            decimal income = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId
+                            && t.Date.Month == month
+                            && t.Date.Year == DateTime.UtcNow.Year
+                            && t.Category.CategoryType.Name == "Income")
+                .Sum(t => t.Amount);
+
+            decimal netBalance = income - expenses;
+
+            return netBalance > 0 ? netBalance : 0; 
         }
 
         public decimal GetMonthlyAverageForCertainCategory(string userId, int categoryId)
