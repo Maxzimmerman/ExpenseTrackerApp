@@ -7,16 +7,15 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
     public interface ITransactionRepository : IRepository<Models.Transaction>
     {
-        // Todo
+        
         BalanceTrendsViewModel getBalanceTrendsData(string userId);
-
         decimal getMonthlyBalanceAverageForCertainMonthThisYear(string userId, int month);
         // Todo
         List<decimal> GetExpensesForAllMonthsForCertainCategory(string userId, int categoryId);
         decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendAmountForCertainCategoryThisMonth(string userId, int categoryId);
-        decimal GetMonthlyAverageForCertainCategory(string userId, int categoryId);
+        decimal GetSpendMonthlyAverageForCertainCategory(string userId, int categoryId);
         AnalyticsData GetAnalyticsData(string userId);
         List<Models.Transaction> GetExpenses(string userId);
         List<Models.Transaction> GetIncoms(string userId);
@@ -28,11 +27,12 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         decimal GetBalanceForCertainMonth(string userId, int month, int year);
         BalanceData GetBalanceData(string userId);
         decimal GetBalanceForCertainDay(string userId, int year, int month, int week);
-        decimal GetAmountForTransactionOfCertainWeek(string userid, int year, int month, int day);
-        decimal GetDailyChangeAverageForCurrentMonth(string userId);
-        decimal GetTotalChangeAmount(string userId);
+        decimal GetAmountSpendForTransactionOfCertainWeek(string userid, int year, int month, int day);
+        decimal GetDailyBalanceAverageForCurrentMonthThisYear(string userId);
+        decimal GetTotalBalanceAmount(string userId);
         decimal GetTotalSpendAmount(string userId);
         decimal GetTotalAmountForCertainCategory(string userId, string categoryName);
         decimal GetTotalAmountForAllCategories(string userId, string expenseOrIncom);
+        // Todo
     }
 }

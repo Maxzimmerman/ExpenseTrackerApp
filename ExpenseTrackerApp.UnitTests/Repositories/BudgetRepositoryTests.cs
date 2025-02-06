@@ -272,7 +272,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             transactionRepositoryMock.Setup(t =>
                 t.GetSpendForCertainCategoryLastMonth(user.Id, budgets[0].CategoryId)).Returns(0);
             transactionRepositoryMock.Setup(t => 
-                t.GetMonthlyAverageForCertainCategory(user.Id, budgets[0].CategoryId)).Returns(0);
+                t.GetSpendMonthlyAverageForCertainCategory(user.Id, budgets[0].CategoryId)).Returns(0);
             transactionRepositoryMock.Setup(t =>
                 t.GetExpensesForAllMonthsForCertainCategory(user.Id, budgets[0].CategoryId)).Returns(new List<decimal> ());
                 
@@ -309,7 +309,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             transactionRepositoryMock.Setup(t =>
                 t.GetSpendForCertainCategoryLastMonth(user.Id, budgets[0].CategoryId)).Returns(50);
             transactionRepositoryMock.Setup(t => 
-                t.GetMonthlyAverageForCertainCategory(user.Id, budgets[0].CategoryId)).Returns((decimal)8.33);
+                t.GetSpendMonthlyAverageForCertainCategory(user.Id, budgets[0].CategoryId)).Returns((decimal)8.33);
             transactionRepositoryMock.Setup(t =>
                 t.GetExpensesForAllMonthsForCertainCategory(user.Id, budgets[0].CategoryId)).Returns(new List<decimal> ()
             {
@@ -350,7 +350,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             transactionRepositoryMock.Setup(t =>
                 t.GetSpendForCertainCategoryLastMonth(user.Id, budgets[0].CategoryId)).Returns(0);
             transactionRepositoryMock.Setup(t => 
-                t.GetMonthlyAverageForCertainCategory(user.Id, budgets[0].CategoryId)).Returns((decimal)16.66);
+                t.GetSpendMonthlyAverageForCertainCategory(user.Id, budgets[0].CategoryId)).Returns((decimal)16.66);
             transactionRepositoryMock.Setup(t =>
                 t.GetExpensesForAllMonthsForCertainCategory(user.Id, budgets[0].CategoryId)).Returns(new List<decimal> ()
             {

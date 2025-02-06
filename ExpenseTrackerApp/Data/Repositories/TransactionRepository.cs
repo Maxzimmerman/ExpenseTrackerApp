@@ -39,14 +39,17 @@ namespace ExpenseTrackerApp.Data.Repositories
             // calculate the balance trend percentage
             monthlyAverageThisMonth = this.getMonthlyBalanceAverageForCertainMonthThisYear(userId, thisMonth);
             monthlyAverageLastMonth = this.getMonthlyBalanceAverageForCertainMonthThisYear(userId, lastMonth);
-            double balancePercentage = 0;
-            
-            if (monthlyAverageThisMonth > 0 && monthlyAverageLastMonth > 0)
-                balancePercentage = (((double)monthlyAverageThisMonth - (double)monthlyAverageLastMonth) / (double)monthlyAverageLastMonth) * 100;
+            decimal balancePercentage = 0;
 
-            balanceTrends.Balance = this.GetBalanceForCertainMonth(userId, month, thisYear);
+            // prevent division by zero and ensure monthlyAverageLastMonth will always be posive
+            if (monthlyAverageLastMonth < 0)
+                monthlyAverageLastMonth *= -1;
+            if(monthlyAverageLastMonth > 0)
+                balancePercentage = ((monthlyAverageThisMonth - monthlyAverageLastMonth) / monthlyAverageLastMonth) * 100;
+            
+            balanceTrends.Balance = this.GetTotalBalanceAmount(userId);
             balanceTrends.Balances = monthlyTrends;
-            balanceTrends.BalancePercentage = balancePercentage;
+            balanceTrends.BalancePercentage = Math.Round(balancePercentage, 2);
             return balanceTrends;
         }
         
@@ -54,24 +57,24 @@ namespace ExpenseTrackerApp.Data.Repositories
         {
             decimal expenses = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId
-                            && t.Date.Month == month
+                            && t.Date.Month <= month
                             && t.Date.Year == DateTime.UtcNow.Year
                             && t.Category.CategoryType.Name == "Expense")
                 .Sum(t => t.Amount); 
 
             decimal income = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId
-                            && t.Date.Month == month
+                            && t.Date.Month <= month
                             && t.Date.Year == DateTime.UtcNow.Year
                             && t.Category.CategoryType.Name == "Income")
                 .Sum(t => t.Amount);
 
             decimal netBalance = income - expenses;
 
-            return netBalance > 0 ? netBalance : 0; 
+            return netBalance;
         }
 
-        public decimal GetMonthlyAverageForCertainCategory(string userId, int categoryId)
+        public decimal GetSpendMonthlyAverageForCertainCategory(string userId, int categoryId)
         {
             var currentYear = DateTime.UtcNow.Year;
 
@@ -172,8 +175,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             if (expenses != null)
                 return expenses;
-            else
-                throw new Exception("Could not find any expenses");
+            throw new Exception("Could not find any expenses");
         }
 
         public List<ExpenseTrackerApp.Models.Transaction> GetIncoms(string userId)
@@ -188,8 +190,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             if (incoms != null)
                 return incoms;
-            else
-                throw new Exception("Could not find any expenses");
+            throw new Exception("Could not find any expenses");
         }
 
         public List<ExpenseTrackerApp.Models.Transaction> GetTransactions(string userId)
@@ -204,7 +205,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             if (transactions != null)
                 return transactions;
-            else throw new Exception("Could not find any transaction");
+            throw new Exception("Could not find any transaction");
         }
 
         public List<Models.Transaction> GetTransactionOfCertainMonth(string userId, string ExpenseOrIncome, int month, int year)
@@ -222,23 +223,22 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             if (transactions != null)
                 return transactions;
-            else
-                throw new Exception("Could not find any Transactions of certain Month");
+            throw new Exception("Could not find any Transactions of certain Month");
         }
 
         public decimal GetBalanceForCertainMonth(string userId, int month, int year)
         {
             decimal expenses = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId
-                && t.Date.Year == year
-                && t.Date.Month == month
+                && t.Date.Year <= year
+                && t.Date.Month <= month 
                 && t.Category.CategoryType.Name == "Expense")
                 .Sum(t => t.Amount) * (-1);
 
             decimal incoms = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId
-                && t.Date.Year == year
-                && t.Date.Month == month
+                && t.Date.Year <= year
+                && t.Date.Month <= month
                 && t.Category.CategoryType.Name == "Income")
                 .Sum(t => t.Amount);
 
@@ -249,15 +249,15 @@ namespace ExpenseTrackerApp.Data.Repositories
         {
             decimal balance = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId
-                && t.Date.Year == year
-                && t.Date.Month == month
-                && t.Date.Day == day)
+                && t.Date.Year <= year
+                && t.Date.Month <= month
+                && t.Date.Day <= day)
                 .Sum(t => t.Amount);
 
             return balance;
         }
 
-        public decimal GetAmountForTransactionOfCertainWeek(string userid, int year, int month, int week)
+        public decimal GetAmountSpendForTransactionOfCertainWeek(string userid, int year, int month, int week)
         {
             var firstDayOfMonth = new DateTime(year, month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
@@ -265,28 +265,28 @@ namespace ExpenseTrackerApp.Data.Repositories
             decimal amount = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userid
                 && t.Category.CategoryType.Name == "Expense"
-                && t.Date.Year == year
-                && t.Date.Month == month
+                && t.Date.Year <= year
+                && t.Date.Month <= month
                 && t.Date.Day >= firstDayOfMonth.Day && t.Date.Day <= lastDayOfMonth.Day)
                 .Sum(t => t.Amount);
 
             return amount;
         }
 
-        public decimal GetDailyChangeAverageForCurrentMonth(string userId)
+        public decimal GetDailyBalanceAverageForCurrentMonthThisYear(string userId)
         {
             var expenses = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId
                 && t.Category.CategoryType.Name == "Expense"
-                && t.Date.Year == DateTime.UtcNow.Year
-                && t.Date.Month == DateTime.UtcNow.Month)
+                && t.Date.Year <= DateTime.UtcNow.Year
+                && t.Date.Month <= DateTime.UtcNow.Month)
                 .Sum(t => t.Amount);
 
             var incoms = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId
                 && t.Category.CategoryType.Name == "Income"
-                && t.Date.Year == DateTime.UtcNow.Year
-                && t.Date.Month == DateTime.UtcNow.Month)
+                && t.Date.Year <= DateTime.UtcNow.Year
+                && t.Date.Month <= DateTime.UtcNow.Month)
                 .Sum(t => t.Amount);
 
             // Get the number of days in the current month
@@ -301,7 +301,7 @@ namespace ExpenseTrackerApp.Data.Repositories
         }
 
 
-        public decimal GetTotalChangeAmount(string userId)
+        public decimal GetTotalBalanceAmount(string userId)
         {
             decimal expenses = _applicationDbContext.transactions
                 .Where(t => t.ApplicationUserId == userId &&
@@ -334,8 +334,8 @@ namespace ExpenseTrackerApp.Data.Repositories
             int transactions = _applicationDbContext.transactions.Where(t => t.ApplicationUserId == userId).Count();
             int categories = _categoryRepository.CountAllCategoriesForUser(userId);
 
-            decimal dailyAverage = GetDailyChangeAverageForCurrentMonth(userId);
-            decimal totalAmount = GetTotalChangeAmount(userId);
+            decimal dailyAverage = GetDailyBalanceAverageForCurrentMonthThisYear(userId);
+            decimal totalAmount = GetTotalBalanceAmount(userId);
             List<decimal> MonhtlyChanges = new List<decimal>();
             var year = DateTime.UtcNow.Year;
 
@@ -368,7 +368,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             if (amount != null)
                 return amount;
-            else throw new Exception("Could not calc the amount");
+            throw new Exception("Could not calc the amount");
         }
 
         public decimal GetPercentageOfTransactionOfCertainCategory(string CategoryTitle, string userId, string ExpnseOrIncome)
@@ -457,8 +457,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             if (transactions != null)
                 return incomeVsExpensesData;
-            else
-                throw new Exception("Could not collect Income vs Expenses data");
+            throw new Exception("Could not collect Income vs Expenses data");
         }
 
         // Income Vs Expenses Page End
