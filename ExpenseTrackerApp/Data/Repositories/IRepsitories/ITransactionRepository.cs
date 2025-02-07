@@ -10,6 +10,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         
         BalanceTrendsViewModel getBalanceTrendsData(string userId);
         decimal getMonthlyBalanceAverageForCertainMonthThisYear(string userId, int month);
+        List<MonthyBudgetEntryViewModel> getMonthlyBudgetData(string userId);
         // Todo
         List<decimal> GetExpensesForAllMonthsForCertainCategory(string userId, int categoryId);
         decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId);

@@ -12,12 +12,15 @@ namespace ExpenseTrackerApp.Data.Repositories
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IBudgetRepository _budgetRepository;
 
         public TransactionRepository(ApplicationDbContext applicationDbContext,
-            ICategoryRepository categoryRepository) : base(applicationDbContext)
+            ICategoryRepository categoryRepository,
+            IBudgetRepository budgetRepository) : base(applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
             _categoryRepository = categoryRepository;
+            _budgetRepository = budgetRepository;
         }
 
         public BalanceTrendsViewModel getBalanceTrendsData(string userId)
@@ -44,13 +47,31 @@ namespace ExpenseTrackerApp.Data.Repositories
             // prevent division by zero and ensure monthlyAverageLastMonth will always be posive
             if (monthlyAverageLastMonth < 0)
                 monthlyAverageLastMonth *= -1;
-            if(monthlyAverageLastMonth > 0)
-                balancePercentage = ((monthlyAverageThisMonth - monthlyAverageLastMonth) / monthlyAverageLastMonth) * 100;
-            
+            if (monthlyAverageLastMonth > 0)
+            {
+                balancePercentage = (monthlyAverageThisMonth - monthlyAverageLastMonth) / monthlyAverageLastMonth;
+                balancePercentage *= 100;
+            }
             balanceTrends.Balance = this.GetTotalBalanceAmount(userId);
             balanceTrends.Balances = monthlyTrends;
             balanceTrends.BalancePercentage = Math.Round(balancePercentage, 2);
             return balanceTrends;
+        }
+
+        public List<MonthyBudgetEntryViewModel> getMonthlyBudgetData(string userId)
+        {
+            var data = new List<MonthyBudgetEntryViewModel>();
+            var budgets = _budgetRepository.GetAllBudgets(userId);
+            foreach (var budget in budgets.Result)
+            {
+                var newDataEntry = new MonthyBudgetEntryViewModel();
+                newDataEntry.Name = budget.Category.Title;
+                newDataEntry.BudgetAmount = budget.Amount;
+                newDataEntry.SpendAmount = 0;
+                newDataEntry.SpendPercentage = (newDataEntry.BudgetAmount / budget.Amount) * 100;
+                data.Add(newDataEntry);
+            }
+            return data;
         }
         
         public decimal getMonthlyBalanceAverageForCertainMonthThisYear(string userId, int month)

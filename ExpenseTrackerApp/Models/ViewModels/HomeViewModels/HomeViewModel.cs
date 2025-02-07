@@ -7,4 +7,5 @@ public class HomeViewModel
     public ApplicationUser User { get; set; }
     public IncomeVsExpensesData IncomeVsExpensesData { get; set; }
     public BalanceTrendsViewModel BalanceTrendsViewModel { get; set; }
+    public List<MonthyBudgetEntryViewModel> MonthyBudgetEntries { get; set; }
 }

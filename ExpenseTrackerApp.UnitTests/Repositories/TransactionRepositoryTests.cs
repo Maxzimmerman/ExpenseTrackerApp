@@ -12,6 +12,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories;
 public class TransactionRepositoryTests
 {
     private Mock<ICategoryRepository> mockCategoryRepository = new Mock<ICategoryRepository>();
+    private Mock<IBudgetRepository> mockBudgetRepository = new Mock<IBudgetRepository>();
     private DbContextOptions<ApplicationDbContext> CreateDbContextOptions()
     {
         return new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -27,7 +28,7 @@ public class TransactionRepositoryTests
         var options = CreateDbContextOptions();
         using (var context = new ApplicationDbContext(options))
         {
-            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object);
+            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object, mockBudgetRepository.Object);
 
             CategoryType expenseType = new CategoryType() { Name = "Expense" };
             CategoryType incomeType = new CategoryType() { Name = "Income" };
@@ -222,7 +223,7 @@ public class TransactionRepositoryTests
         var options = CreateDbContextOptions();
         using (var context = new ApplicationDbContext(options))
         {
-            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object);
+            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object, mockBudgetRepository.Object);
             
             // Act
             var result = transactionRepository.getBalanceTrendsData("userId");
@@ -243,7 +244,7 @@ public class TransactionRepositoryTests
         var options = CreateDbContextOptions();
         using (var context = new ApplicationDbContext(options))
         {
-            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object);
+            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object, mockBudgetRepository.Object);
             
             CategoryType expenseType = new CategoryType() { Name = "Expense" };
             CategoryType incomeType = new CategoryType() { Name = "Income" };
@@ -345,7 +346,7 @@ public class TransactionRepositoryTests
         var options = CreateDbContextOptions();
         using (var context = new ApplicationDbContext(options))
         {
-            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object);
+            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object, mockBudgetRepository.Object);
 
             CategoryType expenseType = new CategoryType() { Name = "Expense" };
             CategoryType incomeType = new CategoryType() { Name = "Income" };
@@ -411,7 +412,7 @@ public class TransactionRepositoryTests
         var options = CreateDbContextOptions();
         using (var context = new ApplicationDbContext(options))
         {
-            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object);
+            var transactionRepository = new TransactionRepository(context, mockCategoryRepository.Object, mockBudgetRepository.Object);
 
             var expectedBalance = 0;
             
