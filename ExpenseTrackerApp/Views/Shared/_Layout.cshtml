@@ -34,8 +34,8 @@
                             @{
                                 if (User.Identity.IsAuthenticated)
                                 {
-                                    <!-- Get Messages every few seconds and show message -->
-                                    <script>
+                            <!-- Get Messages every few seconds and show message 
+                            <script>
                                         function fetchNewMessages() {
                                             $.ajax({
                                                 url: '@Url.Action("GetMessagesForeNoficationMessagePopUp", "Message")',
@@ -54,6 +54,7 @@
                                         }
                                         setInterval(fetchNewMessages, 1000);
                                     </script>
+                                    -->
 
                                     <div class="nav-item dropdown notification">
                                         <div data-bs-toggle="dropdown"
