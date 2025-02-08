@@ -63,6 +63,8 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 // Lazy Repositories
 builder.Services.AddScoped(typeof(Lazy<ITransactionRepository>), serviceProvider =>
     new Lazy<ITransactionRepository>(() => serviceProvider.GetRequiredService<ITransactionRepository>()));
+builder.Services.AddScoped(typeof(Lazy<IBudgetRepository>), serviceProvider =>
+    new Lazy<IBudgetRepository>(() => serviceProvider.GetRequiredService<IBudgetRepository>()));
 
 // Services
 builder.Services.AddScoped<IUserManageService, UserManageService>();

@@ -12,11 +12,11 @@ namespace ExpenseTrackerApp.Data.Repositories
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IBudgetRepository _budgetRepository;
+        private readonly Lazy<IBudgetRepository> _budgetRepository;
 
         public TransactionRepository(ApplicationDbContext applicationDbContext,
             ICategoryRepository categoryRepository,
-            IBudgetRepository budgetRepository) : base(applicationDbContext)
+            Lazy<IBudgetRepository> budgetRepository) : base(applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
             _categoryRepository = categoryRepository;
@@ -61,14 +61,19 @@ namespace ExpenseTrackerApp.Data.Repositories
         public List<MonthyBudgetEntryViewModel> getMonthlyBudgetData(string userId)
         {
             var data = new List<MonthyBudgetEntryViewModel>();
-            var budgets = _budgetRepository.GetAllBudgets(userId);
+            var budgets = _budgetRepository.Value.GetAllBudgets(userId);
             foreach (var budget in budgets.Result)
             {
                 var newDataEntry = new MonthyBudgetEntryViewModel();
                 newDataEntry.Name = budget.Category.Title;
                 newDataEntry.BudgetAmount = budget.Amount;
-                newDataEntry.SpendAmount = 0;
-                newDataEntry.SpendPercentage = (newDataEntry.BudgetAmount / budget.Amount) * 100;
+                newDataEntry.SpendAmount = this.GetSpendAmountForCertainCategoryThisMonth(userId, budget.CategoryId);
+                if (newDataEntry.SpendAmount > newDataEntry.BudgetAmount)
+                    newDataEntry.SpendPercentage = 100;
+                else if (newDataEntry.SpendAmount == 0)
+                    newDataEntry.SpendPercentage = 0;
+                else
+                    newDataEntry.SpendPercentage = (newDataEntry.SpendAmount / newDataEntry.BudgetAmount) * 100;
                 data.Add(newDataEntry);
             }
             return data;
