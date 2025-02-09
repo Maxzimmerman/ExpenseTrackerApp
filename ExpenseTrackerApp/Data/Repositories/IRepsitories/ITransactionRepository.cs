@@ -11,8 +11,8 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         BalanceTrendsViewModel getBalanceTrendsData(string userId);
         decimal getMonthlyBalanceAverageForCertainMonthThisYear(string userId, int month);
         List<MonthyBudgetEntryViewModel> getMonthlyBudgetData(string userId);
-        // Todo
         List<decimal> GetExpensesForAllMonthsForCertainCategory(string userId, int categoryId);
+        // Todo
         decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendAmountForCertainCategoryThisMonth(string userId, int categoryId);

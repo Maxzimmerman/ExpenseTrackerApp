@@ -8,4 +8,5 @@ public class HomeViewModel
     public IncomeVsExpensesData IncomeVsExpensesData { get; set; }
     public BalanceTrendsViewModel BalanceTrendsViewModel { get; set; }
     public List<MonthyBudgetEntryViewModel> MonthyBudgetEntries { get; set; }
+    public List<ExpenseAndIncomeCategoryData> ExpenseAndIncomeCategories { get; set; }
 }

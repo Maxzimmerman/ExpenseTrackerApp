@@ -107,64 +107,31 @@
                 <div class=" col-xxl-4 col-xl-4 col-lg-6 col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Monthly Expenses Breakdown</h4>
+                            <h4 class="card-title">Expenses Breakdown</h4>
                         </div>
                         <div class="card-body">
                             <div class="progress-stacked">
-                                <div class="progress" style="width: 38%">
-                                    <div class="progress-bar bg-orange-500"></div>
-                                </div>
-                                <div class="progress" style="width: 22%">
-                                    <div class="progress-bar bg-amber-500"></div>
-                                </div>
-                                <div class="progress" style="width: 12%">
-                                    <div class="progress-bar bg-yellow-500"></div>
-                                </div>
-                                <div class="progress" style="width: 9%">
-                                    <div class="progress-bar bg-lime-500"></div>
-                                </div>
-                                <div class="progress" style="width: 8%">
-                                    <div class="progress-bar bg-green-500"></div>
-                                </div>
-                                <div class="progress" style="width: 6%">
-                                    <div class="progress-bar bg-cyan-500"></div>
-                                </div>
-                                <div class="progress" style="width: 5%">
-                                    <div class="progress-bar bg-stone-500"></div>
-                                </div>
+                                @{
+                                    var colors = new List<string>() { "orange", "amber", "yellow", "lime", "green", "cyan", "stone" };
+                                    for (int i = 0; i < Model.ExpenseAndIncomeCategories.Count(); i++)
+                                    {
+                                        <div class="progress" style="width: @Model.ExpenseAndIncomeCategories[i].Percentage%">
+                                            <div class="progress-bar bg-@colors[i]-500"></div>
+                                        </div>
+                                    }
+                                }
                             </div>
                             <div class="list-1 mt-3">
                                 <ul>
-                                    <li>
-                                        <p class="mb-0"><i class="fi fi-ss-circle text-orange-500"></i>Food</p>
-                                        <h5 class="mb-0"><span>$1200</span>38%</h5>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0"><i class="fi fi-ss-circle text-amber-500"></i>Transport</p>
-                                        <h5 class="mb-0"><span>$1200</span>38%</h5>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0"><i class="fi fi-ss-circle text-yellow-500"></i>Healthcare
-                                        </p>
-                                        <h5 class="mb-0"><span>$1200</span>38%</h5>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0"><i class="fi fi-ss-circle text-lime-500"></i>Education</p>
-                                        <h5 class="mb-0"><span>$1200</span>38%</h5>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0"><i class="fi fi-ss-circle text-green-500"></i>Clothes</p>
-                                        <h5 class="mb-0"><span>$1200</span>38%</h5>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0"><i class="fi fi-ss-circle text-cyan-500"></i>Pets</p>
-                                        <h5 class="mb-0"><span>$1200</span>38%</h5>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0"><i class="fi fi-ss-circle text-stone-500"></i>Entertainment
-                                        </p>
-                                        <h5 class="mb-0"><span>$1200</span>38%</h5>
-                                    </li>
+                                    @{
+                                        foreach (var categoryData in Model.ExpenseAndIncomeCategories)
+                                        {
+                                            <li>
+                                                <p class="mb-0"><i class="fi fi-ss-circle text-orange-500"></i>@categoryData.Title</p>
+                                                <h5 class="mb-0"><span>$@categoryData.Amount</span>@categoryData.Percentage%</h5>
+                                            </li>
+                                        }
+                                    }
                                 </ul>
                             </div>
                         </div>

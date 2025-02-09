@@ -723,7 +723,7 @@ public class CategoryRespositoryTests
             // Assert 
             Assert.NotNull(resultCategories);
             Assert.NotEmpty(resultCategories);
-            resultCategories.Should().BeEquivalentTo(categories);
+            resultCategories.Should().BeEquivalentTo(expectedResult);
         }
     }
     
