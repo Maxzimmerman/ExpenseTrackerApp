@@ -13,6 +13,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         Category findCategory(int id);
         List<Category> GetAllCategories(string userId);
         IEnumerable<SelectListItem> GetAllCategoriesAsSelectListItems(string userId);
+        IEnumerable<SelectListItem> GetAllExpenseCategoriesAsSelectListItems(string userId);
         List<Category> GetAllExpenseCategories(string userId);
         List<Category> GetAllIncomeCategories(string userId);
         decimal GetTotalAmountOfAllCategories(string userId, string expenseOrIncom);

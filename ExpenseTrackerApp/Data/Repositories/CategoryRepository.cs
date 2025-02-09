@@ -28,6 +28,14 @@ namespace ExpenseTrackerApp.Data.Repositories
             _transactionRepository = transactionRepository;
         }
 
+        public IEnumerable<SelectListItem> GetAllExpenseCategoriesAsSelectListItems(string userId)
+        {
+            IEnumerable<SelectListItem> categories = _applicationDbContext.categories
+                .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == "Expense")
+                .Select(c => new SelectListItem() { Text = c.Title, Value = c.Id.ToString() });
+            return categories;
+        }
+
         public AddCategory addCategoryData(string userId)
         {
             IEnumerable<SelectListItem> categoryTypes = _categoryTypeRepsitory.GetCategoryTypesAsSelectListItems();

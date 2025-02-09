@@ -37,7 +37,38 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             // Arrange
             var options = CreateDbContextOptions();
             var context = new ApplicationDbContext(options);
-            var (user, budgets) = AddDummyBudgetData.AddBudgetsWithAllRelations(context, 100);
+            var user = new ApplicationUser()
+            {
+                ApplicationUserName = "User1", 
+                Balance = 100, 
+                registeredSince = DateTime.Now
+            };
+
+            var categories = new List<Category>()
+            {
+                new Category
+                {
+                    Id = 1,
+                    Title = "Category 1",
+                    CategoryIcon = new CategoryIcon() { Id = 1, Name = "Icon", Code = "icon"},
+                    CategoryColor = new CategoryColor() { Id = 1, Name = "Color", code = "color" },
+                    CategoryType = new CategoryType() { Id = 1, Name = "Type" },
+                    ApplicationUserId = user.Id,
+                },
+                new Category
+                {
+                    Id = 2,
+                    Title = "Category 1",
+                    CategoryIcon = new CategoryIcon() { Id = 2, Name = "Icon", Code = "icon"},
+                    CategoryColor = new CategoryColor() { Id = 2, Name = "Color", code = "color" },
+                    CategoryType = new CategoryType() { Id = 2, Name = "Type" },
+                    ApplicationUserId = user.Id,
+                }
+            };
+            
+            context.Users.Add(user);
+            context.categories.AddRange(categories);
+            context.SaveChanges();
 
             IEnumerable<SelectListItem> mockCategories = new List<SelectListItem>
             {
@@ -45,7 +76,7 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
                 new SelectListItem { Text = "Category2", Value = "2" }
             };
 
-            categoryRepositoryMock.Setup(repo => repo.GetAllCategoriesAsSelectListItems(user.Id))
+            categoryRepositoryMock.Setup(repo => repo.GetAllExpenseCategoriesAsSelectListItems(user.Id))
                 .Returns(mockCategories);
 
             var repository = new BudgetRepository(
@@ -60,6 +91,76 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             // Assert
             Assert.NotNull(result);
             result.Categories.Should().BeEquivalentTo(mockCategories);
+            result.Budgets.Should().BeEquivalentTo(new List<Budget>());
+        }
+        
+        [Fact]
+        public void addBudgetDataSuccessTestAttempToCreateAnotherBudgetForTheSameCategoryTest()
+        {
+            // Arrange
+            var options = CreateDbContextOptions();
+            var context = new ApplicationDbContext(options);
+            var user = new ApplicationUser()
+            {
+                ApplicationUserName = "User1", 
+                Balance = 100, 
+                registeredSince = DateTime.Now
+            };
+
+            var categories = new List<Category>()
+            {
+                new Category
+                {
+                    Id = 1,
+                    Title = "Category 1",
+                    CategoryIcon = new CategoryIcon() { Id = 1, Name = "Icon", Code = "icon"},
+                    CategoryColor = new CategoryColor() { Id = 1, Name = "Color", code = "color" },
+                    CategoryType = new CategoryType() { Id = 1, Name = "Type" },
+                    ApplicationUserId = user.Id,
+                },
+                new Category
+                {
+                    Id = 2,
+                    Title = "Category 1",
+                    CategoryIcon = new CategoryIcon() { Id = 2, Name = "Icon", Code = "icon"},
+                    CategoryColor = new CategoryColor() { Id = 2, Name = "Color", code = "color" },
+                    CategoryType = new CategoryType() { Id = 2, Name = "Type" },
+                    ApplicationUserId = user.Id,
+                }
+            };
+
+            var budgets = new List<Budget>()
+            {
+                new Budget() { Id = 1, Amount = 100, CategoryId = categories[0].Id },
+                new Budget() { Id = 2, Amount = 500, CategoryId = categories[1].Id },
+            };
+            
+            context.Users.Add(user);
+            context.categories.AddRange(categories);
+            context.budgets.AddRange(budgets);
+            context.SaveChanges();
+
+            IEnumerable<SelectListItem> mockCategories = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Category1", Value = "1" },
+                new SelectListItem { Text = "Category2", Value = "2" }
+            };
+
+            categoryRepositoryMock.Setup(repo => repo.GetAllExpenseCategoriesAsSelectListItems(user.Id))
+                .Returns(mockCategories);
+
+            var repository = new BudgetRepository(
+                transactionRepositoryMock.Object,
+                categoryRepositoryMock.Object,
+                context
+            );
+
+            // Act
+            var result = repository.addBudgetData(user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result.Categories);
             result.Budgets.Should().BeEquivalentTo(budgets);
         }
 
@@ -400,12 +501,6 @@ namespace ExpenseTrackerApp.UnitTests.Repositories
             // Assert
             Assert.NotNull(result);
             Assert.Equal(0, result.Result.Budgets.Count);
-        }
-
-        [Fact]
-        public void getBudgetViewModelAsyncFailTest()
-        {
-            
         }
         // GetBudgetViewModelAsync End
         

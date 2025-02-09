@@ -648,7 +648,7 @@ public class CategoryRespositoryTests
             );
             
             // Act
-            var resultCategories = categoryRepo.GetAllCategories("testid");
+            var resultCategories = categoryRepo.GetAllCategoriesAsSelectListItems("testid");
 
             // Assert
             Assert.NotNull(resultCategories);
@@ -656,6 +656,103 @@ public class CategoryRespositoryTests
         }
     }
     // get all categories as selectListItems end
+    
+    // get all expense categories as selectListItems start
+    [Fact]
+    public void getAllExpenseCategoriesAsSelectListItemsSuccess()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        
+        using (var context = new ApplicationDbContext(options))
+        {
+            var user = new ApplicationUser()
+            {
+                ApplicationUserName = "User1", 
+                Balance = 100, 
+                registeredSince = DateTime.Now
+            };
+
+            var categoryTypes = new List<CategoryType>()
+            {
+                new CategoryType() { Name = "Expense" },
+                new CategoryType() { Name = "Income" },
+            };
+
+            var categoryIcons = new List<CategoryIcon>()
+            {
+                new CategoryIcon() { Name = "CategoryIcon 1", Code = "1" },
+                new CategoryIcon() { Name = "CategoryIcon 2", Code = "2" },
+            };
+
+            var categoryColors = new List<CategoryColor>()
+            {
+                new CategoryColor() { Name = "CategoryColor 1", code = "1" },
+                new CategoryColor() { Name = "CategoryColor 2", code = "2" },
+            };
+
+            var categories = new List<Category>()
+            {
+                new Category() { Title = "Category 1", ApplicationUser = user, CategoryType = categoryTypes[0], CategoryIcon = categoryIcons[0], CategoryColor = categoryColors[0] },
+                new Category() { Title = "Category 2", ApplicationUser = user, CategoryType = categoryTypes[1], CategoryIcon = categoryIcons[1], CategoryColor = categoryColors[1] },
+            };
+            
+            context.Users.Add(user);
+            context.categories.AddRange(categories);
+            context.categoriesTypes.AddRange(categoryTypes);
+            context.categoriesIcons.AddRange(categoryIcons);
+            context.categoriesColors.AddRange(categoryColors);
+            context.SaveChanges();
+
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+
+            var expectedResult = new List<SelectListItem>()
+            {
+                new SelectListItem() { Text = categories[0].Title, Value = categoryIcons[0].Id.ToString() },
+            };
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllExpenseCategoriesAsSelectListItems(user.Id);
+
+            // Assert 
+            Assert.NotNull(resultCategories);
+            Assert.NotEmpty(resultCategories);
+            resultCategories.Should().BeEquivalentTo(categories);
+        }
+    }
+    
+    [Fact]
+    public void getAllExpenseCategoriesAsSelectListItemsSuccessNoData()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        
+        using (var context = new ApplicationDbContext(options))
+        {
+            var categoryRepo = new CategoryRepository(
+                context,
+                mockCategoryTypeRepository.Object,
+                mockCategoryIconRepository.Object,
+                mockCategoryColorRepository.Object,
+                mockTransactionRepository.Object
+            );
+            
+            // Act
+            var resultCategories = categoryRepo.GetAllExpenseCategoriesAsSelectListItems("userid");
+
+            // Assert 
+            Assert.NotNull(resultCategories);
+            Assert.Empty(resultCategories);
+        }
+    }
+    
+    // get all expense categories as selectListItems end
     
     // get all expense categories with transaction start
     [Fact]

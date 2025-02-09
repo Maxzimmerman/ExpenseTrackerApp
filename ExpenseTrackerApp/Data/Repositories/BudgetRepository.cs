@@ -28,7 +28,7 @@ namespace ExpenseTrackerApp.Data.Repositories
 
         public AddBudgetViewModel addBudgetData(string userId)
         {
-            IEnumerable<SelectListItem> categories = _categoryRepository.GetAllCategoriesAsSelectListItems(userId);
+            IEnumerable<SelectListItem> categories = _categoryRepository.GetAllExpenseCategoriesAsSelectListItems(userId);
                 
             var budgets = _applicationDbContext.budgets
                 .Include(b => b.Category)
@@ -36,10 +36,26 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Include(b => b.Category.CategoryIcon)
                 .Where(b => b.Category.ApplicationUserId == userId)
                 .ToList();
+            
+            // ensuere the user cannot create multible budgets for the same category
+            var budgetNames = budgets.Select(c => c.Category.Title);
+            IEnumerable<SelectListItem> uniqueCategories = new List<SelectListItem>();
+            if (budgetNames.Count() != 0)
+            {
+                foreach (var category in categories)
+                {
+                    if (budgetNames.Contains(category.Text) == false)
+                        uniqueCategories.Append(category);
+                }
+            }
+            else
+                uniqueCategories = categories;
+            
 
             AddBudgetViewModel addBudgetViewModel = new AddBudgetViewModel();
-            addBudgetViewModel.Categories = categories;
+            
             addBudgetViewModel.Budgets = budgets;
+            addBudgetViewModel.Categories = uniqueCategories;
             return addBudgetViewModel;
         }
 
