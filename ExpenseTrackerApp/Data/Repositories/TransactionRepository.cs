@@ -30,7 +30,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             int thisYear = DateTime.UtcNow.Year;
             int thisMonth = DateTime.UtcNow.Month;
             int lastMonth = DateTime.UtcNow.AddMonths(-1).Month;
-            int month = DateTime.Now.Month;
+            int month = DateTime.UtcNow.Month;
             decimal monthlyAverageThisMonth = 0;
             decimal monthlyAverageLastMonth = 0;
             
@@ -77,6 +77,53 @@ namespace ExpenseTrackerApp.Data.Repositories
                 data.Add(newDataEntry);
             }
             return data;
+        }
+
+        public List<ExpenseAndIncomeCategoryData> getMonthlyExpenseBreakDown(string userId)
+        {
+            List<ExpenseAndIncomeCategoryData> expenseAndIncomeCategoryList = new List<ExpenseAndIncomeCategoryData>();
+
+            foreach (var category in _categoryRepository.GetAllExpenseCategories(userId))
+            {
+                ExpenseAndIncomeCategoryData expenseAndIncomeCategoryData = new ExpenseAndIncomeCategoryData();
+                expenseAndIncomeCategoryData.Title = category.Title;
+                expenseAndIncomeCategoryData.Amount = this.GetSpendAmountForCertainCategoryThisMonth(userId, category.Id);
+                expenseAndIncomeCategoryData.Percentage = this.GetPercentageOfTransactionOfCertainCategoryThisMonth(userId, category.CategoryType.Name, category.Id);
+                expenseAndIncomeCategoryList.Add(expenseAndIncomeCategoryData);
+            }
+            return expenseAndIncomeCategoryList;
+        }
+        
+        public decimal GetPercentageOfTransactionOfCertainCategoryThisMonth(string userId, string ExpnseOrIncome, int categoryId)
+        {
+            decimal percentage = 0;
+            decimal totalAmountOfCategories = 0;
+            decimal amountOfCertainCategory = 0;
+
+            totalAmountOfCategories = this.GetExpenseTotalAmountForAllCategoriesThisMonth(userId);
+            amountOfCertainCategory = this.GetSpendAmountForCertainCategoryThisMonth(userId, categoryId);
+
+            if (totalAmountOfCategories > 0)
+                percentage = (amountOfCertainCategory / totalAmountOfCategories) * 100;
+
+            if (percentage > 100)
+            {
+                percentage = 100;
+            }
+
+            return Math.Round(percentage, 0);
+        }
+        
+        public decimal GetExpenseTotalAmountForAllCategoriesThisMonth(string userId)
+        {
+            decimal amount = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId 
+                            && t.Category.CategoryType.Name == "Expense" 
+                            && t.Date.Year == DateTime.UtcNow.Year 
+                            && t.Date.Month == DateTime.UtcNow.Month)
+                .Sum(t => Math.Abs(t.Amount));
+
+            return amount;
         }
         
         public decimal getMonthlyBalanceAverageForCertainMonthThisYear(string userId, int month)

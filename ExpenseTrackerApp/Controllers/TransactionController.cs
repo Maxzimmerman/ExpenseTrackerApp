@@ -65,7 +65,10 @@ namespace ExpenseTrackerApp.Controllers
         [HttpGet]
         public IActionResult TransactionHistory()
         {
-            var transactions = _transactionRepository.GetTransactions(_userManageService.GetCurrentUserId(User)); 
+            var transactions = _transactionRepository
+                .GetTransactions(_userManageService.GetCurrentUserId(User))
+                .OrderByDescending(t => t.Date)
+                .ToList(); 
 
             return View(transactions);
         }
