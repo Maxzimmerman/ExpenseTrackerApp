@@ -9,4 +9,5 @@ public class HomeViewModel
     public BalanceTrendsViewModel BalanceTrendsViewModel { get; set; }
     public List<MonthyBudgetEntryViewModel> MonthyBudgetEntries { get; set; }
     public List<ExpenseAndIncomeCategoryData> ExpenseAndIncomeCategories { get; set; }
+    public TotalBalanceDataViewModel TotalBalanceDataViewModel { get; set; }
 }

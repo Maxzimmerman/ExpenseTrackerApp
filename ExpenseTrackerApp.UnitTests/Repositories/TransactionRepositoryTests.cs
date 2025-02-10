@@ -675,8 +675,8 @@ public class TransactionRepositoryTests
                     Title = "Test2",
                     Description = "Test2",
                     Date = DateTime.UtcNow,
-                    Amount = 90,
-                    Category = categories[1],
+                    Amount = 600,
+                    Category = categories[0],
                     ApplicationUser = user,
                 },
                 new Transaction()
@@ -692,8 +692,8 @@ public class TransactionRepositoryTests
                 {
                     Title = "Test2",
                     Description = "Test2",
-                    Date = new DateTime(2025, 01, 01),
-                    Amount = 10,
+                    Date = DateTime.UtcNow,
+                    Amount = 90,
                     Category = categories[1],
                     ApplicationUser = user,
                 },
@@ -702,8 +702,8 @@ public class TransactionRepositoryTests
                     Title = "Test2",
                     Description = "Test2",
                     Date = DateTime.UtcNow,
-                    Amount = 600,
-                    Category = categories[0],
+                    Amount = 10,
+                    Category = categories[1],
                     ApplicationUser = user,
                 }
             };
@@ -724,9 +724,6 @@ public class TransactionRepositoryTests
             context.AddRange(transactions);
             context.SaveChanges();
 
-            mockCategoryRepository.Setup(mc => mc.GetTotalAmountOfAllCategories(user.Id, "Expense"))
-                .Returns(900);
-
             var transactionRepository = new TransactionRepository(
                 context,
                 mockCategoryRepository.Object,
@@ -739,7 +736,7 @@ public class TransactionRepositoryTests
                     categories[0].Id);
 
             // Assert
-            result.Should().Be(72);
+            result.Should().Be(87);
         }
     }
 
@@ -789,17 +786,8 @@ public class TransactionRepositoryTests
                     Title = "Test1",
                     Description = "Test1",
                     Date = DateTime.UtcNow,
-                    Amount = 20,
+                    Amount = 200,
                     Category = categories[0],
-                    ApplicationUser = user,
-                },
-                new Transaction()
-                {
-                    Title = "Test2",
-                    Description = "Test2",
-                    Date = DateTime.UtcNow,
-                    Amount = 90,
-                    Category = categories[1],
                     ApplicationUser = user,
                 },
                 new Transaction()
@@ -809,15 +797,6 @@ public class TransactionRepositoryTests
                     Date = DateTime.UtcNow,
                     Amount = 30,
                     Category = categories[0],
-                    ApplicationUser = user,
-                },
-                new Transaction()
-                {
-                    Title = "Test2",
-                    Description = "Test2",
-                    Date = DateTime.UtcNow,
-                    Amount = 10,
-                    Category = categories[1],
                     ApplicationUser = user,
                 },
                 new Transaction()

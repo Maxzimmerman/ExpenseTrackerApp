@@ -9,13 +9,14 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
     {
         
         BalanceTrendsViewModel getBalanceTrendsData(string userId);
-        decimal getMonthlyBalanceAverageForCertainMonthThisYear(string userId, int month);
+        decimal getMonthlyBalanceForCertainMonthThisYear(string userId, int month);
         List<MonthyBudgetEntryViewModel> getMonthlyBudgetData(string userId);
         List<decimal> GetExpensesForAllMonthsForCertainCategory(string userId, int categoryId);
         List<ExpenseAndIncomeCategoryData> getMonthlyExpenseBreakDown(string userId);
         decimal GetPercentageOfTransactionOfCertainCategoryThisMonth(string userId, string ExpnseOrIncome, int categoryId);
+        decimal GetExpenseTotalAmountForAllCategoriesThisMonth(string userId);
         // Todo
-        public decimal GetExpenseTotalAmountForAllCategoriesThisMonth(string userId);
+        public TotalBalanceDataViewModel getTotalBalanceData(string userId);
         // Todo
         decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId);
