@@ -35,7 +35,7 @@
                             textColor = "success";
                             upOrDown = "up";
                         }
-                            
+
                         else if (@Model.TotalBalanceDataViewModel.DifferenceFromLastToCurrentMonthPercentage < 0)
                         {
                             textColor = "danger";
@@ -43,53 +43,76 @@
                         }
                         else
                             textColor = "secondary";
-                        
+
                         <div class="stat-widget-1">
                             <h6>Total Balance</h6>
                             <h3>$ @Model.TotalBalanceDataViewModel.TotalBalance</h3>
                             <p>
-                                <span class="text-@textColor"><i class="fi fi-rr-arrow-trend-@upOrDown"></i>@Model.TotalBalanceDataViewModel.DifferenceFromLastToCurrentMonthPercentage   %</span>
+                                <span class="text-@textColor"><i
+                                        class="fi fi-rr-arrow-trend-@upOrDown"></i>@Model.TotalBalanceDataViewModel.DifferenceFromLastToCurrentMonthPercentage %</span>
                                 Last month <strong>$@Model.TotalBalanceDataViewModel.BalanceLastMonth</strong>
                             </p>
-                        </div>  
-                    } 
-                </div>
-                @{
-                    string textColorExpense;
-                    string upOrDownExpense = "";
-                    if (@Model.TotalPeriodExpenses.DifferenceBetweenThisAndLastMonth > 0)
-                    {
-                        textColorExpense = "success";
-                        upOrDownExpense = "up";
-                    }
-
-                    else if (@Model.TotalPeriodExpenses.DifferenceBetweenThisAndLastMonth < 0)
-                    {
-                        textColorExpense = "danger";
-                        upOrDownExpense = "down";
-                    }
-                    else
-                        textColorExpense = "secondary";
-
-                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                        <div class="stat-widget-1">
-                            <h6>Total Period Expenses</h6>
-                            <h3>$ @Model.TotalPeriodExpenses.TotalAmountOfExpenses</h3>
-                            <p>
-                                <span class="text-@textColorExpense"><i class="fi fi-rr-arrow-trend-@upOrDownExpense"></i>@Model.TotalPeriodExpenses.DifferenceBetweenThisAndLastMonth%</span>
-                                Last month <strong>$@Model.TotalPeriodExpenses.AmountOfExpensesLastMonth</strong>
-                            </p>
                         </div>
+                    }
+                </div>
+                
+                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
+                    <div class="stat-widget-1">
+                        @{
+                            string textColorExpense;
+                            string upOrDownExpense = "";
+                            if (@Model.TotalPeriodExpensesDataViewModel.DifferenceBetweenThisAndLastMonth > 0)
+                            {
+                                textColorExpense = "success";
+                                upOrDownExpense = "up";
+                            }
+                            else if (@Model.TotalPeriodExpensesDataViewModel.DifferenceBetweenThisAndLastMonth < 0)
+                            {
+                                textColorExpense = "danger";
+                                upOrDownExpense = "down";
+                            }
+                            else
+                                textColorExpense = "secondary";
+                        }
+                        <h6>Total Period Expenses</h6>
+                        <h3>$ @Model.TotalPeriodExpensesDataViewModel.TotalAmountOfExpenses</h3>
+                        <p>
+                            <span class="text-@textColorExpense"><i
+                                    class="fi fi-rr-arrow-trend-@upOrDownExpense"></i>@Model.TotalPeriodExpensesDataViewModel.DifferenceBetweenThisAndLastMonth%</span>
+                            Last month
+                            <strong>$@Model.TotalPeriodExpensesDataViewModel.AmountOfExpensesLastMonth</strong>
+                        </p>
                     </div>
-                }
+                </div>
+
                 <div class="col-xl-4 col-lg-12 col-md-12 col-sm-6">
                     <div class="stat-widget-1">
-                        <h6>Total Period Income</h6>
-                        <h3>$ 22.56</h3>
-                        <p>
-                            <span class="text-success"><i class="fi fi-rr-arrow-trend-up"></i>2.47%</span>
-                            Last month <strong>$24,478</strong>
-                        </p>
+                        @{
+                            string textColorIncome;
+                            string upOrDownIncome = "";
+                            if (@Model.TotalPeriotIncomeDateViewModel.DifferenceBetweenThisAndLastMonth > 0)
+                            {
+                                textColorIncome = "success";
+                                upOrDownIncome = "up";
+                            }
+
+                            else if (@Model.TotalPeriotIncomeDateViewModel.DifferenceBetweenThisAndLastMonth < 0)
+                            {
+                                textColorIncome = "danger";
+                                upOrDownIncome = "down";
+                            }
+                            else
+                                textColorIncome = "secondary";
+
+                            <h6>Total Period Income</h6>
+                            <h3>$ @Model.TotalPeriotIncomeDateViewModel.TotalIncomeAmount</h3>
+                            <p>
+                                <span class="text-@textColorIncome"><i
+                                        class="fi fi-rr-arrow-trend-@upOrDownIncome"></i>@Model.TotalPeriotIncomeDateViewModel.DifferenceBetweenThisAndLastMonth %</span>
+                                Last month
+                                <strong>$@Model.TotalPeriotIncomeDateViewModel.ExpenseAmountLastMonth</strong>
+                            </p>
+                        }
                     </div>
                 </div>
             </div>
@@ -97,7 +120,8 @@
                 <div class="col-xxl-8 col-xl-8 col-lg-6">
                     <div class="card">
                         <div class="card-header balance-trend">
-                            <h4 class="card-title">Balace Trends <br> <span>@Model.BalanceTrendsViewModel.Balance$</span></h4>
+                            <h4 class="card-title">Balace Trends <br>
+                                <span>@Model.BalanceTrendsViewModel.Balance$</span></h4>
                             <div class="trend-stats">
                                 <p class="mb-0">Last Month</p>
                                 @{
@@ -122,7 +146,7 @@
                                         </span>
                                     }
                                 }
-                                
+
                             </div>
                         </div>
                         <div class="card-body">
@@ -141,7 +165,8 @@
                                     var colors = new List<string>() { "orange", "amber", "yellow", "lime", "green", "cyan", "stone" };
                                     for (int i = 0; i < Model.ExpenseAndIncomeCategories.Count(); i++)
                                     {
-                                        <div class="progress" style="width: @Model.ExpenseAndIncomeCategories[i].Percentage%">
+                                        <div class="progress"
+                                             style="width: @Model.ExpenseAndIncomeCategories[i].Percentage%">
                                             <div class="progress-bar bg-@colors[i]-500"></div>
                                         </div>
                                     }
@@ -153,8 +178,11 @@
                                         foreach (var categoryData in Model.ExpenseAndIncomeCategories)
                                         {
                                             <li>
-                                                <p class="mb-0"><i class="fi fi-ss-circle text-orange-500"></i>@categoryData.Title</p>
-                                                <h5 class="mb-0"><span>$@categoryData.Amount</span>@categoryData.Percentage%</h5>
+                                                <p class="mb-0"><i
+                                                        class="fi fi-ss-circle text-orange-500"></i>@categoryData.Title
+                                                </p>
+                                                <h5 class="mb-0">
+                                                    <span>$@categoryData.Amount</span>@categoryData.Percentage%</h5>
                                             </li>
                                         }
                                     }
@@ -177,8 +205,12 @@
                                             <li>
                                                 <div class="budget-info flex-grow-2 me-3">
                                                     <div class="d-flex justify-content-between align-items-center mb-1">
-                                                        <h5 class="mb-1"><i class="bg-green-500 fi fi-rr-carrot"></i>@monhtlyBudgetEntry.Name</h5>
-                                                        <p class="mb-0"><strong>@monhtlyBudgetEntry.SpendAmount </strong>/ @monhtlyBudgetEntry.BudgetAmount</p>
+                                                        <h5 class="mb-1"><i
+                                                                class="bg-green-500 fi fi-rr-carrot"></i>@monhtlyBudgetEntry.Name
+                                                        </h5>
+                                                        <p class="mb-0">
+                                                            <strong>@monhtlyBudgetEntry.SpendAmount </strong>/ @monhtlyBudgetEntry.BudgetAmount
+                                                        </p>
                                                     </div>
                                                     <div class="progress">
                                                         <div class="progress-bar bg-green-500" role="progressbar"
@@ -186,7 +218,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </li>       
+                                            </li>
                                         }
                                     }
                                 </ul>

@@ -45,7 +45,8 @@ namespace ExpenseTrackerApp.Controllers
                 homeViewModel.MonthyBudgetEntries = _transactionRepository.getMonthlyBudgetData(user.Id);
                 homeViewModel.ExpenseAndIncomeCategories = _transactionRepository.getMonthlyExpenseBreakDown(user.Id);
                 homeViewModel.TotalBalanceDataViewModel = _transactionRepository.getTotalBalanceData(user.Id);
-                homeViewModel.TotalPeriodExpenses = _transactionRepository.getTotalPeriodExpensesData(user.Id);
+                homeViewModel.TotalPeriodExpensesDataViewModel = _transactionRepository.getTotalPeriodExpensesData(user.Id);
+                homeViewModel.TotalPeriotIncomeDateViewModel = _transactionRepository.getTotalIncomeData(user.Id);
                 return View(homeViewModel);
             }
             return RedirectToAction("SignIn", "UserManage");

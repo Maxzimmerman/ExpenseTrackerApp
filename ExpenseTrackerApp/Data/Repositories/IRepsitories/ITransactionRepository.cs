@@ -15,10 +15,14 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         decimal GetPercentageOfTransactionOfCertainCategoryThisMonth(string userId, string ExpnseOrIncome, int categoryId);
         decimal GetExpenseTotalAmountForAllCategoriesThisMonth(string userId);
         TotalBalanceDataViewModel getTotalBalanceData(string userId);
-        // Todo
-        TotalPeriodExpenses getTotalPeriodExpensesData(string userId);
+        TotalPeriodExpensesDataViewModel getTotalPeriodExpensesData(string userId);
         decimal GetExpenseTotalAmountForAllCategoriesLastMonth(string userId);
+        // Todo
+        TotalPeriotIncomeDateViewModel getTotalIncomeData(string userId);
+        decimal GetIncomeTotalAmountForAllCategoriesThisMonth(string userId);
+        decimal GetIncomeTotalAmountForAllCategoriesLastMonth(string userId);
 
+        decimal GetTotalIncomeAmount(string userId);
         // Todo
         decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId);

@@ -153,9 +153,9 @@ namespace ExpenseTrackerApp.Data.Repositories
             return totalBalanceDataViewModel;
         }
 
-        public TotalPeriodExpenses getTotalPeriodExpensesData(string userId)
+        public TotalPeriodExpensesDataViewModel getTotalPeriodExpensesData(string userId)
         {
-            TotalPeriodExpenses totalPeriodExpensesViewModel = new TotalPeriodExpenses();
+            TotalPeriodExpensesDataViewModel totalPeriodExpensesDataViewModelViewModel = new TotalPeriodExpensesDataViewModel();
             int thisMonth = DateTime.UtcNow.Month;
             int lastMonth = DateTime.UtcNow.AddMonths(-1).Month;
             decimal expenseAmountThisMonth = 0;
@@ -173,11 +173,11 @@ namespace ExpenseTrackerApp.Data.Repositories
                 balancePercentage *= 100;
             }
 
-            totalPeriodExpensesViewModel.TotalAmountOfExpenses = this.GetTotalSpendAmount(userId);
-            totalPeriodExpensesViewModel.AmountOfExpensesLastMonth = expenseAmountLastMonth;
-            totalPeriodExpensesViewModel.DifferenceBetweenThisAndLastMonth = Math.Round(balancePercentage, 2);
+            totalPeriodExpensesDataViewModelViewModel.TotalAmountOfExpenses = this.GetTotalSpendAmount(userId);
+            totalPeriodExpensesDataViewModelViewModel.AmountOfExpensesLastMonth = expenseAmountLastMonth;
+            totalPeriodExpensesDataViewModelViewModel.DifferenceBetweenThisAndLastMonth = Math.Round(balancePercentage, 2);
 
-            return totalPeriodExpensesViewModel;
+            return totalPeriodExpensesDataViewModelViewModel;
         }
         
         public decimal GetExpenseTotalAmountForAllCategoriesLastMonth(string userId)
@@ -190,6 +190,68 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Sum(t => Math.Abs(t.Amount));
 
             return amount;
+        }
+        
+        public TotalPeriotIncomeDateViewModel getTotalIncomeData(string userId)
+        {
+            TotalPeriotIncomeDateViewModel totalPeriotIncomeDateViewModel = new TotalPeriotIncomeDateViewModel();
+            int thisMonth = DateTime.UtcNow.Month;
+            int lastMonth = DateTime.UtcNow.AddMonths(-1).Month;
+            decimal incomeAmountThisMonth = 0;
+            decimal incomeAmountLastMonth = 0;
+            
+            // calculate the balance trend percentage
+            incomeAmountThisMonth = this.GetIncomeTotalAmountForAllCategoriesThisMonth(userId);
+            incomeAmountLastMonth = this.GetIncomeTotalAmountForAllCategoriesLastMonth(userId);
+            decimal balancePercentage = 0;
+
+            // prevent division by zero
+            if (incomeAmountLastMonth != 0)
+            {
+                balancePercentage = (incomeAmountThisMonth - incomeAmountLastMonth) / incomeAmountLastMonth;
+                balancePercentage *= 100;
+            }
+
+            totalPeriotIncomeDateViewModel.TotalIncomeAmount = this.GetTotalIncomeAmount(userId);
+            totalPeriotIncomeDateViewModel.ExpenseAmountLastMonth = incomeAmountLastMonth;
+            totalPeriotIncomeDateViewModel.DifferenceBetweenThisAndLastMonth = Math.Round(balancePercentage, 2);
+
+            return totalPeriotIncomeDateViewModel;
+        }
+
+        public decimal GetIncomeTotalAmountForAllCategoriesThisMonth(string userId)
+        {
+            decimal amount = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId 
+                            && t.Category.CategoryType.Name == "Income" 
+                            && t.Date.Year == DateTime.UtcNow.Year 
+                            && t.Date.Month == DateTime.UtcNow.Month)
+                .Sum(t => Math.Abs(t.Amount));
+
+            return amount;
+        }
+        
+        public decimal GetIncomeTotalAmountForAllCategoriesLastMonth(string userId)
+        {
+            decimal amount = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId 
+                            && t.Category.CategoryType.Name == "Income" 
+                            && t.Date.Year == DateTime.UtcNow.Year 
+                            && t.Date.Month == DateTime.UtcNow.AddMonths(-1).Month)
+                .Sum(t => Math.Abs(t.Amount));
+
+            return amount;
+        }
+
+        public decimal GetTotalIncomeAmount(string userId)
+        {
+            decimal expenses = _applicationDbContext.transactions
+                .Include(t => t.Category)
+                .Include(t => t.Category.CategoryType)
+                .Where(t => t.ApplicationUserId == userId &&
+                            t.Category.CategoryType.Name == "Income")
+                .Sum(t => t.Amount);
+            return expenses;
         }
         
         public decimal getMonthlyBalanceForCertainMonthThisYear(string userId, int month)

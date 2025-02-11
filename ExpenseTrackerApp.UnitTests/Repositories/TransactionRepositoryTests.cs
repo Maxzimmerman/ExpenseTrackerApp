@@ -1297,8 +1297,10 @@ public class TransactionRepositoryTests
             DifferenceFromLastToCurrentMonthPercentage = (decimal)-509.09
         };
         
+        // Act
         var result = transactionRepository.getTotalBalanceData(user.Id);
         
+        // Assert
         result.Should().BeEquivalentTo(expectedResult);
     }
     
@@ -1419,8 +1421,10 @@ public class TransactionRepositoryTests
             DifferenceFromLastToCurrentMonthPercentage = 0
         };
         
+        // Act
         var result = transactionRepository.getTotalBalanceData(user.Id);
         
+        // Assert
         result.Should().BeEquivalentTo(expectedResult);
     }
     
@@ -1436,7 +1440,7 @@ public class TransactionRepositoryTests
             mockCategoryRepository.Object,
             mockBudgetRepository.Object
         );
-
+        
         var expectedResult = new TotalBalanceDataViewModel()
         {
             TotalBalance = 0,
@@ -1444,9 +1448,488 @@ public class TransactionRepositoryTests
             DifferenceFromLastToCurrentMonthPercentage = 0
         };
         
+        // Act
         var result = transactionRepository.getTotalBalanceData("userId");
         
+        // Assert
         result.Should().BeEquivalentTo(expectedResult);
     }
     // get total balance data end
+    
+    // get total period expense data start
+    [Fact]
+    public void getTotalPeriodExpensesDataSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using var context = new ApplicationDbContext(options);
+        
+        var user = new ApplicationUser() { ApplicationUserName = "user" };
+        CategoryType expenseType = new CategoryType() { Name = "Expense" };
+        CategoryIcon icon = new CategoryIcon() { Name = "Icon", Code = "icon" };
+        CategoryColor color = new CategoryColor() { Name = "Color", code = "color" };
+        var categories = new List<Category>()
+        {
+            new Category()
+            {
+                Title = "Groceries",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Casino",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Hobby",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            }
+        };
+
+        var transactions = new List<Transaction>()
+        {
+            new Transaction()
+            {
+                Title = "Test1",
+                Description = "Test1",
+                Date = DateTime.UtcNow,
+                Amount = 20,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 90,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 30,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 600,
+                Category = categories[2],
+                ApplicationUser = user,
+            }
+        };
+
+        var budgets = new List<Budget>
+        {
+            new Budget() { Amount = 110, Category = categories[0] },
+            new Budget() { Amount = 800, Category = categories[1] },
+            new Budget() { Amount = 1, Category = categories[2] }
+        };
+
+        context.Add(expenseType);
+        context.Add(icon);
+        context.Add(color);
+        context.Add(user);
+        context.AddRange(categories);
+        context.AddRange(budgets);
+        context.AddRange(transactions);
+        context.SaveChanges();
+
+        var transactionRepository = new TransactionRepository(
+            context,
+            mockCategoryRepository.Object,
+            mockBudgetRepository.Object
+        );
+
+        var expectedResult = new TotalPeriodExpensesDataViewModel()
+        {
+            TotalAmountOfExpenses = 770,
+            AmountOfExpensesLastMonth = 20,
+            DifferenceBetweenThisAndLastMonth = 3650
+        };
+        
+        // Act
+        var result = transactionRepository.getTotalPeriodExpensesData(user.Id);
+        
+        // Assert
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+    
+    [Fact]
+    public void getTotalPeriodExpensesDataSuccessLastMonthWasMoreThanThisMonthTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using var context = new ApplicationDbContext(options);
+        
+        var user = new ApplicationUser() { ApplicationUserName = "user" };
+        CategoryType expenseType = new CategoryType() { Name = "Expense" };
+        CategoryIcon icon = new CategoryIcon() { Name = "Icon", Code = "icon" };
+        CategoryColor color = new CategoryColor() { Name = "Color", code = "color" };
+        var categories = new List<Category>()
+        {
+            new Category()
+            {
+                Title = "Groceries",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Casino",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Hobby",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            }
+        };
+
+        var transactions = new List<Transaction>()
+        {
+            new Transaction()
+            {
+                Title = "Test1",
+                Description = "Test1",
+                Date = DateTime.UtcNow,
+                Amount = 20,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 90,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 30,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 600,
+                Category = categories[2],
+                ApplicationUser = user,
+            }
+        };
+
+        var budgets = new List<Budget>
+        {
+            new Budget() { Amount = 110, Category = categories[0] },
+            new Budget() { Amount = 800, Category = categories[1] },
+            new Budget() { Amount = 1, Category = categories[2] }
+        };
+
+        context.Add(expenseType);
+        context.Add(icon);
+        context.Add(color);
+        context.Add(user);
+        context.AddRange(categories);
+        context.AddRange(budgets);
+        context.AddRange(transactions);
+        context.SaveChanges();
+
+        var transactionRepository = new TransactionRepository(
+            context,
+            mockCategoryRepository.Object,
+            mockBudgetRepository.Object
+        );
+
+        var expectedResult = new TotalPeriodExpensesDataViewModel()
+        {
+            TotalAmountOfExpenses = 770,
+            AmountOfExpensesLastMonth = 620,
+            DifferenceBetweenThisAndLastMonth = (decimal)-75.81
+        };
+        
+        // Act
+        var result = transactionRepository.getTotalPeriodExpensesData(user.Id);
+        
+        // Assert
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+    
+    [Fact]
+    public void getTotalPeriodExpensesDataSuccessLastMonthNoDataTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using var context = new ApplicationDbContext(options);
+
+        var transactionRepository = new TransactionRepository(
+            context,
+            mockCategoryRepository.Object,
+            mockBudgetRepository.Object
+        );
+
+        var expectedResult = new TotalPeriodExpensesDataViewModel()
+        {
+            TotalAmountOfExpenses = 0,
+            AmountOfExpensesLastMonth = 0,
+            DifferenceBetweenThisAndLastMonth = 0
+        };
+        
+        // Act
+        var result = transactionRepository.getTotalPeriodExpensesData("userId");
+        
+        // Assert
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+    // get total period expense data end
+    
+    // Get Expense Total Amount For All Categories Last Month start
+    [Fact]
+    public void GetExpenseTotalAmountForAllCategoriesLastMonthSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using var context = new ApplicationDbContext(options);
+        
+        var user = new ApplicationUser() { ApplicationUserName = "user" };
+        CategoryType expenseType = new CategoryType() { Name = "Expense" };
+        CategoryIcon icon = new CategoryIcon() { Name = "Icon", Code = "icon" };
+        CategoryColor color = new CategoryColor() { Name = "Color", code = "color" };
+        var categories = new List<Category>()
+        {
+            new Category()
+            {
+                Title = "Groceries",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Casino",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Hobby",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            }
+        };
+
+        var transactions = new List<Transaction>()
+        {
+            new Transaction()
+            {
+                Title = "Test1",
+                Description = "Test1",
+                Date = DateTime.UtcNow,
+                Amount = 20,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 90,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 30,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 600,
+                Category = categories[2],
+                ApplicationUser = user,
+            }
+        };
+
+        var budgets = new List<Budget>
+        {
+            new Budget() { Amount = 110, Category = categories[0] },
+            new Budget() { Amount = 800, Category = categories[1] },
+            new Budget() { Amount = 1, Category = categories[2] }
+        };
+
+        context.Add(expenseType);
+        context.Add(icon);
+        context.Add(color);
+        context.Add(user);
+        context.AddRange(categories);
+        context.AddRange(budgets);
+        context.AddRange(transactions);
+        context.SaveChanges();
+
+        var transactionRepository = new TransactionRepository(
+            context,
+            mockCategoryRepository.Object,
+            mockBudgetRepository.Object
+        );
+        
+        // Act
+        var result = transactionRepository.GetExpenseTotalAmountForAllCategoriesLastMonth(user.Id);
+        
+        // Assert
+        result.Should().Be(620);
+    }
+    
+    [Fact]
+    public void GetExpenseTotalAmountForAllCategoriesLastMonthNoDataTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using var context = new ApplicationDbContext(options);
+
+        var transactionRepository = new TransactionRepository(
+            context,
+            mockCategoryRepository.Object,
+            mockBudgetRepository.Object
+        );
+
+        var expectedResult = new TotalPeriodExpensesDataViewModel()
+        {
+            TotalAmountOfExpenses = 0,
+            AmountOfExpensesLastMonth = 0,
+            DifferenceBetweenThisAndLastMonth = 0
+        };
+        
+        // Act
+        var result = transactionRepository.GetExpenseTotalAmountForAllCategoriesLastMonth("userId");
+        
+        // Assert
+        result.Should().Be(0);
+    }
+    // Get Expense Total Amount For All Categories Last Month end
 }

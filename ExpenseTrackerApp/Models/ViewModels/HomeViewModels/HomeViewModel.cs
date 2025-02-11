@@ -10,5 +10,6 @@ public class HomeViewModel
     public List<MonthyBudgetEntryViewModel> MonthyBudgetEntries { get; set; }
     public List<ExpenseAndIncomeCategoryData> ExpenseAndIncomeCategories { get; set; }
     public TotalBalanceDataViewModel TotalBalanceDataViewModel { get; set; }
-    public TotalPeriodExpenses TotalPeriodExpenses { get; set; }
+    public TotalPeriodExpensesDataViewModel TotalPeriodExpensesDataViewModel { get; set; }
+    public TotalPeriotIncomeDateViewModel TotalPeriotIncomeDateViewModel { get; set; }
 }
