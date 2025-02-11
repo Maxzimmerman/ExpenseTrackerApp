@@ -213,7 +213,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             }
 
             totalPeriotIncomeDateViewModel.TotalIncomeAmount = this.GetTotalIncomeAmount(userId);
-            totalPeriotIncomeDateViewModel.ExpenseAmountLastMonth = incomeAmountLastMonth;
+            totalPeriotIncomeDateViewModel.IncomeAmountLastMonth = incomeAmountLastMonth;
             totalPeriotIncomeDateViewModel.DifferenceBetweenThisAndLastMonth = Math.Round(balancePercentage, 2);
 
             return totalPeriotIncomeDateViewModel;
