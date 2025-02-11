@@ -54,16 +54,34 @@
                         </div>  
                     } 
                 </div>
-                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
-                    <div class="stat-widget-1">
-                        <h6>Total Period Expenses</h6>
-                        <h3>$ 25.35</h3>
-                        <p>
-                            <span class="text-danger"><i class="fi fi-rr-arrow-trend-down"></i>2.47%</span>
-                            Last month <strong>$24,478</strong>
-                        </p>
+                @{
+                    string textColorExpense;
+                    string upOrDownExpense = "";
+                    if (@Model.TotalPeriodExpenses.DifferenceBetweenThisAndLastMonth > 0)
+                    {
+                        textColorExpense = "success";
+                        upOrDownExpense = "up";
+                    }
+
+                    else if (@Model.TotalPeriodExpenses.DifferenceBetweenThisAndLastMonth < 0)
+                    {
+                        textColorExpense = "danger";
+                        upOrDownExpense = "down";
+                    }
+                    else
+                        textColorExpense = "secondary";
+
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6">
+                        <div class="stat-widget-1">
+                            <h6>Total Period Expenses</h6>
+                            <h3>$ @Model.TotalPeriodExpenses.TotalAmountOfExpenses</h3>
+                            <p>
+                                <span class="text-@textColorExpense"><i class="fi fi-rr-arrow-trend-@upOrDownExpense"></i>@Model.TotalPeriodExpenses.DifferenceBetweenThisAndLastMonth%</span>
+                                Last month <strong>$@Model.TotalPeriodExpenses.AmountOfExpensesLastMonth</strong>
+                            </p>
+                        </div>
                     </div>
-                </div>
+                }
                 <div class="col-xl-4 col-lg-12 col-md-12 col-sm-6">
                     <div class="stat-widget-1">
                         <h6>Total Period Income</h6>

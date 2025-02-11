@@ -7,7 +7,6 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
 {
     public interface ITransactionRepository : IRepository<Models.Transaction>
     {
-        
         BalanceTrendsViewModel getBalanceTrendsData(string userId);
         decimal getMonthlyBalanceForCertainMonthThisYear(string userId, int month);
         List<MonthyBudgetEntryViewModel> getMonthlyBudgetData(string userId);
@@ -15,8 +14,11 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         List<ExpenseAndIncomeCategoryData> getMonthlyExpenseBreakDown(string userId);
         decimal GetPercentageOfTransactionOfCertainCategoryThisMonth(string userId, string ExpnseOrIncome, int categoryId);
         decimal GetExpenseTotalAmountForAllCategoriesThisMonth(string userId);
+        TotalBalanceDataViewModel getTotalBalanceData(string userId);
         // Todo
-        public TotalBalanceDataViewModel getTotalBalanceData(string userId);
+        TotalPeriodExpenses getTotalPeriodExpensesData(string userId);
+        decimal GetExpenseTotalAmountForAllCategoriesLastMonth(string userId);
+
         // Todo
         decimal GetIncomeForCertainCategoryLastMonth(string userId, int categoryId);
         decimal GetSpendForCertainCategoryLastMonth(string userId, int categoryId);

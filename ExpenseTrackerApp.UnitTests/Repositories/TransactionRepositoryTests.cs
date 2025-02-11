@@ -340,7 +340,7 @@ public class TransactionRepositoryTests
             var expectedBalance = 19490;
 
             // Act
-            var result = transactionRepository.getMonthlyBalanceAverageForCertainMonthThisYear(user.Id, 1);
+            var result = transactionRepository.getMonthlyBalanceForCertainMonthThisYear(user.Id, 1);
 
             // Assert
             result.Should().Be(expectedBalance);
@@ -407,7 +407,7 @@ public class TransactionRepositoryTests
             var expectedBalance = -19;
 
             // Act
-            var result = transactionRepository.getMonthlyBalanceAverageForCertainMonthThisYear(user.Id, 1);
+            var result = transactionRepository.getMonthlyBalanceForCertainMonthThisYear(user.Id, 1);
 
             // Assert
             result.Should().Be(expectedBalance);
@@ -427,7 +427,7 @@ public class TransactionRepositoryTests
             var expectedBalance = 0;
 
             // Act
-            var result = transactionRepository.getMonthlyBalanceAverageForCertainMonthThisYear("user.Id", 1);
+            var result = transactionRepository.getMonthlyBalanceForCertainMonthThisYear("user.Id", 1);
 
             // Assert
             result.Should().Be(expectedBalance);
@@ -1177,4 +1177,276 @@ public class TransactionRepositoryTests
         result.Should().Be(0);
     }
     // Get Expense Total Amount For All Categories This Month end
+    
+    // get total balance data start
+    [Fact]
+    public void getTotalBalanceDataSuccessTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using var context = new ApplicationDbContext(options);
+        
+        var user = new ApplicationUser() { ApplicationUserName = "user" };
+        CategoryType expenseType = new CategoryType() { Name = "Expense" };
+        CategoryType incomeType = new CategoryType() { Name = "Income" };
+        CategoryIcon icon = new CategoryIcon() { Name = "Icon", Code = "icon" };
+        CategoryColor color = new CategoryColor() { Name = "Color", code = "color" };
+        var categories = new List<Category>()
+        {
+            new Category()
+            {
+                Title = "Groceries",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Casino",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Hobby",
+                CategoryType = incomeType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            }
+        };
+
+        var transactions = new List<Transaction>()
+        {
+            new Transaction()
+            {
+                Title = "Test1",
+                Description = "Test1",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 20,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow.AddMonths(-1),
+                Amount = 90,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 30,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 600,
+                Category = categories[2],
+                ApplicationUser = user,
+            }
+        };
+
+        var budgets = new List<Budget>
+        {
+            new Budget() { Amount = 110, Category = categories[0] },
+            new Budget() { Amount = 800, Category = categories[1] },
+            new Budget() { Amount = 1, Category = categories[2] }
+        };
+
+        context.Add(expenseType);
+        context.Add(icon);
+        context.Add(color);
+        context.Add(user);
+        context.AddRange(categories);
+        context.AddRange(budgets);
+        context.AddRange(transactions);
+        context.SaveChanges();
+
+        var transactionRepository = new TransactionRepository(
+            context,
+            mockCategoryRepository.Object,
+            mockBudgetRepository.Object
+        );
+
+        var expectedResult = new TotalBalanceDataViewModel()
+        {
+            TotalBalance = 450,
+            BalanceLastMonth = -110,
+            DifferenceFromLastToCurrentMonthPercentage = (decimal)-509.09
+        };
+        
+        var result = transactionRepository.getTotalBalanceData(user.Id);
+        
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+    
+    [Fact]
+    public void getTotalBalanceDataSuccessBalanceLastMonthWaszeroTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using var context = new ApplicationDbContext(options);
+        
+        var user = new ApplicationUser() { ApplicationUserName = "user" };
+        CategoryType expenseType = new CategoryType() { Name = "Expense" };
+        CategoryIcon icon = new CategoryIcon() { Name = "Icon", Code = "icon" };
+        CategoryColor color = new CategoryColor() { Name = "Color", code = "color" };
+        var categories = new List<Category>()
+        {
+            new Category()
+            {
+                Title = "Groceries",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Casino",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            },
+            new Category()
+            {
+                Title = "Hobby",
+                CategoryType = expenseType,
+                CategoryIcon = icon,
+                CategoryColor = color,
+                ApplicationUser = user
+            }
+        };
+
+        var transactions = new List<Transaction>()
+        {
+            new Transaction()
+            {
+                Title = "Test1",
+                Description = "Test1",
+                Date = DateTime.UtcNow,
+                Amount = 20,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 90,
+                Category = categories[0],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 30,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 10,
+                Category = categories[1],
+                ApplicationUser = user,
+            },
+            new Transaction()
+            {
+                Title = "Test2",
+                Description = "Test2",
+                Date = DateTime.UtcNow,
+                Amount = 600,
+                Category = categories[2],
+                ApplicationUser = user,
+            }
+        };
+
+        var budgets = new List<Budget>
+        {
+            new Budget() { Amount = 110, Category = categories[0] },
+            new Budget() { Amount = 800, Category = categories[1] },
+            new Budget() { Amount = 1, Category = categories[2] }
+        };
+
+        context.Add(expenseType);
+        context.Add(icon);
+        context.Add(color);
+        context.Add(user);
+        context.AddRange(categories);
+        context.AddRange(budgets);
+        context.AddRange(transactions);
+        context.SaveChanges();
+
+        var transactionRepository = new TransactionRepository(
+            context,
+            mockCategoryRepository.Object,
+            mockBudgetRepository.Object
+        );
+
+        var expectedResult = new TotalBalanceDataViewModel()
+        {
+            TotalBalance = -750,
+            BalanceLastMonth = 0,
+            DifferenceFromLastToCurrentMonthPercentage = 0
+        };
+        
+        var result = transactionRepository.getTotalBalanceData(user.Id);
+        
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+    
+    [Fact]
+    public void getTotalBalanceDataSuccessNoDataTest()
+    {
+        // Arrange
+        var options = CreateDbContextOptions();
+        using var context = new ApplicationDbContext(options);
+
+        var transactionRepository = new TransactionRepository(
+            context,
+            mockCategoryRepository.Object,
+            mockBudgetRepository.Object
+        );
+
+        var expectedResult = new TotalBalanceDataViewModel()
+        {
+            TotalBalance = 0,
+            BalanceLastMonth = 0,
+            DifferenceFromLastToCurrentMonthPercentage = 0
+        };
+        
+        var result = transactionRepository.getTotalBalanceData("userId");
+        
+        result.Should().BeEquivalentTo(expectedResult);
+    }
+    // get total balance data end
 }

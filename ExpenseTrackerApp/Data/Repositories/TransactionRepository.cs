@@ -30,7 +30,6 @@ namespace ExpenseTrackerApp.Data.Repositories
             int thisYear = DateTime.UtcNow.Year;
             int thisMonth = DateTime.UtcNow.Month;
             int lastMonth = DateTime.UtcNow.AddMonths(-1).Month;
-            int month = DateTime.UtcNow.Month;
             decimal balanceThisMonth = 0;
             decimal balanceLastMonth = 0;
             
@@ -130,10 +129,8 @@ namespace ExpenseTrackerApp.Data.Repositories
         {
             TotalBalanceDataViewModel totalBalanceDataViewModel = new TotalBalanceDataViewModel();
             
-            int thisYear = DateTime.UtcNow.Year;
             int thisMonth = DateTime.UtcNow.Month;
             int lastMonth = DateTime.UtcNow.AddMonths(-1).Month;
-            int month = DateTime.UtcNow.Month;
             decimal BalanceThisMonth = 0;
             decimal BalanceLastMonth = 0;
             
@@ -142,10 +139,8 @@ namespace ExpenseTrackerApp.Data.Repositories
             BalanceLastMonth = this.getMonthlyBalanceForCertainMonthThisYear(userId, lastMonth);
             decimal balancePercentage = 0;
 
-            // prevent division by zero and ensure monthlyAverageLastMonth will always be posive
-            if (BalanceLastMonth < 0)
-                BalanceLastMonth *= -1;
-            if (BalanceLastMonth > 0)
+            // prevent division by zero
+            if (BalanceLastMonth != 0)
             {
                 balancePercentage = (BalanceThisMonth - BalanceLastMonth) / BalanceLastMonth;
                 balancePercentage *= 100;
@@ -153,9 +148,48 @@ namespace ExpenseTrackerApp.Data.Repositories
             
             totalBalanceDataViewModel.TotalBalance = this.GetTotalBalanceAmount(userId);
             totalBalanceDataViewModel.BalanceLastMonth = BalanceLastMonth;
-            totalBalanceDataViewModel.DifferenceFromLastToCurrentMonthPercentage = balancePercentage;
+            totalBalanceDataViewModel.DifferenceFromLastToCurrentMonthPercentage = Math.Round(balancePercentage, 2);
 
             return totalBalanceDataViewModel;
+        }
+
+        public TotalPeriodExpenses getTotalPeriodExpensesData(string userId)
+        {
+            TotalPeriodExpenses totalPeriodExpensesViewModel = new TotalPeriodExpenses();
+            int thisMonth = DateTime.UtcNow.Month;
+            int lastMonth = DateTime.UtcNow.AddMonths(-1).Month;
+            decimal expenseAmountThisMonth = 0;
+            decimal expenseAmountLastMonth = 0;
+            
+            // calculate the balance trend percentage
+            expenseAmountThisMonth = this.GetExpenseTotalAmountForAllCategoriesThisMonth(userId);
+            expenseAmountLastMonth = this.GetExpenseTotalAmountForAllCategoriesLastMonth(userId);
+            decimal balancePercentage = 0;
+
+            // prevent division by zero
+            if (expenseAmountLastMonth != 0)
+            {
+                balancePercentage = (expenseAmountThisMonth - expenseAmountLastMonth) / expenseAmountLastMonth;
+                balancePercentage *= 100;
+            }
+
+            totalPeriodExpensesViewModel.TotalAmountOfExpenses = this.GetTotalSpendAmount(userId);
+            totalPeriodExpensesViewModel.AmountOfExpensesLastMonth = expenseAmountLastMonth;
+            totalPeriodExpensesViewModel.DifferenceBetweenThisAndLastMonth = Math.Round(balancePercentage, 2);
+
+            return totalPeriodExpensesViewModel;
+        }
+        
+        public decimal GetExpenseTotalAmountForAllCategoriesLastMonth(string userId)
+        {
+            decimal amount = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId 
+                            && t.Category.CategoryType.Name == "Expense" 
+                            && t.Date.Year == DateTime.UtcNow.Year 
+                            && t.Date.Month == DateTime.UtcNow.AddMonths(-1).Month)
+                .Sum(t => Math.Abs(t.Amount));
+
+            return amount;
         }
         
         public decimal getMonthlyBalanceForCertainMonthThisYear(string userId, int month)
