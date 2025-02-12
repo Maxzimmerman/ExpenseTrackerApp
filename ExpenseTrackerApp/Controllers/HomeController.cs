@@ -53,12 +53,6 @@ namespace ExpenseTrackerApp.Controllers
         }
 
         [Authorize]
-        public IActionResult Budgets()
-        {
-            return View();
-        }
-
-        [Authorize]
         public IActionResult Goals()
         {
             return View();
