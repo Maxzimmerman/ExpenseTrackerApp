@@ -75,8 +75,9 @@
                         </div>
                         <div class="add-card-link">
                             <h5 class="mb-0">Add new wallet</h5>
-                            <a href="add-new-account.html">
+                            <a onclick="openPlaid()">
                                 <i class="fi fi-rr-square-plus"></i>
+                                <button onclick="openPlaid()">Connect Bank Account</button>
                             </a>
                         </div>
                     </div>
@@ -960,5 +961,30 @@
             </div>
         </div>
     </div>
+    <partial name="~/Views/Footer/_Footer.cshtml" />
 </div>
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+    window.onload = function () {
+        async function openPlaid() {
+            const response = await fetch("Wallets/CreatePublicLink");
+            console.log(response);
+            const data = await response.json();
+            console.log(data);
+
+            const handler = Plaid.create({
+                token: data.link_token,
+                onSuccess: async function(public_token, metadata) {
+                    console.log("Public Token:", public_token);
+                    await fetch("/api/exchange_public_token", {
+                        method: "POST",
+                        body: JSON.stringify({ public_token }),
+                        headers: { "Content-Type": "application/json" }
+                    });
+                }
+            });
+            handler.open();
+        }
+    };
+</script>
 </body>
