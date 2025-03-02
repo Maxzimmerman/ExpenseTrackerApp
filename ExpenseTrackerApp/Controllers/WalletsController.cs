@@ -16,8 +16,10 @@ public class WalletsController : BaseController
     private readonly string baseUrl = "https://sandbox.plaid.com"; // Use sandbox environment
     private readonly string institutionId = "ins_109508"; // Example test institution
 
-    public WalletsController(IFooterRepository footerRepository) : base(footerRepository)
+    public WalletsController(ILogger<WalletsController> logger, 
+        IFooterRepository footerRepository) : base(footerRepository)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     [HttpGet]
@@ -29,58 +31,89 @@ public class WalletsController : BaseController
     [HttpGet]
     public async Task<IActionResult> CreatePublicLink()
     {
-        _logger.LogInformation("Creating a Plaid public link...");
-
         try
         {
-            using (HttpClient client = new HttpClient())
+            _logger.LogInformation("Creating a Plaid public link...");
+
+            var requestBody = new
             {
-                // Prepare the request body with necessary details for creating a public link
-                var requestBody = new
-                {
-                    client_id = clientId,
-                    secret = secret,
-                    institution_id = institutionId,
-                    initial_products = new[] { "transactions" }
-                };
+                client_id = clientId,
+                secret = secret,
+                user = new { client_user_id = "unique_user_id" },
+                client_name = "YourAppName",
+                products = new[] { "transactions" },
+                country_codes = new[] { "US" },
+                language = "en"
+            };
 
-                // Serialize the body to JSON format
-                string json = JsonSerializer.Serialize(requestBody);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+            string json = JsonSerializer.Serialize(requestBody);
+            using var client = new HttpClient();
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                // Send the POST request to Plaid API
-                HttpResponseMessage response =
-                    await client.PostAsync($"{baseUrl}/sandbox/public_token/create", content);
+            HttpResponseMessage response = await client.PostAsync($"{baseUrl}/link/token/create", content);
+            string responseBody = await response.Content.ReadAsStringAsync();
 
-                // If the response is not successful, handle the error
-                if (!response.IsSuccessStatusCode)
-                {
-                    string errorMessage = await response.Content.ReadAsStringAsync();
-                    return StatusCode((int)response.StatusCode, new { error = errorMessage });
-                }
+            _logger.LogInformation($"Plaid API Response: {responseBody}");
 
-                // Parse the response body to extract the public_token
-                string responseBody = await response.Content.ReadAsStringAsync();
-                using (JsonDocument doc = JsonDocument.Parse(responseBody))
-                {
-                    if (doc.RootElement.TryGetProperty("public_token", out var publicToken))
-                    {
-                        // Return the public token as a JSON response
-                        return Ok(new { link_token = publicToken.GetString() });
-                    }
-                    else
-                    {
-                        // If the public_token is not found in the response, return an error
-                        return StatusCode(500, new { error = "Public token not found in response" });
-                    }
-                }
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode, new { error = responseBody });
             }
+
+            using JsonDocument doc = JsonDocument.Parse(responseBody);
+            string linkToken = doc.RootElement.GetProperty("link_token").GetString();
+
+            _logger.LogInformation($"Generated link_token: {linkToken}");
+
+            return new JsonResult(new { link_token = linkToken });
         }
         catch (Exception ex)
         {
-            // Log and return the exception message if an error occurs
-            _logger.LogError($"Error creating public link: {ex.Message}");
-            return StatusCode(500, new { error = ex.Message });
+            _logger.LogError($"Error in CreatePublicLink: {ex.Message}");
+            return StatusCode(500, new { error = "Internal Server Error", details = ex.Message });
         }
+    }
+
+    public class PublicTokenRequest
+    {
+        public string public_token { get; set; }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ExchangePublicToken([FromBody] PublicTokenRequest data)
+    {
+        if (data == null || string.IsNullOrEmpty(data.public_token))
+        {
+            return BadRequest(new { error = "Invalid request payload" });
+        }
+
+        _logger.LogInformation($"Exchanging public token: {data.public_token}");
+
+        var requestBody = new
+        {
+            client_id = clientId,
+            secret = secret,
+            public_token = data.public_token
+        };
+
+        string json = JsonSerializer.Serialize(requestBody);
+        using var client = new HttpClient();
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await client.PostAsync($"{baseUrl}/item/public_token/exchange", content);
+        string responseBody = await response.Content.ReadAsStringAsync();
+
+        _logger.LogInformation($"Plaid Exchange Response: {responseBody}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return StatusCode((int)response.StatusCode, new { error = responseBody });
+        }
+
+        using JsonDocument doc = JsonDocument.Parse(responseBody);
+        string accessToken = doc.RootElement.GetProperty("access_token").GetString();
+
+        _logger.LogInformation("Access token retrieved successfully.");
+        return new JsonResult(new { access_token = accessToken });
     }
 }

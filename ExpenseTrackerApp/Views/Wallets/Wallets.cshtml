@@ -75,9 +75,57 @@
                         </div>
                         <div class="add-card-link">
                             <h5 class="mb-0">Add new wallet</h5>
+                            <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+                            <script>
+                                async function openPlaid() {
+                                    try {
+                                        const response = await fetch("/Wallets/CreatePublicLink");
+
+                                        if (!response.ok) {
+                                            console.error("Failed to fetch link token:", response.statusText);
+                                            return;
+                                        }
+
+                                        const data = await response.json();
+
+                                        if (!data.link_token) {
+                                            console.error("Invalid response from server:", data);
+                                            return;
+                                        }
+
+                                        const handler = Plaid.create({
+                                            token: data.link_token,
+                                            onSuccess: async function (public_token, metadata) {
+                                                console.log("Public Token:", public_token);
+
+                                                const exchangeResponse = await fetch("/Wallets/ExchangePublicToken", {
+                                                    method: "POST",
+                                                    headers: {"Content-Type": "application/json"},
+                                                    body: JSON.stringify({public_token}),
+                                                });
+
+                                                if (!exchangeResponse.ok) {
+                                                    console.error("Failed to exchange token:", exchangeResponse.statusText);
+                                                    return;
+                                                }
+
+                                                const exchangeData = await exchangeResponse.json();
+                                                console.log("Access Token:", exchangeData.access_token);
+                                            },
+                                            onExit: function (err, metadata) {
+                                                if (err) console.error("Plaid Link UI closed with error:", err);
+                                            }
+                                        });
+
+                                        handler.open(); // ✅ This should open the modal, not a new page
+
+                                    } catch (error) {
+                                        console.error("Error initializing Plaid:", error);
+                                    }
+                                }
+                            </script>
                             <a onclick="openPlaid()">
                                 <i class="fi fi-rr-square-plus"></i>
-                                <button onclick="openPlaid()">Connect Bank Account</button>
                             </a>
                         </div>
                     </div>
@@ -961,30 +1009,6 @@
             </div>
         </div>
     </div>
-    <partial name="~/Views/Footer/_Footer.cshtml" />
+    <partial name="~/Views/Footer/_Footer.cshtml"/>
 </div>
-<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-<script>
-    window.onload = function () {
-        async function openPlaid() {
-            const response = await fetch("Wallets/CreatePublicLink");
-            console.log(response);
-            const data = await response.json();
-            console.log(data);
-
-            const handler = Plaid.create({
-                token: data.link_token,
-                onSuccess: async function(public_token, metadata) {
-                    console.log("Public Token:", public_token);
-                    await fetch("/api/exchange_public_token", {
-                        method: "POST",
-                        body: JSON.stringify({ public_token }),
-                        headers: { "Content-Type": "application/json" }
-                    });
-                }
-            });
-            handler.open();
-        }
-    };
-</script>
 </body>
