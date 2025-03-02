@@ -116,4 +116,55 @@ public class WalletsController : BaseController
         _logger.LogInformation("Access token retrieved successfully.");
         return new JsonResult(new { access_token = accessToken });
     }
+    
+    [HttpPost]
+    public async Task<IActionResult> GetUserAccountInfo([FromBody] AccessTokenRequest data)
+    {
+        if (data == null || string.IsNullOrEmpty(data.access_token))
+        {
+            return BadRequest(new { error = "Invalid request payload" });
+        }
+
+        _logger.LogInformation("Fetching user account info...");
+
+        var requestBody = new
+        {
+            client_id = clientId,
+            secret = secret,
+            access_token = data.access_token
+        };
+
+        string json = JsonSerializer.Serialize(requestBody);
+        using var client = new HttpClient();
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await client.PostAsync($"{baseUrl}/accounts/get", content);
+        string responseBody = await response.Content.ReadAsStringAsync();
+
+        _logger.LogInformation($"Plaid Accounts Response: {responseBody}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return StatusCode((int)response.StatusCode, new { error = responseBody });
+        }
+
+        using JsonDocument doc = JsonDocument.Parse(responseBody);
+        var accounts = doc.RootElement.GetProperty("accounts")
+            .EnumerateArray()
+            .Select(account => new
+            {
+                Name = account.GetProperty("name").GetString(),
+                Balance = account.GetProperty("balances").GetProperty("available").GetDecimal(),
+                Currency = account.GetProperty("balances").GetProperty("iso_currency_code").GetString(),
+                Type = account.GetProperty("type").GetString()
+            })
+            .ToList();
+
+        return new JsonResult(accounts);
+    }
+
+    public class AccessTokenRequest
+    {
+        public string access_token { get; set; }
+    }
 }

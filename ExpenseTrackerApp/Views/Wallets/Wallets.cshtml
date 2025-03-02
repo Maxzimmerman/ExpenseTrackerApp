@@ -111,22 +111,59 @@
 
                                                 const exchangeData = await exchangeResponse.json();
                                                 console.log("Access Token:", exchangeData.access_token);
+
+                                                // Fetch user account info
+                                                fetchUserAccountInfo(exchangeData.access_token);
                                             },
                                             onExit: function (err, metadata) {
                                                 if (err) console.error("Plaid Link UI closed with error:", err);
                                             }
                                         });
 
-                                        handler.open(); // ✅ This should open the modal, not a new page
+                                        handler.open();
 
                                     } catch (error) {
                                         console.error("Error initializing Plaid:", error);
                                     }
                                 }
+
+                                async function fetchUserAccountInfo(accessToken) {
+                                    try {
+                                        const response = await fetch("/Wallets/GetUserAccountInfo", {
+                                            method: "POST",
+                                            headers: {"Content-Type": "application/json"},
+                                            body: JSON.stringify({access_token: accessToken}),
+                                        });
+
+                                        if (!response.ok) {
+                                            console.error("Failed to fetch user info:", response.statusText);
+                                            return;
+                                        }
+
+                                        const userData = await response.json();
+                                        console.log("User Account Info:", userData);
+
+                                        displayUserInfo(userData);
+                                    } catch (error) {
+                                        console.error("Error fetching user info:", error);
+                                    }
+                                }
+
+                                function displayUserInfo(userData) {
+                                    const userInfoDiv = document.getElementById("user-info");
+                                    userInfoDiv.innerHTML = userData.map(account => `
+                                        <div>
+                                            <h3>${account.name}</h3>
+                                            <p>Balance: $${account.balance} (${account.currency})</p>
+                                            <p>Type: ${account.type}</p>
+                                        </div>
+                                    `).join('');
+                                }
                             </script>
                             <a onclick="openPlaid()">
                                 <i class="fi fi-rr-square-plus"></i>
                             </a>
+                            <div id="user-info"></div>
                         </div>
                     </div>
                     <div class="col-xl-9">
