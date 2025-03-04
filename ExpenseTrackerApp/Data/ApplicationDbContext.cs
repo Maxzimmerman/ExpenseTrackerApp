@@ -22,6 +22,7 @@ namespace ExpenseTrackerApp.Data
         public DbSet<Footer> footers { get; set; }
         public DbSet<Budget> budgets { get; set; }
         public DbSet<Message> messages { get; set; }
+        public DbSet<Wallet> wallets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Text.Json;
+using ExpenseTrackerApp.Data;
 
 namespace ExpenseTrackerApp.Controllers;
 
@@ -11,21 +12,24 @@ public class WalletsController : BaseController
 {
     private readonly ILogger<WalletsController> _logger;
     private readonly IFooterRepository _footerRepository;
+    private readonly ApplicationDbContext _context;
     private readonly string clientId = "6748bb5fc33b04001a5b72eb"; // Replace with your Plaid client_id
     private readonly string secret = "70581998b11cf373c0f52d6950c067"; // Replace with your Plaid secret
     private readonly string baseUrl = "https://sandbox.plaid.com"; // Use sandbox environment
     private readonly string institutionId = "ins_109508"; // Example test institution
 
     public WalletsController(ILogger<WalletsController> logger, 
-        IFooterRepository footerRepository) : base(footerRepository)
+        IFooterRepository footerRepository, ApplicationDbContext applicationDbContext) : base(footerRepository)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _context = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
     }
 
     [HttpGet]
     public IActionResult Wallets()
     {
-        return View();
+        var wallets = _context.wallets.ToList();
+        return View(wallets);
     }
 
     [HttpGet]

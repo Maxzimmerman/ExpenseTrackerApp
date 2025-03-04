@@ -95,6 +95,8 @@ if (app.Environment.IsDevelopment())
     //seederCategoryType.ReadCSV();
     //seederCategoryIcon.ReadCSV();
     //seederCategoryColor.ReadCSV();
+    //var seedWallet = new SeedWallet(context);
+    //seedWallet.Seed();
     
     app.UseMigrationsEndPoint();
     app.ApplyMigrations();
