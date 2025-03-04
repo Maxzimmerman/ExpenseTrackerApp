@@ -15,6 +15,7 @@ public class Wallet
     public decimal Balance { get; set; }
     public string Currency { get; set; }
     public string AccessToken { get; set; }
+    public string ItemId { get; set; }
     public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     
     [ForeignKey("ApplicationUser")]

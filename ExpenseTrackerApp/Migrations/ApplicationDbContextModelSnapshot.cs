@@ -311,6 +311,10 @@ namespace ExpenseTrackerApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("timestamp with time zone");
 
