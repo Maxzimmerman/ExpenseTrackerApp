@@ -99,7 +99,7 @@ public class WalletsController : BaseController
             return BadRequest(new { error = "Invalid request payload" });
         }
 
-        _logger.LogInformation($"Exchanging public token: {data.public_token}");
+        _logger.LogError($"Exchanging public token: {data.public_token}");
 
         var requestBody = new
         {
@@ -113,7 +113,7 @@ public class WalletsController : BaseController
         HttpResponseMessage response = await client.PostAsync($"{baseUrl}/item/public_token/exchange", content);
         string responseBody = await response.Content.ReadAsStringAsync();
 
-        _logger.LogInformation($"Plaid Exchange Response: {responseBody}");
+        _logger.LogError($"Plaid Exchange Response: {responseBody}");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -122,7 +122,6 @@ public class WalletsController : BaseController
 
         using JsonDocument doc = JsonDocument.Parse(responseBody);
         string accessToken = doc.RootElement.GetProperty("access_token").GetString();
-        string itemId = doc.RootElement.GetProperty("item_id").GetString();
 
         // Get user ID (assuming authentication)
         var user = _userRepository.getUserById(_userManagerSerive.GetCurrentUserId(User));
@@ -132,10 +131,6 @@ public class WalletsController : BaseController
             return Unauthorized();
         }
 
-        // Get Institution Name (optional, helps user recognize their bank)
-        var institutionResponse = await client.PostAsync($"{baseUrl}/institutions/get_by_id", 
-            new StringContent(JsonSerializer.Serialize(new { client_id = clientId, secret = secret, institution_id = institutionId }), Encoding.UTF8, "application/json"));
-
         string bankName = "Unknown";
         string accountName = "Unknown";
         string creditCardNumber = "Unknown";
@@ -143,14 +138,10 @@ public class WalletsController : BaseController
         decimal creditLimits = 0;
         decimal balance = 0;
         string currency = "Unknown";
-
-        if (institutionResponse.IsSuccessStatusCode)
-        {
-            using JsonDocument institutionDoc = JsonDocument.Parse(await institutionResponse.Content.ReadAsStringAsync());
-        }
+        string itemId = "";
 
         // Save or update wallet
-        var existingWallet = _context.wallets.FirstOrDefault(w => w.ItemId == itemId && w.ApplicationUserId == user.Id);
+        var existingWallet = _context.wallets.FirstOrDefault(w => w.ApplicationUserId == user.Id);
 
         if (existingWallet == null)
         {
@@ -165,11 +156,13 @@ public class WalletsController : BaseController
                 Currency = currency,
                 AccessToken = accessToken,
                 ItemId = itemId,
-                LastUpdated = DateTime.Now,
+                LastUpdated = DateTime.UtcNow,
                 ApplicationUserId = user.Id,
             });
             await _context.SaveChangesAsync();
         }
+        
+        _logger.LogError("Created Walled Successfully");
 
         return new JsonResult(new { access_token = accessToken });
     }
