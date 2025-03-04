@@ -121,7 +121,17 @@ public class WalletsController : BaseController
         }
 
         using JsonDocument doc = JsonDocument.Parse(responseBody);
-        string accessToken = doc.RootElement.GetProperty("access_token").GetString();
+        string jsonString = doc.ToString();
+        _logger.LogInformation($"------------Received JSON Response: {jsonString}");
+        string accessToken = data.public_token;
+        string bankName = doc.RootElement.GetProperty("meta").GetProperty("name").GetString();
+        string accountName = "Unknown";
+        string creditCardNumber = "Unknown";
+        decimal personalFunds = 0;
+        decimal creditLimits = 0;
+        decimal balance = 0;
+        string currency = "Unknown";
+        string itemId = doc.RootElement.GetProperty("numbers").GetProperty("account").GetString();
 
         // Get user ID (assuming authentication)
         var user = _userRepository.getUserById(_userManagerSerive.GetCurrentUserId(User));
@@ -131,17 +141,9 @@ public class WalletsController : BaseController
             return Unauthorized();
         }
 
-        string bankName = "Unknown";
-        string accountName = "Unknown";
-        string creditCardNumber = "Unknown";
-        decimal personalFunds = 0;
-        decimal creditLimits = 0;
-        decimal balance = 0;
-        string currency = "Unknown";
-        string itemId = "";
-
         // Save or update wallet
-        var existingWallet = _context.wallets.FirstOrDefault(w => w.ApplicationUserId == user.Id);
+        var existingWallet = _context.wallets
+            .FirstOrDefault(w => w.ApplicationUserId == user.Id && w.ItemId == itemId);
 
         if (existingWallet == null)
         {
