@@ -94,6 +94,7 @@ public class WalletsController : BaseController
     [HttpPost]
     public async Task<IActionResult> ExchangePublicToken([FromBody] PublicTokenRequest data)
     {
+        // exchange token start
         if (data == null || string.IsNullOrEmpty(data.public_token))
         {
             return BadRequest(new { error = "Invalid request payload" });
@@ -110,40 +111,66 @@ public class WalletsController : BaseController
 
         using var client = new HttpClient();
         var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await client.PostAsync($"{baseUrl}/item/public_token/exchange", content);
-        string responseBody = await response.Content.ReadAsStringAsync();
+        HttpResponseMessage exchangeResponse = await client.PostAsync($"{baseUrl}/item/public_token/exchange", content);
+        string exchangeResponseBody = await exchangeResponse.Content.ReadAsStringAsync();
 
-        _logger.LogError($"Plaid Exchange Response: {responseBody}");
+        _logger.LogInformation($"Plaid Exchange Response: {exchangeResponseBody}");
 
-        if (!response.IsSuccessStatusCode)
+        if (!exchangeResponse.IsSuccessStatusCode)
         {
-            return StatusCode((int)response.StatusCode, new { error = responseBody });
+            return StatusCode((int)exchangeResponse.StatusCode, new { error = exchangeResponseBody });
         }
 
-        using JsonDocument doc = JsonDocument.Parse(responseBody);
-        string jsonString = doc.ToString();
-        _logger.LogInformation($"------------Received JSON Response: {jsonString}");
-        string accessToken = data.public_token;
-        string bankName = doc.RootElement.GetProperty("meta").GetProperty("name").GetString();
-        string accountName = "Unknown";
-        string creditCardNumber = "Unknown";
-        decimal personalFunds = 0;
-        decimal creditLimits = 0;
-        decimal balance = 0;
-        string currency = "Unknown";
-        string itemId = doc.RootElement.GetProperty("numbers").GetProperty("account").GetString();
+        var exchangeData = JsonSerializer.Deserialize<PlaidExchangeResponse>(exchangeResponseBody);
+        string accessToken = exchangeData.access_token;
+        string itemId = exchangeData.item_id;
 
-        // Get user ID (assuming authentication)
-        var user = _userRepository.getUserById(_userManagerSerive.GetCurrentUserId(User));
+        // Fetch accounts
+        var accountsRequestBody = new
+        {
+            client_id = clientId,
+            secret = secret,
+            access_token = accessToken
+        };
+
+        var accountsContent = new StringContent(JsonSerializer.Serialize(accountsRequestBody), Encoding.UTF8, "application/json");
+        HttpResponseMessage accountsResponse = await client.PostAsync($"{baseUrl}/accounts/get", accountsContent);
+        string accountsResponseBody = await accountsResponse.Content.ReadAsStringAsync();
+
+        _logger.LogInformation($"Plaid Accounts Response: {accountsResponseBody}");
+
+        if (!accountsResponse.IsSuccessStatusCode)
+        {
+            return StatusCode((int)accountsResponse.StatusCode, new { error = accountsResponseBody });
+        }
+
+        var accountsData = JsonSerializer.Deserialize<PlaidAccountsResponse>(accountsResponseBody);
+
+        if (accountsData.accounts == null || accountsData.accounts.Length == 0)
+        {
+            return BadRequest(new { error = "No accounts found in the response" });
+        }
+
+        var firstAccount = accountsData.accounts[0];
         
+        _logger.LogInformation($"Plaid account found: {firstAccount.transactions}");
+
+        string bankName = firstAccount.name;
+        string accountId = firstAccount.account_id;
+        string accountName = firstAccount.official_name ?? "Unknown";
+        decimal balance = firstAccount.balances.current;
+        decimal personalFunds = firstAccount.balances.available ?? 0;
+        decimal creditLimits = firstAccount.balances.limit ?? 0;
+        string currency = firstAccount.balances.iso_currency_code;
+
+        var user = _userRepository.getUserById(_userManagerSerive.GetCurrentUserId(User));
         if (user == null)
         {
             return Unauthorized();
         }
 
         // Save or update wallet
-        var existingWallet = _context.wallets
-            .FirstOrDefault(w => w.ApplicationUserId == user.Id && w.ItemId == itemId);
+        var existingWallet = _context.wallets.FirstOrDefault(w => w.ApplicationUserId == user.Id && w.BankName == bankName);
 
         if (existingWallet == null)
         {
@@ -151,8 +178,8 @@ public class WalletsController : BaseController
             {
                 BankName = bankName,
                 AccountName = accountName,
-                CreditCardNumber = creditCardNumber,
-                PersonalFunds = personalFunds,  
+                CreditCardNumber = "Unknown",
+                PersonalFunds = personalFunds,
                 CreditLimits = creditLimits,
                 Balance = balance,
                 Currency = currency,
@@ -163,56 +190,101 @@ public class WalletsController : BaseController
             });
             await _context.SaveChangesAsync();
         }
+
+        _logger.LogInformation("Created Wallet Successfully");
         
-        _logger.LogError("Created Walled Successfully");
+        // Fetch Transactions
+        var transactionsRequestBody = new
+        {
+            client_id = clientId,
+            secret = secret,
+            access_token = accessToken,
+            start_date = DateTime.UtcNow.AddMonths(-1).ToString("yyyy-MM-dd"), // Last 1 month
+            end_date = DateTime.UtcNow.ToString("yyyy-MM-dd")
+        };
+
+        var transactionsContent = new StringContent(JsonSerializer.Serialize(transactionsRequestBody), Encoding.UTF8, "application/json");
+        HttpResponseMessage transactionsResponse = await client.PostAsync($"{baseUrl}/transactions/get", transactionsContent);
+        string transactionsResponseBody = await transactionsResponse.Content.ReadAsStringAsync();
+
+        _logger.LogInformation($" --------------------- Plaid Transactions Response: {transactionsResponseBody}");
+
+        if (!transactionsResponse.IsSuccessStatusCode)
+        {
+            return StatusCode((int)transactionsResponse.StatusCode, new { error = transactionsResponseBody });
+        }
+
+        var transactionsData = JsonSerializer.Deserialize<PlaidTransactionsResponse>(transactionsResponseBody);
+
+        // Save transactions
+        foreach (var transaction in transactionsData.transactions)
+        {
+            var newTransaction = new Transaction
+            {
+                Id = Convert.ToInt32(transaction.transaction_id),
+                Title = transaction.name,
+                Description = "Unknown",
+                Date = DateTime.Parse(transaction.date),
+                Amount = transaction.amount,
+                CategoryId = 3,
+                ApplicationUserId = user.Id,
+                WalletId = existingWallet.Id,
+            };
+
+            _context.transactions.Add(newTransaction);
+        }
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Created Wallet & Transactions Successfully");
 
         return new JsonResult(new { access_token = accessToken });
     }
     
-    [HttpPost]
-    public async Task<IActionResult> GetUserAccountInfo([FromBody] AccessTokenRequest data)
+    public class PlaidTransactionsResponse
     {
-        if (data == null || string.IsNullOrEmpty(data.access_token))
-        {
-            return BadRequest(new { error = "Invalid request payload" });
-        }
+        public PlaidTransaction[] transactions { get; set; }
+    }
+    
+    public class PlaidTransaction
+    {
+        public string transaction_id { get; set; }
+        public string name { get; set; }
+        public decimal amount { get; set; }
+        public string iso_currency_code { get; set; }
+        public string date { get; set; }
+        public string[] category { get; set; }
+    }
+    
+    public class PlaidExchangeResponse
+    {
+        public string access_token { get; set; }
+        public string item_id { get; set; }
+    }
 
-        _logger.LogInformation("Fetching user account info...");
+    public class PlaidAccountsResponse
+    {
+        public PlaidAccount[] accounts { get; set; }
+    }
 
-        var requestBody = new
-        {
-            client_id = clientId,
-            secret = secret,
-            access_token = data.access_token
-        };
+    public class PlaidAccount
+    {
+        public string account_id { get; set; }
+        public string name { get; set; }
+        public string official_name { get; set; }
+        public string mask { get; set; }
+        public string subtype { get; set; }
+        public string type { get; set; }
+        public PlaidBalance balances { get; set; }
+        public List<Transaction> transactions { get; set; }
+    }
 
-        string json = JsonSerializer.Serialize(requestBody);
-        using var client = new HttpClient();
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        HttpResponseMessage response = await client.PostAsync($"{baseUrl}/accounts/get", content);
-        string responseBody = await response.Content.ReadAsStringAsync();
-
-        _logger.LogInformation($"Plaid Accounts Response: {responseBody}");
-
-        if (!response.IsSuccessStatusCode)
-        {
-            return StatusCode((int)response.StatusCode, new { error = responseBody });
-        }
-
-        using JsonDocument doc = JsonDocument.Parse(responseBody);
-        var accounts = doc.RootElement.GetProperty("accounts")
-            .EnumerateArray()
-            .Select(account => new
-            {
-                Name = account.GetProperty("name").GetString(),
-                Balance = account.GetProperty("balances").GetProperty("available").GetDecimal(),
-                Currency = account.GetProperty("balances").GetProperty("iso_currency_code").GetString(),
-                Type = account.GetProperty("type").GetString()
-            })
-            .ToList();
-
-        return new JsonResult(accounts);
+    public class PlaidBalance
+    {
+        public decimal? available { get; set; }
+        public decimal current { get; set; }
+        public decimal? limit { get; set; }
+        public string iso_currency_code { get; set; }
     }
 
     public class AccessTokenRequest

@@ -30,5 +30,9 @@ namespace ExpenseTrackerApp.Models
         [ForeignKey("ApplicationUser")]
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
+        
+        [ForeignKey("Wallet")]
+        public int WalletId { get; set; }
+        public Wallet Wallet { get; set; }
     }
 }

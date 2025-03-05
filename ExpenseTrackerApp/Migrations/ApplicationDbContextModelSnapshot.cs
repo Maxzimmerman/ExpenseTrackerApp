@@ -264,11 +264,16 @@ namespace ExpenseTrackerApp.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)");
 
+                    b.Property<int>("WalletId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("WalletId");
 
                     b.ToTable("transactions");
                 });
@@ -637,9 +642,17 @@ namespace ExpenseTrackerApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ExpenseTrackerApp.Models.Wallet", "Wallet")
+                        .WithMany()
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Category");
+
+                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("ExpenseTrackerApp.Models.Wallet", b =>
