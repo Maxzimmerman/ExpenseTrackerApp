@@ -21,6 +21,9 @@ namespace ExpenseTrackerApp.Models
 
         [Required]
         public decimal Amount { get; set; }
+        
+        [Required]
+        public string TransactionId { get; set; }
 
         [Required]
         [ForeignKey("Category")]

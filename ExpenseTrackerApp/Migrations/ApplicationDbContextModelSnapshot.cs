@@ -264,6 +264,10 @@ namespace ExpenseTrackerApp.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)");
 
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("WalletId")
                         .HasColumnType("integer");
 

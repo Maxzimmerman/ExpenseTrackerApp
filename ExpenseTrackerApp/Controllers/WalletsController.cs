@@ -94,14 +94,13 @@ public class WalletsController : BaseController
     [HttpPost]
     public async Task<IActionResult> ExchangePublicToken([FromBody] PublicTokenRequest data)
     {
-        // exchange token start
+        // Validate request
         if (data == null || string.IsNullOrEmpty(data.public_token))
         {
             return BadRequest(new { error = "Invalid request payload" });
         }
 
-        _logger.LogError($"Exchanging public token: {data.public_token}");
-
+        // Exchange public token for access token
         var requestBody = new
         {
             client_id = clientId,
@@ -114,8 +113,6 @@ public class WalletsController : BaseController
         HttpResponseMessage exchangeResponse = await client.PostAsync($"{baseUrl}/item/public_token/exchange", content);
         string exchangeResponseBody = await exchangeResponse.Content.ReadAsStringAsync();
 
-        _logger.LogInformation($"Plaid Exchange Response: {exchangeResponseBody}");
-
         if (!exchangeResponse.IsSuccessStatusCode)
         {
             return StatusCode((int)exchangeResponse.StatusCode, new { error = exchangeResponseBody });
@@ -125,7 +122,7 @@ public class WalletsController : BaseController
         string accessToken = exchangeData.access_token;
         string itemId = exchangeData.item_id;
 
-        // Fetch accounts
+        // Fetch account details
         var accountsRequestBody = new
         {
             client_id = clientId,
@@ -136,8 +133,6 @@ public class WalletsController : BaseController
         var accountsContent = new StringContent(JsonSerializer.Serialize(accountsRequestBody), Encoding.UTF8, "application/json");
         HttpResponseMessage accountsResponse = await client.PostAsync($"{baseUrl}/accounts/get", accountsContent);
         string accountsResponseBody = await accountsResponse.Content.ReadAsStringAsync();
-
-        _logger.LogInformation($"Plaid Accounts Response: {accountsResponseBody}");
 
         if (!accountsResponse.IsSuccessStatusCode)
         {
@@ -152,9 +147,6 @@ public class WalletsController : BaseController
         }
 
         var firstAccount = accountsData.accounts[0];
-        
-        _logger.LogInformation($"Plaid account found: {firstAccount.transactions}");
-
         string bankName = firstAccount.name;
         string accountId = firstAccount.account_id;
         string accountName = firstAccount.official_name ?? "Unknown";
@@ -174,7 +166,7 @@ public class WalletsController : BaseController
 
         if (existingWallet == null)
         {
-            _context.wallets.Add(new Wallet
+            existingWallet = new Wallet
             {
                 BankName = bankName,
                 AccountName = accountName,
@@ -187,19 +179,21 @@ public class WalletsController : BaseController
                 ItemId = itemId,
                 LastUpdated = DateTime.UtcNow,
                 ApplicationUserId = user.Id,
-            });
+            };
+
+            _context.wallets.Add(existingWallet);
             await _context.SaveChangesAsync();
         }
 
         _logger.LogInformation("Created Wallet Successfully");
-        
-        // Fetch Transactions
+
+        // Fetch transactions
         var transactionsRequestBody = new
         {
             client_id = clientId,
             secret = secret,
             access_token = accessToken,
-            start_date = DateTime.UtcNow.AddMonths(-1).ToString("yyyy-MM-dd"), // Last 1 month
+            start_date = DateTime.UtcNow.AddMonths(-1).ToString("yyyy-MM-dd"),
             end_date = DateTime.UtcNow.ToString("yyyy-MM-dd")
         };
 
@@ -207,7 +201,7 @@ public class WalletsController : BaseController
         HttpResponseMessage transactionsResponse = await client.PostAsync($"{baseUrl}/transactions/get", transactionsContent);
         string transactionsResponseBody = await transactionsResponse.Content.ReadAsStringAsync();
 
-        _logger.LogInformation($" --------------------- Plaid Transactions Response: {transactionsResponseBody}");
+        _logger.LogInformation($"Plaid Transactions Response: {transactionsResponseBody}");
 
         if (!transactionsResponse.IsSuccessStatusCode)
         {
@@ -216,30 +210,44 @@ public class WalletsController : BaseController
 
         var transactionsData = JsonSerializer.Deserialize<PlaidTransactionsResponse>(transactionsResponseBody);
 
-        // Save transactions
-        foreach (var transaction in transactionsData.transactions)
-        {
-            var newTransaction = new Transaction
-            {
-                Id = Convert.ToInt32(transaction.transaction_id),
-                Title = transaction.name,
-                Description = "Unknown",
-                Date = DateTime.Parse(transaction.date),
-                Amount = transaction.amount,
-                CategoryId = 3,
-                ApplicationUserId = user.Id,
-                WalletId = existingWallet.Id,
-            };
+        // Fetch existing transaction IDs to prevent duplicates
+        var existingTransactionIds = _context.transactions
+            .Where(t => t.WalletId == existingWallet.Id)
+            .Select(t => t.TransactionId)
+            .ToList();
 
-            _context.transactions.Add(newTransaction);
+        // Filter transactions for the correct account and prevent duplicates
+        var newTransactions = transactionsData.transactions
+            .Where(t => t.account_id == accountId) // Ensure it's for the added account
+            .Where(t => !existingTransactionIds.Contains(t.transaction_id)) // Avoid duplicates
+            .Select(t => new Transaction
+            {
+                Title = t.name,
+                Description = t.merchant_name ?? "Unknown",
+                Date = DateTime.Parse(t.date),
+                Amount = t.amount,
+                TransactionId = t.transaction_id,
+                CategoryId = 34,
+                ApplicationUserId = user.Id,
+                WalletId = existingWallet.Id
+            })
+            .ToList();
+
+        if (!newTransactions.Any())
+        {
+            _logger.LogInformation("No new transactions to add.");
+            return Ok(new { message = "No new transactions found" });
         }
 
+        // Save new transactions
+        await _context.transactions.AddRangeAsync(newTransactions);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Created Wallet & Transactions Successfully");
+        _logger.LogInformation($" ------ Added {newTransactions.Count} new transactions for Wallet {existingWallet.Id}");
 
         return new JsonResult(new { access_token = accessToken });
     }
+
     
     public class PlaidTransactionsResponse
     {
@@ -254,6 +262,8 @@ public class WalletsController : BaseController
         public string iso_currency_code { get; set; }
         public string date { get; set; }
         public string[] category { get; set; }
+        public string account_id { get; set; }
+        public string merchant_name { get; set; }
     }
     
     public class PlaidExchangeResponse
