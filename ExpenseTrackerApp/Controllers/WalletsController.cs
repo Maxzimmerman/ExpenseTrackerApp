@@ -7,6 +7,7 @@ using ExpenseTrackerApp.Data;
 using ExpenseTrackerApp.Data.Repositories;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Services.IServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTrackerApp.Controllers;
 
@@ -201,7 +202,7 @@ public class WalletsController : BaseController
         HttpResponseMessage transactionsResponse = await client.PostAsync($"{baseUrl}/transactions/get", transactionsContent);
         string transactionsResponseBody = await transactionsResponse.Content.ReadAsStringAsync();
 
-        _logger.LogInformation($"Plaid Transactions Response: {transactionsResponseBody}");
+        // _logger.LogInformation($"Plaid Transactions Response: {transactionsResponseBody}");
 
         if (!transactionsResponse.IsSuccessStatusCode)
         {
@@ -215,35 +216,69 @@ public class WalletsController : BaseController
             .Where(t => t.WalletId == existingWallet.Id)
             .Select(t => t.TransactionId)
             .ToList();
+        
+        // Get Expense and Income default Category
+        var incomeCategoryId = _context.categories
+            .Include(ici => ici.CategoryType)
+            .FirstOrDefault(ici => ici.CategoryType.Name == "Income").Id;
+        
+        var expenseCategoryId = _context.categories
+            .Include(ici => ici.CategoryType)
+            .FirstOrDefault(ici => ici.CategoryType.Name == "Expense").Id;
 
         // Filter transactions for the correct account and prevent duplicates
-        var newTransactions = transactionsData.transactions
+        var newExpenseTransactions = transactionsData.transactions
             .Where(t => t.account_id == accountId) // Ensure it's for the added account
+            .Where(t => t.amount < 0)
             .Where(t => !existingTransactionIds.Contains(t.transaction_id)) // Avoid duplicates
             .Select(t => new Transaction
             {
                 Title = t.name,
                 Description = t.merchant_name ?? "Unknown",
-                Date = DateTime.Parse(t.date),
+                Date = DateTime.SpecifyKind(DateTime.Parse(t.date), DateTimeKind.Utc),
+                Amount = t.amount * -1, // Ensuere negative values always are positive
+                TransactionId = t.transaction_id,
+                CategoryId = expenseCategoryId,
+                ApplicationUserId = user.Id,
+                WalletId = existingWallet.Id
+            })
+            .ToList();
+        
+        var newIncomeTransactions = transactionsData.transactions
+            .Where(t => t.account_id == accountId) // Ensure it's for the added account
+            .Where(t => t.amount > 0)
+            .Where(t => !existingTransactionIds.Contains(t.transaction_id)) // Avoid duplicates
+            .Select(t => new Transaction
+            {
+                Title = t.name,
+                Description = t.merchant_name ?? "Unknown",
+                Date = DateTime.SpecifyKind(DateTime.Parse(t.date), DateTimeKind.Utc),
                 Amount = t.amount,
                 TransactionId = t.transaction_id,
-                CategoryId = 34,
+                CategoryId = incomeCategoryId,
                 ApplicationUserId = user.Id,
                 WalletId = existingWallet.Id
             })
             .ToList();
 
-        if (!newTransactions.Any())
+        if (!newExpenseTransactions.Any())
+        {
+            _logger.LogInformation("No new transactions to add.");
+            return Ok(new { message = "No new transactions found" });
+        }
+        
+        if (!newIncomeTransactions.Any())
         {
             _logger.LogInformation("No new transactions to add.");
             return Ok(new { message = "No new transactions found" });
         }
 
         // Save new transactions
-        await _context.transactions.AddRangeAsync(newTransactions);
+        await _context.transactions.AddRangeAsync(newExpenseTransactions);
+        await _context.transactions.AddRangeAsync(newIncomeTransactions);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation($" ------ Added {newTransactions.Count} new transactions for Wallet {existingWallet.Id}");
+        _logger.LogInformation($" ------ Added expenses {newExpenseTransactions.Count} and income {newIncomeTransactions} new transactions for Wallet {existingWallet.Id}");
 
         return new JsonResult(new { access_token = accessToken });
     }
