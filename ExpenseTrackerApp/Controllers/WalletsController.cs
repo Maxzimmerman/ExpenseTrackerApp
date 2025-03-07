@@ -220,11 +220,11 @@ public class WalletsController : BaseController
         // Get Expense and Income default Category
         var incomeCategoryId = _context.categories
             .Include(ici => ici.CategoryType)
-            .FirstOrDefault(ici => ici.CategoryType.Name == "Income").Id;
+            .FirstOrDefault(ici => ici.CategoryType.Name == "Income" && ici.Title == "Default").Id;
         
         var expenseCategoryId = _context.categories
             .Include(ici => ici.CategoryType)
-            .FirstOrDefault(ici => ici.CategoryType.Name == "Expense").Id;
+            .FirstOrDefault(ici => ici.CategoryType.Name == "Expense" && ici.Title == "Default").Id;
 
         // Filter transactions for the correct account and prevent duplicates
         var newExpenseTransactions = transactionsData.transactions
