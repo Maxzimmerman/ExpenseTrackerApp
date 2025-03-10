@@ -276,30 +276,33 @@
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                    @foreach (var transaction in Model[i].Transactions)
+                                                                    @if (Model[i].Transactions != null && Model[i].Transactions.Any())
                                                                     {
-                                                                        string textColor = "";
-                                                                        if (transaction.Category.CategoryType.Name == "Expense")
-                                                                            textColor = "text-danger";
-                                                                        else if(transaction.Category.CategoryType.Name == "Income")
-                                                                            textColor = "text-success";
-                                                                        <tr>
-                                                                            <td>
-                                                                                <span class="table-category-icon">
-                                                                                    <i
-                                                                                        class="@transaction.Category.CategoryColor.code fi @transaction.Category.CategoryIcon.Code"></i>
-                                                                                    @transaction.Title  </span>
-                                                                            </td>
-                                                                            <td>
-                                                                                @transaction.Date
-                                                                            </td>
-                                                                            <td>
-                                                                                @transaction.Description
-                                                                            </td>
-                                                                            <td class="@textColor">
-                                                                                @transaction.Amount
-                                                                            </td>
-                                                                        </tr>
+                                                                        @foreach (var transaction in Model[i].Transactions)
+                                                                        {
+                                                                            string textColor = "";
+                                                                            if (transaction.Category.CategoryType.Name == "Expense")
+                                                                                textColor = "text-danger";
+                                                                            else if (transaction.Category.CategoryType.Name == "Income")
+                                                                                textColor = "text-success";
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <span class="table-category-icon">
+                                                                                        <i
+                                                                                            class="@transaction.Category.CategoryColor.code fi @transaction.Category.CategoryIcon.Code"></i>
+                                                                                        @transaction.Title </span>
+                                                                                </td>
+                                                                                <td>
+                                                                                    @transaction.Date
+                                                                                </td>
+                                                                                <td>
+                                                                                    @transaction.Description
+                                                                                </td>
+                                                                                <td class="@textColor">
+                                                                                    @transaction.Amount
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
                                                                     }
                                                                     </tbody>
                                                                 </table>

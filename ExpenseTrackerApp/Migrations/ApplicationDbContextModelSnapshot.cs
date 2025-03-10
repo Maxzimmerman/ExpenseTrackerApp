@@ -647,7 +647,7 @@ namespace ExpenseTrackerApp.Migrations
                         .IsRequired();
 
                     b.HasOne("ExpenseTrackerApp.Models.Wallet", "Wallet")
-                        .WithMany()
+                        .WithMany("Transactions")
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -719,6 +719,11 @@ namespace ExpenseTrackerApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ExpenseTrackerApp.Models.Wallet", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

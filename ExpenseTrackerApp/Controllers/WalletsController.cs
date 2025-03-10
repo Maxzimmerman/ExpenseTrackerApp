@@ -37,7 +37,22 @@ public class WalletsController : BaseController
     [HttpGet]
     public IActionResult Wallets()
     {
-        var wallets = _context.wallets.ToList();
+        var wallets = _context.wallets
+            .Include(w => w.Transactions)
+            .ToList();
+
+        // Ensure Transactions is always initialized
+        foreach (var wallet in wallets)
+        {
+            wallet.Transactions = _context.transactions
+                .Include(t => t.Category)
+                .Include(t => t.Category.CategoryType)
+                .Include(t => t.Category.CategoryColor)
+                .Include(t => t.Category.CategoryIcon)
+                .OrderByDescending(t => t.Date)
+                .Where(w => w.WalletId == wallet.Id).ToList();
+        }
+
         return View(wallets);
     }
 
@@ -202,7 +217,7 @@ public class WalletsController : BaseController
         HttpResponseMessage transactionsResponse = await client.PostAsync($"{baseUrl}/transactions/get", transactionsContent);
         string transactionsResponseBody = await transactionsResponse.Content.ReadAsStringAsync();
 
-        // _logger.LogInformation($"Plaid Transactions Response: {transactionsResponseBody}");
+        _logger.LogInformation($"---------------Plaid Transactions Response: {transactionsResponseBody}");
 
         if (!transactionsResponse.IsSuccessStatusCode)
         {
@@ -225,6 +240,18 @@ public class WalletsController : BaseController
         var expenseCategoryId = _context.categories
             .Include(ici => ici.CategoryType)
             .FirstOrDefault(ici => ici.CategoryType.Name == "Expense" && ici.Title == "Default").Id;
+
+        if (incomeCategoryId == null)
+        {
+            _logger.LogInformation("------------- no income default category");
+            throw new Exception("No income default category");
+        }
+
+        if (expenseCategoryId == null)
+        {
+            _logger.LogInformation("------------- no expense default category");
+            throw new Exception("No expense default category");
+        }
 
         // Filter transactions for the correct account and prevent duplicates
         var newExpenseTransactions = transactionsData.transactions

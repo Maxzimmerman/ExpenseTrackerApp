@@ -21,7 +21,6 @@ public class Wallet
     [ForeignKey("ApplicationUser")]
     public string ApplicationUserId { get; set; }
     public ApplicationUser ApplicationUser { get; set; }
-    
-    [NotMapped]
-    public ICollection<Transaction> Transactions { get; set; }
+
+    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }
