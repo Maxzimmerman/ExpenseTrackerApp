@@ -8,6 +8,7 @@ using ExpenseTrackerApp.Data.Repositories;
 using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using ExpenseTrackerApp.Models.Helper.Wallets;
 
 namespace ExpenseTrackerApp.Controllers;
 
@@ -155,7 +156,7 @@ public class WalletsController : BaseController
             return StatusCode((int)accountsResponse.StatusCode, new { error = accountsResponseBody });
         }
 
-        var accountsData = JsonSerializer.Deserialize<PlaidAccountsResponse>(accountsResponseBody);
+        var accountsData = JsonSerializer.Deserialize<PlaidAccountResponse>(accountsResponseBody);
 
         if (accountsData.accounts == null || accountsData.accounts.Length == 0)
         {
@@ -224,7 +225,7 @@ public class WalletsController : BaseController
             return StatusCode((int)transactionsResponse.StatusCode, new { error = transactionsResponseBody });
         }
 
-        var transactionsData = JsonSerializer.Deserialize<PlaidTransactionsResponse>(transactionsResponseBody);
+        var transactionsData = JsonSerializer.Deserialize<PlaidTransactionResponse>(transactionsResponseBody);
 
         // Fetch existing transaction IDs to prevent duplicates
         var existingTransactionIds = _context.transactions
@@ -308,59 +309,5 @@ public class WalletsController : BaseController
         _logger.LogInformation($" ------ Added expenses {newExpenseTransactions.Count} and income {newIncomeTransactions} new transactions for Wallet {existingWallet.Id}");
 
         return new JsonResult(new { access_token = accessToken });
-    }
-
-    
-    public class PlaidTransactionsResponse
-    {
-        public PlaidTransaction[] transactions { get; set; }
-    }
-    
-    public class PlaidTransaction
-    {
-        public string transaction_id { get; set; }
-        public string name { get; set; }
-        public decimal amount { get; set; }
-        public string iso_currency_code { get; set; }
-        public string date { get; set; }
-        public string[] category { get; set; }
-        public string account_id { get; set; }
-        public string merchant_name { get; set; }
-    }
-    
-    public class PlaidExchangeResponse
-    {
-        public string access_token { get; set; }
-        public string item_id { get; set; }
-    }
-
-    public class PlaidAccountsResponse
-    {
-        public PlaidAccount[] accounts { get; set; }
-    }
-
-    public class PlaidAccount
-    {
-        public string account_id { get; set; }
-        public string name { get; set; }
-        public string official_name { get; set; }
-        public string mask { get; set; }
-        public string subtype { get; set; }
-        public string type { get; set; }
-        public PlaidBalance balances { get; set; }
-        public List<Transaction> transactions { get; set; }
-    }
-
-    public class PlaidBalance
-    {
-        public decimal? available { get; set; }
-        public decimal current { get; set; }
-        public decimal? limit { get; set; }
-        public string iso_currency_code { get; set; }
-    }
-
-    public class AccessTokenRequest
-    {
-        public string access_token { get; set; }
     }
 }
