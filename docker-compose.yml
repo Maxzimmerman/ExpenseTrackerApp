@@ -1,5 +1,9 @@
 version: '3.4'
 
+networks:
+  web:
+    external: true
+
 services:
   expensetrackerapp:
     image: ${DOCKER_REGISTRY-}expensetrackerapp
