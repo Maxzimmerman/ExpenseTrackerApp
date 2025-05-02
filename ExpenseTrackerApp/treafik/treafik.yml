@@ -14,6 +14,14 @@ entryPoints:
   web-secure:
     # https
     address: ':443'
+    
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: 'you@example.com'
+      storage: /etc/traefik/acme/acme.json
+      httpChallenge:
+        entryPoint: web
 
 http:
   routers:
