@@ -1,0 +1,52 @@
+version: '3.4'
+
+networks:
+  web:
+    external: true
+
+services:
+  expensetrackerapp:
+    image: ${DOCKER_REGISTRY-}expensetrackerapp
+    build:
+      context: .
+      dockerfile: ExpenseTrackerApp/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - DOTNET_RUNNING_IN_CONTAINER=true
+    depends_on:
+      - expensetrackerapp.database
+    networks:
+      - web
+
+  expensetrackerapp.database:
+    image: postgres:latest
+    container_name: expensetrackerapp.database
+    environment:
+      - POSTGRES_DB=expensetrackerdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/expensetrackerapp-db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - web
+  
+  traefik:
+    image: traefik:3.3.3
+    container_name: traefik
+    command:
+      - "--providers.file.filename=/etc/traefik/traefik.yml"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web-secure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.email=you@example.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./compose/production/traefik/traefik.yml:/etc/traefik/traefik.yml
+      - ./.containers/traefik/acme:/etc/traefik/acme
+    networks:
+      - web

@@ -3,18 +3,16 @@ log:
 
 entryPoints:
   web:
-    # http
-    address: ':80'
+    address: ":80"
     http:
-      # https://doc.traefik.io/traefik/routing/entrypoints/#entrypoint
       redirections:
         entryPoint:
           to: web-secure
+          scheme: https
 
   web-secure:
-    # https
-    address: ':443'
-    
+    address: ":443"
+
 certificatesResolvers:
   letsencrypt:
     acme:
@@ -29,11 +27,8 @@ http:
       rule: 'Host(`doughtrack.com`) || Host(`www.doughtrack.com`)'
       entryPoints:
         - web-secure
-      middlewares:
-        - csrf
       service: expensetrackerapp
       tls:
-        # https://doc.traefik.io/traefik/routing/routers/#certresolver
         certResolver: letsencrypt
 
   services:
@@ -43,7 +38,6 @@ http:
           - url: http://expensetrackerapp:5000
 
 providers:
-  # https://doc.traefik.io/traefik/master/providers/file/
   file:
     filename: /etc/traefik/traefik.yml
     watch: true

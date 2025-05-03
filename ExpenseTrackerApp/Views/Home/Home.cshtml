@@ -42,7 +42,7 @@
                             upOrDown = "down";
                         }
                         else
-                            textColor = "secondary";
+                            textColor = "";
 
                         <div class="stat-widget-1">
                             <h6>Total Balance</h6>
@@ -72,7 +72,7 @@
                                 upOrDownExpense = "down";
                             }
                             else
-                                textColorExpense = "secondary";
+                                textColorExpense = "";
                         }
                         <h6>Total Period Expenses</h6>
                         <h3>$ @Model.TotalPeriodExpensesDataViewModel.TotalAmountOfExpenses</h3>
@@ -102,7 +102,7 @@
                                 upOrDownIncome = "down";
                             }
                             else
-                                textColorIncome = "secondary";
+                                textColorIncome = "";
 
                             <h6>Total Period Income</h6>
                             <h3>$ @Model.TotalPeriotIncomeDateViewModel.TotalIncomeAmount</h3>
@@ -120,7 +120,7 @@
                 <div class="col-xxl-8 col-xl-8 col-lg-6">
                     <div class="card">
                         <div class="card-header balance-trend">
-                            <h4 class="card-title">Balace Trends <br>
+                            <h4 class="card-title">Balance Trends <br>
                                 <span>@Model.BalanceTrendsViewModel.Balance$</span></h4>
                             <div class="trend-stats">
                                 <p class="mb-0">Last Month</p>
@@ -141,7 +141,7 @@
                                     }
                                     else
                                     {
-                                        <span class="text-secondary">
+                                        <span>
                                             @Model.BalanceTrendsViewModel.BalancePercentage%
                                         </span>
                                     }
