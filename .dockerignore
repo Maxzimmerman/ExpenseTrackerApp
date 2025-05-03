@@ -31,3 +31,5 @@ README.md
 /**
 !ExpenseTrackerApp/ExpenseTrackerApp.csproj
 !ExpenseTrackerApp/
+.containers
+.containers/

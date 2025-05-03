@@ -85,6 +85,30 @@ if (app.Environment.IsDevelopment())
     context.Database.Migrate();
 
     // Run the CSV seeding logic
+    var seederCategoryType = new SeedCategoryType(context);
+    var seederCategoryIcon = new SeedCategoryIcon(context);
+    var seederCategoryColor = new SeedCategoryColor(context);
+    var seedFooter = new SeedFooter(context);
+    var seedSocialLinks = new SeedSocialLinks(context);
+    seedFooter.ReadCSV();
+    seedSocialLinks.ReadCSV();
+    seederCategoryType.ReadCSV();
+    seederCategoryIcon.ReadCSV();
+    seederCategoryColor.ReadCSV();
+    var seedWallet = new SeedWallet(context);
+    seedWallet.Seed();
+    
+    app.UseMigrationsEndPoint();
+    app.ApplyMigrations();
+}
+else
+{
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    // Apply pending migrations
+    context.Database.Migrate();
+
+    // Run the CSV seeding logic
     //var seederCategoryType = new SeedCategoryType(context);
     //var seederCategoryIcon = new SeedCategoryIcon(context);
     //var seederCategoryColor = new SeedCategoryColor(context);
@@ -95,14 +119,9 @@ if (app.Environment.IsDevelopment())
     //seederCategoryType.ReadCSV();
     //seederCategoryIcon.ReadCSV();
     //seederCategoryColor.ReadCSV();
-    //var seedWallet = new SeedWallet(context);
-    //seedWallet.Seed();
-    
+
     app.UseMigrationsEndPoint();
     app.ApplyMigrations();
-}
-else
-{
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();

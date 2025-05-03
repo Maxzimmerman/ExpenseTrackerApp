@@ -10,9 +10,17 @@ services:
     build:
       context: .
       dockerfile: ExpenseTrackerApp/Dockerfile
+    ports:
+      - "8080:8080"  # This ensures port 8080 on your machine maps to the container's port 8080
     environment:
-      - ASPNETCORE_URLS=http://+:5000
+      - ASPNETCORE_URLS=http://+:8080
       - DOTNET_RUNNING_IN_CONTAINER=true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.expensetrackerapp.rule=Host(`doughtrack.com`) || Host(`www.doughtrack.com`)"
+      - "traefik.http.routers.expensetrackerapp.entrypoints=web,web-secure"
+      - "traefik.http.routers.expensetrackerapp.tls.certresolver=letsencrypt"
+      - "traefik.http.services.expensetrackerapp.loadbalancer.server.port=8080"
     depends_on:
       - expensetrackerapp.database
     networks:
@@ -29,24 +37,5 @@ services:
       - ./.containers/expensetrackerapp-db:/var/lib/postgresql/data
     ports:
       - 5432:5432
-    networks:
-      - web
-  
-  traefik:
-    image: traefik:3.3.3
-    container_name: traefik
-    command:
-      - "--providers.file.filename=/etc/traefik/traefik.yml"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web-secure.address=:443"
-      - "--certificatesresolvers.letsencrypt.acme.email=you@example.com"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./compose/production/traefik/traefik.yml:/etc/traefik/traefik.yml
-      - ./.containers/traefik/acme:/etc/traefik/acme
     networks:
       - web
