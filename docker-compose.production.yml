@@ -4,6 +4,9 @@ networks:
   web:
     external: true
 
+volumes:
+  expensetracker_postgres_data: {}
+
 services:
   expensetrackerapp:
     image: ${DOCKER_REGISTRY-}expensetrackerapp
@@ -34,7 +37,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./.containers/expensetrackerapp-db:/var/lib/postgresql/data
+      - expensetracker_postgres_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:

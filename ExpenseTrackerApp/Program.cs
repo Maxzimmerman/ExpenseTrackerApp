@@ -60,7 +60,7 @@ builder.Services.AddScoped<ICategoryIconRepository, CategoryIconRepository>();
 builder.Services.AddScoped<ICategoryColorRepository, CategoryColorRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
-// Lazy Repositories
+// Lazy Repositorie
 builder.Services.AddScoped(typeof(Lazy<ITransactionRepository>), serviceProvider =>
     new Lazy<ITransactionRepository>(() => serviceProvider.GetRequiredService<ITransactionRepository>()));
 builder.Services.AddScoped(typeof(Lazy<IBudgetRepository>), serviceProvider =>
@@ -77,53 +77,36 @@ builder.Services.AddScoped<IEmailSender, EmailSender>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    // Apply pending migrations
     context.Database.Migrate();
 
-    // Run the CSV seeding logic
-    var seederCategoryType = new SeedCategoryType(context);
-    var seederCategoryIcon = new SeedCategoryIcon(context);
-    var seederCategoryColor = new SeedCategoryColor(context);
-    var seedFooter = new SeedFooter(context);
-    var seedSocialLinks = new SeedSocialLinks(context);
-    seedFooter.ReadCSV();
-    seedSocialLinks.ReadCSV();
-    seederCategoryType.ReadCSV();
-    seederCategoryIcon.ReadCSV();
-    seederCategoryColor.ReadCSV();
-    var seedWallet = new SeedWallet(context);
-    seedWallet.Seed();
-    
-    app.UseMigrationsEndPoint();
-    app.ApplyMigrations();
+    if (app.Environment.IsDevelopment())
+    {
+        var seederCategoryType = new SeedCategoryType(context);
+        var seederCategoryIcon = new SeedCategoryIcon(context);
+        var seederCategoryColor = new SeedCategoryColor(context);
+        var seedFooter = new SeedFooter(context);
+        var seedSocialLinks = new SeedSocialLinks(context);
+        var seedWallet = new SeedWallet(context);
+
+        seedFooter.ReadCSV();
+        seedSocialLinks.ReadCSV();
+        seederCategoryType.ReadCSV();
+        seederCategoryIcon.ReadCSV();
+        seederCategoryColor.ReadCSV();
+        seedWallet.Seed();
+    }
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint(); // Optional for dev
 }
 else
 {
-    using var scope = app.Services.CreateScope();
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    // Apply pending migrations
-    context.Database.Migrate();
-
-    // Run the CSV seeding logic
-    //var seederCategoryType = new SeedCategoryType(context);
-    //var seederCategoryIcon = new SeedCategoryIcon(context);
-    //var seederCategoryColor = new SeedCategoryColor(context);
-    //var seedFooter = new SeedFooter(context);
-    //var seedSocialLinks = new SeedSocialLinks(context);
-    //seedFooter.ReadCSV();
-    //seedSocialLinks.ReadCSV();
-    //seederCategoryType.ReadCSV();
-    //seederCategoryIcon.ReadCSV();
-    //seederCategoryColor.ReadCSV();
-
-    app.UseMigrationsEndPoint();
-    app.ApplyMigrations();
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

@@ -21,7 +21,7 @@ namespace ExpenseTrackerApp.Data.Repositories
         {
             Footer footerModel = _applicationDbContext.footers.FirstOrDefault();
             if (footerModel == null)
-                throw new Exception("No footer found");
+                return new Footer();
             footerModel.SocialLinks = _socialLinksRepository.getLinksBelongingToCertainFooter(footerModel.Id);
             return footerModel;
         }
