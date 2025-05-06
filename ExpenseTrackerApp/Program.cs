@@ -59,8 +59,9 @@ builder.Services.AddScoped<ICategoryTypeRepsitory, CategoryTypeRepository>();
 builder.Services.AddScoped<ICategoryIconRepository, CategoryIconRepository>();
 builder.Services.AddScoped<ICategoryColorRepository, CategoryColorRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 
-// Lazy Repositorie
+// Lazy Repositories
 builder.Services.AddScoped(typeof(Lazy<ITransactionRepository>), serviceProvider =>
     new Lazy<ITransactionRepository>(() => serviceProvider.GetRequiredService<ITransactionRepository>()));
 builder.Services.AddScoped(typeof(Lazy<IBudgetRepository>), serviceProvider =>
@@ -68,6 +69,7 @@ builder.Services.AddScoped(typeof(Lazy<IBudgetRepository>), serviceProvider =>
 
 // Services
 builder.Services.AddScoped<IUserManageService, UserManageService>();
+builder.Services.AddScoped<IPlaidService, PlaidService>();
 
 // Mail Settings and Mail Serivce
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
@@ -76,29 +78,29 @@ builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
-
-    if (app.Environment.IsDevelopment())
-    {
-        var seederCategoryType = new SeedCategoryType(context);
-        var seederCategoryIcon = new SeedCategoryIcon(context);
-        var seederCategoryColor = new SeedCategoryColor(context);
-        var seedFooter = new SeedFooter(context);
-        var seedSocialLinks = new SeedSocialLinks(context);
-        var seedWallet = new SeedWallet(context);
-
-        seedFooter.ReadCSV();
-        seedSocialLinks.ReadCSV();
-        seederCategoryType.ReadCSV();
-        seederCategoryIcon.ReadCSV();
-        seederCategoryColor.ReadCSV();
-        seedWallet.Seed();
-    }
-}
+//Configure the HTTP request pipeline.
+// using (var scope = app.Services.CreateScope())
+// {
+//     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//     context.Database.Migrate();
+//
+//     if (app.Environment.IsDevelopment())
+//     {
+//         var seederCategoryType = new SeedCategoryType(context);
+//         var seederCategoryIcon = new SeedCategoryIcon(context);
+//         var seederCategoryColor = new SeedCategoryColor(context);
+//         var seedFooter = new SeedFooter(context);
+//         var seedSocialLinks = new SeedSocialLinks(context);
+//         var seedWallet = new SeedWallet(context);
+//
+//         seedFooter.ReadCSV();
+//         seedSocialLinks.ReadCSV();
+//         seederCategoryType.ReadCSV();
+//         seederCategoryIcon.ReadCSV();
+//         seederCategoryColor.ReadCSV();
+//         seedWallet.Seed();
+//     }
+// }
 
 if (app.Environment.IsDevelopment())
 {

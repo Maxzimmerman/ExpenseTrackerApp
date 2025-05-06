@@ -713,5 +713,19 @@ namespace ExpenseTrackerApp.Data.Repositories
 
             return amount;
         }
+        
+        public List<string> getIdsForWallet(string userId, int walledId)
+        {
+            return _applicationDbContext.transactions
+                .Where(t => t.WalletId == walledId && t.ApplicationUserId == userId)
+                .Select(t => t.TransactionId)
+                .ToList();
+        }
+
+        public void addTransactions(List<Models.Transaction> transactions)
+        {
+            _applicationDbContext.transactions.AddRange(transactions);
+            _applicationDbContext.SaveChanges();
+        }
     }
 }

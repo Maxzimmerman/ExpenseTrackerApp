@@ -187,5 +187,19 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Count();
             return categoriesCount;
         }
+
+        public int getExpenseDefaultCategoryId()
+        {
+            return _applicationDbContext.categories
+                .Include(ici => ici.CategoryType)
+                .FirstOrDefault(ici => ici.CategoryType.Name == "Expense" && ici.Title == "Default").Id;
+        }
+
+        public int getIncomeDefaultCategoryId()
+        {
+            return _applicationDbContext.categories
+                .Include(ici => ici.CategoryType)
+                .FirstOrDefault(ici => ici.CategoryType.Name == "Income" && ici.Title == "Default").Id;
+        }
     }
 }

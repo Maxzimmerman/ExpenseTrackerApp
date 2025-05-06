@@ -43,6 +43,8 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         decimal GetTotalSpendAmount(string userId);
         decimal GetTotalAmountForCertainCategory(string userId, string categoryName);
         decimal GetTotalAmountForAllCategories(string userId, string expenseOrIncom);
+        List<string> getIdsForWallet(string userId, int walledId);
+        void addTransactions(List<Models.Transaction> transactions);
         // Todo
     }
 }
