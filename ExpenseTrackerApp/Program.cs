@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using ExpenseTrackerApp.Data;
 using ExpenseTrackerApp.Data.Repositories;
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
@@ -79,28 +80,20 @@ builder.Services.AddScoped<IEmailSender, EmailSender>();
 var app = builder.Build();
 
 //Configure the HTTP request pipeline.
-// using (var scope = app.Services.CreateScope())
-// {
-//     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//     context.Database.Migrate();
-//
-//     if (app.Environment.IsDevelopment())
-//     {
-//         var seederCategoryType = new SeedCategoryType(context);
-//         var seederCategoryIcon = new SeedCategoryIcon(context);
-//         var seederCategoryColor = new SeedCategoryColor(context);
-//         var seedFooter = new SeedFooter(context);
-//         var seedSocialLinks = new SeedSocialLinks(context);
-//         var seedWallet = new SeedWallet(context);
-//
-//         seedFooter.ReadCSV();
-//         seedSocialLinks.ReadCSV();
-//         seederCategoryType.ReadCSV();
-//         seederCategoryIcon.ReadCSV();
-//         seederCategoryColor.ReadCSV();
-//         seedWallet.Seed();
-//     }
-// }
+using (var scope = app.Services.CreateScope())
+{
+     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+     var userManagerService = scope.ServiceProvider.GetRequiredService<IUserManageService>();
+     context.Database.Migrate();
+     
+     // var seedCategory = new SeedCategory(context, userManagerService);
+     // var seedFooter = new SeedFooter(context);
+     // var seedSocialLinks = new SeedSocialLinks(context);
+     //     
+     // seedFooter.ReadCSV();
+     // seedSocialLinks.ReadCSV();
+     // seedCategory.Seed();
+}
 
 if (app.Environment.IsDevelopment())
 {

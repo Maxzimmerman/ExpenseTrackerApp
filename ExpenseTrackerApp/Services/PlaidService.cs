@@ -45,18 +45,18 @@ public class PlaidService : IPlaidService
         }
     }
 
-    public string transFormJsonResponseForPublicToken(string jsonRequest)
+    public string transFormJsonResponseForPublicToken(string jsonResponse)
     {
-        using JsonDocument doc = JsonDocument.Parse(jsonRequest);
+        using JsonDocument doc = JsonDocument.Parse(jsonResponse);
         string linkToken = doc.RootElement.GetProperty("link_token").GetString();
         Console.WriteLine($"Link Token: {linkToken}");
         return linkToken;
     }
 
-    public async Task<string> getPublicToken(string clientId, string clientSecret)
+    public async Task<string> getPublicToken(string clientId, string clientSecret, string baseUrl)
     {
         string requestJson = createJsonRequestForPublicToken(clientId, clientSecret);
-        string responseJson = await sendJsonRequestForPublicToken(requestJson, clientId);
+        string responseJson = await sendJsonRequestForPublicToken(requestJson, baseUrl);
         string linkToken = transFormJsonResponseForPublicToken(responseJson);
         return linkToken;
     }
@@ -116,6 +116,13 @@ public class PlaidService : IPlaidService
         var transactionsContent = new StringContent(JsonSerializer.Serialize(transactionsRequestBody), Encoding.UTF8, "application/json");
         HttpResponseMessage transactionsResponse = await client.PostAsync($"{baseUrl}/transactions/get", transactionsContent);
         string transactionsResponseBody = await transactionsResponse.Content.ReadAsStringAsync();
+        
+        Console.WriteLine($" --------------- Plaid Transactions Response: {transactionsResponseBody}");
+        
+        if (!transactionsResponse.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"{(int)transactionsResponse.StatusCode} {new { error = transactionsResponse }}");
+        }
         
         var transactionsData = JsonSerializer.Deserialize<PlaidTransactionResponse>(transactionsResponseBody);
         

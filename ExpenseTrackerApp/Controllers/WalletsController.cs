@@ -74,7 +74,8 @@ public class WalletsController : BaseController
         try
         {
             _logger.LogInformation("Creating a Plaid public link...");
-            string linkToken = await _plaidService.getPublicToken(clientId, secret);
+            string linkToken = await _plaidService.getPublicToken(clientId, secret, baseUrl);
+            
             return new JsonResult(new { link_token = linkToken });
         }
         catch (Exception ex)
@@ -139,8 +140,20 @@ public class WalletsController : BaseController
         var existingTransactionIds = _transactionRepository.getIdsForWallet(user.Id, existingWallet.Id);
         
         // Get Expense and Income default Category
-        var incomeCategoryId = _categoryRepository.getIncomeDefaultCategoryId();
-        var expenseCategoryId = _categoryRepository.getExpenseDefaultCategoryId();
+        var incomeCategoryId = _categoryRepository.getIncomeDefaultCategoryId(User);
+        var expenseCategoryId = _categoryRepository.getExpenseDefaultCategoryId(User);
+        
+        if (incomeCategoryId == null)
+        {
+            _logger.LogInformation("------------- no income default category");
+            throw new Exception("No income default category");
+        }
+        
+        if (expenseCategoryId == null)
+        {
+            _logger.LogInformation("------------- no expense default category");
+            throw new Exception("No expense default category");
+        }
 
         // Filter transactions for the correct account and prevent duplicates
         var newExpenseTransactions = transactionsData.transactions

@@ -5,7 +5,6 @@ namespace ExpenseTrackerApp.SeedDataBase;
 
 public class SeedCategoryIcon
 {
-    
     private readonly ApplicationDbContext _context;
 
     public SeedCategoryIcon(ApplicationDbContext context)

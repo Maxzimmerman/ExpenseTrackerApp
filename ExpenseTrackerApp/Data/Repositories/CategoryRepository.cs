@@ -4,6 +4,9 @@ using ExpenseTrackerApp.Models.ViewModels.CategoryViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Security.Claims;
+using ExpenseTrackerApp.Services.IServices;
+using Microsoft.Identity.Client;
 
 namespace ExpenseTrackerApp.Data.Repositories
 {
@@ -14,7 +17,7 @@ namespace ExpenseTrackerApp.Data.Repositories
         private readonly ICategoryIconRepository _categoryIconRepository;
         private readonly ICategoryColorRepository _categoryColorRepository;
         private readonly Lazy<ITransactionRepository> _transactionRepository;
-
+        
         public CategoryRepository(ApplicationDbContext applicationDbContext,
             ICategoryTypeRepsitory categoryTypeRepsitory,
             ICategoryIconRepository categoryIconRepository,
@@ -188,18 +191,36 @@ namespace ExpenseTrackerApp.Data.Repositories
             return categoriesCount;
         }
 
-        public int getExpenseDefaultCategoryId()
+        public int getExpenseDefaultCategoryId(ClaimsPrincipal user)
         {
-            return _applicationDbContext.categories
-                .Include(ici => ici.CategoryType)
-                .FirstOrDefault(ici => ici.CategoryType.Name == "Expense" && ici.Title == "Default").Id;
+            try
+            {
+                return _applicationDbContext.categories
+                    .Include(ici => ici.CategoryType)
+                    .FirstOrDefault(
+                        ici => ici.CategoryType.Name == "Expense" && ici.Title == "Expense Default Category").Id;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Default Expense Category Not Found it is create {ex.Message}");
+                return new Category().Id;
+            }
         }
 
-        public int getIncomeDefaultCategoryId()
+        public int getIncomeDefaultCategoryId(ClaimsPrincipal user)
         {
-            return _applicationDbContext.categories
-                .Include(ici => ici.CategoryType)
-                .FirstOrDefault(ici => ici.CategoryType.Name == "Income" && ici.Title == "Default").Id;
+            try
+            {
+                return _applicationDbContext.categories
+                    .Include(ici => ici.CategoryType)
+                    .FirstOrDefault(ici => ici.CategoryType.Name == "Income" && ici.Title == "Income Default Category")
+                    .Id;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Default Income Category Not Found it is create {ex.Message}");
+                return new Category().Id;
+            }
         }
     }
 }

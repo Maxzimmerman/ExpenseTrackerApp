@@ -1,4 +1,5 @@
-﻿using ExpenseTrackerApp.Models;
+﻿using System.Security.Claims;
+using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.ViewModels.CategoryViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -18,7 +19,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         List<Category> GetAllIncomeCategories(string userId);
         decimal GetTotalAmountOfAllCategories(string userId, string expenseOrIncom);
         int CountAllCategoriesForUser(string userId);
-        int getExpenseDefaultCategoryId();
-        int getIncomeDefaultCategoryId();
+        int getExpenseDefaultCategoryId(ClaimsPrincipal user);
+        int getIncomeDefaultCategoryId(ClaimsPrincipal user);
     }
 }
