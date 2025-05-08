@@ -62,6 +62,9 @@ builder.Services.AddScoped<ICategoryColorRepository, CategoryColorRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 
+// Background Services
+builder.Services.AddHostedService<SyncTransactionsBackgroundService>();
+
 // Lazy Repositories
 builder.Services.AddScoped(typeof(Lazy<ITransactionRepository>), serviceProvider =>
     new Lazy<ITransactionRepository>(() => serviceProvider.GetRequiredService<ITransactionRepository>()));
@@ -75,7 +78,6 @@ builder.Services.AddScoped<IPlaidService, PlaidService>();
 // Mail Settings and Mail Serivce
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-
 
 var app = builder.Build();
 

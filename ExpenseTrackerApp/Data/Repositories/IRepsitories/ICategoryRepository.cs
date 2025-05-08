@@ -21,5 +21,7 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         int CountAllCategoriesForUser(string userId);
         int getExpenseDefaultCategoryId(ClaimsPrincipal user);
         int getIncomeDefaultCategoryId(ClaimsPrincipal user);
+        Category getExpenseDefaultCategory(string userId);
+        Category getIncomeDefaultCategory(string userId);
     }
 }

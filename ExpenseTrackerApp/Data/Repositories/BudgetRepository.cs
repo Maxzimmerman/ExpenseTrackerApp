@@ -179,6 +179,8 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Include(b => b.Category.CategoryColor)
                 .Where(b => b.Category.ApplicationUserId == userId)
                 .ToListAsync();
+            
+            
             return budgets;
         }
 

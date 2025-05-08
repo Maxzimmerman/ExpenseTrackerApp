@@ -164,7 +164,10 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Include(c => c.CategoryType)
                 .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == "Expense")
                 .ToList();
-
+            
+            var defaultCategory = this.getExpenseDefaultCategory(userId);
+            listExpenses.Add(defaultCategory);
+            
             return listExpenses;
         }
 
@@ -174,6 +177,9 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Include(c => c.CategoryType)
                 .Where(c => c.ApplicationUserId == userId && c.CategoryType.Name == "Income")
                 .ToList();
+            
+            var defaultIncomeCategory = this.getIncomeDefaultCategory(userId);
+            listIncoms.Add(defaultIncomeCategory);
 
             return listIncoms;
         }
@@ -220,6 +226,37 @@ namespace ExpenseTrackerApp.Data.Repositories
             {
                 Console.WriteLine($"Default Income Category Not Found it is create {ex.Message}");
                 return new Category().Id;
+            }
+        }
+
+        public Category getExpenseDefaultCategory(string userId)
+        {
+            try
+            {
+                return _applicationDbContext.categories
+                    .Include(ici => ici.CategoryType)
+                    .FirstOrDefault(
+                        ici => ici.CategoryType.Name == "Expense" && ici.Title == "Expense Default Category");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Default Expense Category Not Found it is create {ex.Message}");
+                return new Category();
+            }
+        }
+
+        public Category getIncomeDefaultCategory(string userId)
+        {
+            try
+            {
+                return _applicationDbContext.categories
+                    .Include(ici => ici.CategoryType)
+                    .FirstOrDefault(ici => ici.CategoryType.Name == "Income" && ici.Title == "Income Default Category");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Default Income Category Not Found it is create {ex.Message}");
+                return new Category();
             }
         }
     }
