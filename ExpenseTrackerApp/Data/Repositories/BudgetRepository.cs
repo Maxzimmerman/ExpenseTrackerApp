@@ -180,7 +180,6 @@ namespace ExpenseTrackerApp.Data.Repositories
                 .Where(b => b.Category.ApplicationUserId == userId)
                 .ToListAsync();
             
-            
             return budgets;
         }
 

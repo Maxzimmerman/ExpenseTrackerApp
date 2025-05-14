@@ -34,4 +34,11 @@ public class WalletRepository : Repository<Wallet>, IWalletRepository
             .Where(w => w.ApplicationUserId == userId)
             .ToList();
     }
+
+    public List<Wallet> getAll()
+    {
+        return _applicationDbContext.wallets
+            .Include(w => w.Transactions)
+            .ToList();
+    }
 }

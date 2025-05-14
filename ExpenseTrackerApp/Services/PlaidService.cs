@@ -117,7 +117,7 @@ public class PlaidService : IPlaidService
         HttpResponseMessage transactionsResponse = await client.PostAsync($"{baseUrl}/transactions/get", transactionsContent);
         string transactionsResponseBody = await transactionsResponse.Content.ReadAsStringAsync();
         
-        Console.WriteLine($" --------------- Plaid Transactions Response: {transactionsResponseBody}");
+        //Console.WriteLine($" --------------- Plaid Transactions Response: {transactionsResponseBody}");
         
         if (!transactionsResponse.IsSuccessStatusCode)
         {

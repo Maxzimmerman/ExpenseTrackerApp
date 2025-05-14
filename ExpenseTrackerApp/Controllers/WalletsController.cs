@@ -9,6 +9,7 @@ using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 using ExpenseTrackerApp.Models.Helper.Wallets;
+using ExpenseTrackerApp.Models.ViewModels.WalletViewModels;
 
 namespace ExpenseTrackerApp.Controllers;
 
@@ -48,6 +49,7 @@ public class WalletsController : BaseController
     [HttpGet]
     public IActionResult Wallets()
     {
+        var walletData = new List<WalletViewModel>();
         var user = _userRepository.getUserById(_userManageService.GetCurrentUserId(User));
         
         var wallets = _walletRepository.getAllByUser(user.Id);
@@ -65,7 +67,18 @@ public class WalletsController : BaseController
                 .Where(w => w.WalletId == wallet.Id).ToList();
         }
 
-        return View(wallets);
+        // build walled view model data
+        foreach (var wallet in wallets)
+        {
+            var newWallet = new WalletViewModel();
+            newWallet.Wallet = wallet;
+            newWallet.TotalBalanceData = _transactionRepository.getTotalBalanceDataForCertainWallet(user.Id, wallet.Id);
+            newWallet.TotalPeriodExpensesData = _transactionRepository.getTotalPeriodExpensesDataForCertainWallet(user.Id, wallet.Id);
+            newWallet.monthlyBalance = _transactionRepository.GetBalanceDataForCertainWallet(user.Id, wallet.Id);
+            walletData.Add(newWallet);
+        }
+
+        return View(walletData);
     }
 
     [HttpGet]
@@ -140,8 +153,8 @@ public class WalletsController : BaseController
         var existingTransactionIds = _transactionRepository.getIdsForWallet(user.Id, existingWallet.Id);
         
         // Get Expense and Income default Category
-        var incomeCategoryId = _categoryRepository.getIncomeDefaultCategoryId(User);
-        var expenseCategoryId = _categoryRepository.getExpenseDefaultCategoryId(User);
+        var incomeCategoryId = _categoryRepository.getIncomeDefaultCategoryId();
+        var expenseCategoryId = _categoryRepository.getExpenseDefaultCategoryId();
         
         if (incomeCategoryId == null)
         {

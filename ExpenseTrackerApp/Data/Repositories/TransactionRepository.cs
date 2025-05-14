@@ -727,5 +727,173 @@ namespace ExpenseTrackerApp.Data.Repositories
             _applicationDbContext.transactions.AddRange(transactions);
             _applicationDbContext.SaveChanges();
         }
+        
+        public TotalBalanceDataViewModel getTotalBalanceDataForCertainWallet(string userId, int walledId)
+        {
+            TotalBalanceDataViewModel totalBalanceDataViewModel = new TotalBalanceDataViewModel();
+            
+            int thisMonth = DateTime.UtcNow.Month;
+            int lastMonth = DateTime.UtcNow.AddMonths(-1).Month;
+            decimal BalanceThisMonth = 0;
+            decimal BalanceLastMonth = 0;
+            
+            // calculate the balance trend percentage
+            BalanceThisMonth = this.getMonthlyBalanceForCertainMonthThisYearForCertainWallet(userId, thisMonth, walledId);
+            BalanceLastMonth = this.getMonthlyBalanceForCertainMonthThisYearForCertainWallet(userId, lastMonth, walledId);
+            decimal balancePercentage = 0;
+
+            // prevent division by zero
+            if (BalanceLastMonth != 0)
+            {
+                balancePercentage = (BalanceThisMonth - BalanceLastMonth) / BalanceLastMonth;
+                balancePercentage *= 100;
+            }
+            
+            totalBalanceDataViewModel.TotalBalance = this.GetTotalBalanceAmountForCertainWallet(userId, walledId);
+            totalBalanceDataViewModel.BalanceLastMonth = BalanceLastMonth;
+            totalBalanceDataViewModel.DifferenceFromLastToCurrentMonthPercentage = Math.Round(balancePercentage, 2);
+
+            return totalBalanceDataViewModel;
+        }
+        
+        public decimal getMonthlyBalanceForCertainMonthThisYearForCertainWallet(string userId, int month, int walledId)
+        {
+            decimal expenses = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId
+                            && t.Date.Month <= month
+                            && t.Date.Year == DateTime.UtcNow.Year
+                            && t.Category.CategoryType.Name == "Expense" && t.WalletId == walledId)
+                .Sum(t => t.Amount); 
+
+            decimal income = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId
+                            && t.Date.Month <= month
+                            && t.Date.Year == DateTime.UtcNow.Year
+                            && t.Category.CategoryType.Name == "Income" && t.WalletId == walledId)
+                .Sum(t => t.Amount);
+
+            decimal netBalance = income - expenses;
+
+            return netBalance;
+        }
+        
+        public decimal GetTotalBalanceAmountForCertainWallet(string userId, int walledId)
+        {
+            decimal expenses = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId &&
+                            t.Category.CategoryType.Name == "Expense" && t.WalletId == walledId)
+                .Sum(t => t.Amount) * (-1);
+
+            decimal incomes = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId
+                            && t.Category.CategoryType.Name == "Income" && t.WalletId == walledId)
+                .Sum(t => t.Amount);
+
+            return expenses + incomes;
+        }
+        
+        public TotalPeriodExpensesDataViewModel getTotalPeriodExpensesDataForCertainWallet(string userId, int walletId)
+        {
+            TotalPeriodExpensesDataViewModel totalPeriodExpensesDataViewModelViewModel = new TotalPeriodExpensesDataViewModel();
+            int thisMonth = DateTime.UtcNow.Month;
+            int lastMonth = DateTime.UtcNow.AddMonths(-1).Month;
+            decimal expenseAmountThisMonth = 0;
+            decimal expenseAmountLastMonth = 0;
+            
+            // calculate the balance trend percentage
+            expenseAmountThisMonth = this.GetExpenseTotalAmountForAllCategoriesThisMonthForCertainWallet(userId, walletId);
+            expenseAmountLastMonth = this.GetExpenseTotalAmountForAllCategoriesLastMonthForCertainWallet(userId, walletId);
+            decimal balancePercentage = 0;
+
+            // prevent division by zero
+            if (expenseAmountLastMonth != 0)
+            {
+                balancePercentage = (expenseAmountThisMonth - expenseAmountLastMonth) / expenseAmountLastMonth;
+                balancePercentage *= 100;
+            }
+
+            totalPeriodExpensesDataViewModelViewModel.TotalAmountOfExpenses = this.GetTotalSpendAmountForCertainWallet(userId, walletId);
+            totalPeriodExpensesDataViewModelViewModel.AmountOfExpensesLastMonth = expenseAmountLastMonth;
+            totalPeriodExpensesDataViewModelViewModel.DifferenceBetweenThisAndLastMonth = Math.Round(balancePercentage, 2);
+
+            return totalPeriodExpensesDataViewModelViewModel;
+        }
+        
+        public decimal GetExpenseTotalAmountForAllCategoriesThisMonthForCertainWallet(string userId, int walletId)
+        {
+            decimal amount = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId 
+                            && t.Category.CategoryType.Name == "Expense" 
+                            && t.WalletId == walletId
+                            && t.Date.Year == DateTime.UtcNow.Year 
+                            && t.Date.Month == DateTime.UtcNow.Month)
+                .Sum(t => Math.Abs(t.Amount));
+
+            return amount;
+        }
+        
+        public decimal GetExpenseTotalAmountForAllCategoriesLastMonthForCertainWallet(string userId, int walletId)
+        {
+            decimal amount = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId 
+                            && t.Category.CategoryType.Name == "Expense" 
+                            && t.WalletId == walletId
+                            && t.Date.Year == DateTime.UtcNow.Year 
+                            && t.Date.Month == DateTime.UtcNow.AddMonths(-1).Month)
+                .Sum(t => Math.Abs(t.Amount));
+
+            return amount;
+        }
+        
+        public decimal GetTotalSpendAmountForCertainWallet(string userId, int walletId)
+        {
+            decimal expenses = _applicationDbContext.transactions
+                .Include(t => t.Category)
+                .Include(t => t.Category.CategoryType)
+                .Where(t => t.ApplicationUserId == userId &&
+                            t.WalletId == walletId &&
+                            t.Category.CategoryType.Name == "Expense")
+                .Sum(t => t.Amount);
+            return expenses;
+        }
+        
+        public List<decimal> GetBalanceDataForCertainWallet(string userId, int walletId)
+        {
+            int year = DateTime.UtcNow.Year;
+
+            List<decimal> monthlyBalance = new List<decimal>();
+
+            for (int i = 1; i < 13; i++)
+            {
+                monthlyBalance.Add(GetBalanceForCertainMonthForCertainWallet(userId, i, year, walletId));
+            }
+
+            int currentYear = DateTime.UtcNow.Year;
+            int currentMonth = DateTime.UtcNow.Month;
+            int numberOfDays = DateTime.DaysInMonth(currentYear, currentMonth);
+
+            return monthlyBalance;
+        }
+        
+        public decimal GetBalanceForCertainMonthForCertainWallet(string userId, int month, int year, int walletId)
+        {
+            decimal expenses = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId
+                            && t.Date.Year <= year
+                            && t.Date.Month <= month 
+                            && t.Category.CategoryType.Name == "Expense"
+                            && t.WalletId == walletId)
+                .Sum(t => t.Amount) * (-1);
+
+            decimal incoms = _applicationDbContext.transactions
+                .Where(t => t.ApplicationUserId == userId
+                            && t.Date.Year <= year
+                            && t.Date.Month <= month
+                            && t.Category.CategoryType.Name == "Income"
+                            && t.WalletId == walletId)
+                .Sum(t => t.Amount);
+
+            return expenses + incoms;
+        }
     }
 }

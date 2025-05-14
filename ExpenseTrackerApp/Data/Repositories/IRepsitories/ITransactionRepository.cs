@@ -46,5 +46,15 @@ namespace ExpenseTrackerApp.Data.Repositories.IRepsitories
         List<string> getIdsForWallet(string userId, int walledId);
         void addTransactions(List<Models.Transaction> transactions);
         // Todo
+        TotalBalanceDataViewModel getTotalBalanceDataForCertainWallet(string userId, int walledId);
+        decimal getMonthlyBalanceForCertainMonthThisYearForCertainWallet(string userId, int month, int walledId);
+        decimal GetTotalBalanceAmountForCertainWallet(string userId, int walledId);
+        TotalPeriodExpensesDataViewModel getTotalPeriodExpensesDataForCertainWallet(string userId, int walletId);
+        decimal GetExpenseTotalAmountForAllCategoriesThisMonthForCertainWallet(string userId, int walletId); 
+        decimal GetExpenseTotalAmountForAllCategoriesLastMonthForCertainWallet(string userId, int walletId);
+        decimal GetTotalSpendAmountForCertainWallet(string userId, int walletId);
+        List<decimal> GetBalanceDataForCertainWallet(string userId, int walletId);
+
+        decimal GetBalanceForCertainMonthForCertainWallet(string userId, int month, int year, int walletId);
     }
 }

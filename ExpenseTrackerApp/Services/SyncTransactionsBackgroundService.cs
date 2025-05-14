@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using System;
 using ExpenseTrackerApp.Data.Repositories.IRepsitories;
+using ExpenseTrackerApp.Models;
 using ExpenseTrackerApp.Models.Helper.Wallets;
 using ExpenseTrackerApp.Services.IServices;
 
@@ -31,16 +32,13 @@ public class SyncTransactionsBackgroundService : IHostedService, IDisposable
     {
         // Start the timer with an initial delay of 0, then repeat every 10 minutes.
         _timer = new Timer(async _ => await SyncTransactions(cancellationToken), null, TimeSpan.Zero,
-            TimeSpan.FromSeconds(10));
+            TimeSpan.FromMinutes(60));
         return Task.CompletedTask;
     }
 
     private async Task SyncTransactions(CancellationToken cancellationToken)
     {
         _logger.LogInformation($"SyncTransactionsBackgroundService is starting... {DateTime.Now.ToShortTimeString()}");
-        var userPrincipal = _httpContextAccessor?.HttpContext?.User;
-        var user = userPrincipal?.Identity;
-        var userId = user?.Name;
         
         using var scope = _scopeFactory.CreateScope();
         var plaidService = scope.ServiceProvider.GetRequiredService<IPlaidService>();
@@ -48,8 +46,12 @@ public class SyncTransactionsBackgroundService : IHostedService, IDisposable
         var transactionRepository = scope.ServiceProvider.GetRequiredService<ITransactionRepository>();
         var categoryRepository = scope.ServiceProvider.GetRequiredService<ICategoryRepository>();
 
-        // Fetch all wallets that have access tokens stored.
-        var wallets = walletRepository.getAllByUser(userId);
+        // Fetch all wallets.
+        List<Wallet> wallets = walletRepository.getAll();
+        if (wallets.Count == 0)
+        {
+            _logger.LogInformation($"No Wallet to sync. wallets: {wallets.Count}");
+        }
         foreach (var wallet in wallets)
         {
             try
@@ -66,8 +68,8 @@ public class SyncTransactionsBackgroundService : IHostedService, IDisposable
                 var existingTransactionIds = transactionRepository.getIdsForWallet(wallet.ApplicationUserId, wallet.Id);
 
                 // Get default categories (Income and Expense)
-                var incomeCategoryId = categoryRepository.getIncomeDefaultCategoryId(userPrincipal);
-                var expenseCategoryId = categoryRepository.getExpenseDefaultCategoryId(userPrincipal);
+                var incomeCategoryId = categoryRepository.getIncomeDefaultCategoryId();
+                var expenseCategoryId = categoryRepository.getExpenseDefaultCategoryId();
 
                 if (incomeCategoryId == null || expenseCategoryId == null)
                 {
@@ -126,7 +128,6 @@ public class SyncTransactionsBackgroundService : IHostedService, IDisposable
             }
         }
         
-        _logger.LogInformation($"No Wallet to sync.");
         _logger.LogInformation($"SyncTransactionsBackgroundService is stopping... {DateTime.Now.ToShortTimeString()}");
     }
 

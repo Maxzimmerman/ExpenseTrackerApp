@@ -197,7 +197,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             return categoriesCount;
         }
 
-        public int getExpenseDefaultCategoryId(ClaimsPrincipal user)
+        public int getExpenseDefaultCategoryId()
         {
             try
             {
@@ -213,7 +213,7 @@ namespace ExpenseTrackerApp.Data.Repositories
             }
         }
 
-        public int getIncomeDefaultCategoryId(ClaimsPrincipal user)
+        public int getIncomeDefaultCategoryId()
         {
             try
             {
