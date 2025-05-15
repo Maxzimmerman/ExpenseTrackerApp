@@ -88,13 +88,13 @@ using (var scope = app.Services.CreateScope())
      var userManagerService = scope.ServiceProvider.GetRequiredService<IUserManageService>();
      context.Database.Migrate();
      
-     // var seedCategory = new SeedCategory(context, userManagerService);
-     // var seedFooter = new SeedFooter(context);
-     // var seedSocialLinks = new SeedSocialLinks(context);
-     //     
-     // seedFooter.ReadCSV();
-     // seedSocialLinks.ReadCSV();
-     // seedCategory.Seed();
+     //var seedCategory = new SeedCategory(context, userManagerService);
+     //var seedFooter = new SeedFooter(context);
+     //var seedSocialLinks = new SeedSocialLinks(context);
+     //    
+     //seedFooter.ReadCSV();
+     //seedSocialLinks.ReadCSV();
+     //seedCategory.Seed();
 }
 
 if (app.Environment.IsDevelopment())
