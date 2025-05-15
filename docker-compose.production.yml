@@ -20,11 +20,11 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - DOTNET_RUNNING_IN_CONTAINER=true
     labels:
-      - "traefik.enable=true"
       - "traefik.http.routers.expensetrackerapp.rule=Host(`doughtrack.com`) || Host(`www.doughtrack.com`)"
-      - "traefik.http.routers.expensetrackerapp.entrypoints=web,web-secure"
-      - "traefik.http.routers.expensetrackerapp.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.expensetrackerapp.tls=true"
+      - "traefik.http.routers.expensetrackerapp.tls.certresolver=le-rslolver"
       - "traefik.http.services.expensetrackerapp.loadbalancer.server.port=8080"
+      - "traefik.http.routers.expensetrackerapp.entrypoints=websecure"
     depends_on:
       - expensetrackerapp.database
     networks:
@@ -44,11 +44,3 @@ services:
       - expensetracker
     labels:
       - "traefik.enable=false"
-
-  traefik:
-    image: traefik:v2.10
-    volumes:
-      - /opt/app/ExpenseTrackerApp/ExpenseTrackerApp/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - /opt/app/ExpenseTrackerApp/acme:/etc/traefik/acme
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-

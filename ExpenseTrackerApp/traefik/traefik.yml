@@ -8,7 +8,6 @@ entryPoints:
       redirections:
         entryPoint:
           to: web-secure
-          scheme: https
 
   web-secure:
     address: ":443"
@@ -22,6 +21,7 @@ certificatesResolvers:
         entryPoint: web
 
 providers:
-  docker:
-    endpoint: "unix:///var/run/docker.sock"
-    exposedByDefault: false
+  # https://docs.traefik.io/master/providers/file/
+  file:
+    filename: /etc/traefik/traefik.yml
+    watch: true
