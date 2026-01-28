@@ -8,7 +8,6 @@ networks:
 
 volumes:
   expensetracker_postgres_data: {}
-  traefik_cert_data: {}
 
 services:
   expensetrackerapp:
@@ -20,11 +19,13 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - DOTNET_RUNNING_IN_CONTAINER=true
     labels:
+      - "traefik.enable=true"
       - "traefik.http.routers.expensetrackerapp.rule=Host(`doughtrack.com`) || Host(`www.doughtrack.com`)"
       - "traefik.http.routers.expensetrackerapp.tls=true"
-      - "traefik.http.routers.expensetrackerapp.tls.certresolver=le-rslolver"
+      - "traefik.http.routers.expensetrackerapp.tls.certresolver=le-resolver"
       - "traefik.http.services.expensetrackerapp.loadbalancer.server.port=8080"
       - "traefik.http.routers.expensetrackerapp.entrypoints=websecure"
+      - "traefik.docker.network=web"
     depends_on:
       - expensetrackerapp.database
     networks:
